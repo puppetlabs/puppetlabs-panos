@@ -1,8 +1,67 @@
 <response code='19' status='success'><result count='1' total-count='1'>
   <vsys>
     <entry name='vsys1'>
-      <application/>
-      <application-group/>
+      <application>
+        <entry name='app'>
+          <default>
+            <port>
+              <member>tcp/666</member>
+            </port>
+          </default>
+          <signature>
+            <entry name='signature'>
+              <and-condition>
+                <entry name='And Condition 1'>
+                  <or-condition>
+                    <entry name='Or Condition 1'>
+                      <operator>
+                        <pattern-match>
+                          <pattern>abcdefg</pattern>
+                          <context>dhcp-rsp-chaddr</context>
+                        </pattern-match>
+                      </operator>
+                    </entry>
+                  </or-condition>
+                </entry>
+              </and-condition>
+              <scope>protocol-data-unit</scope>
+              <order-free>no</order-free>
+              <comment>test</comment>
+            </entry>
+          </signature>
+          <subcategory>internet-conferencing</subcategory>
+          <category>collaboration</category>
+          <technology>peer-to-peer</technology>
+          <description>foo</description>
+          <timeout>100</timeout>
+          <tcp-timeout>300</tcp-timeout>
+          <udp-timeout>500</udp-timeout>
+          <tcp-half-closed-timeout>200</tcp-half-closed-timeout>
+          <tcp-time-wait-timeout>400</tcp-time-wait-timeout>
+          <risk>1</risk>
+          <evasive-behavior>yes</evasive-behavior>
+          <consume-big-bandwidth>yes</consume-big-bandwidth>
+          <used-by-malware>no</used-by-malware>
+          <able-to-transfer-file>yes</able-to-transfer-file>
+          <has-known-vulnerability>yes</has-known-vulnerability>
+          <tunnel-other-application>yes</tunnel-other-application>
+          <tunnel-applications>yes</tunnel-applications>
+          <prone-to-misuse>yes</prone-to-misuse>
+          <pervasive-use>yes</pervasive-use>
+          <file-type-ident>yes</file-type-ident>
+          <virus-ident>yes</virus-ident>
+          <data-ident>yes</data-ident>
+        </entry>
+      </application>
+      <application-group>
+        <entry name='appgrp'>
+          <members>
+            <member>app</member>
+            <member>3pc</member>
+            <member>youtube-tv-streaming</member>
+          </members>
+        </entry>
+      </application-group>
       <zone>
         <entry name='test-zone'>
           <network>
@@ -13,9 +72,39 @@
           </network>
         </entry>
       </zone>
-      <service/>
-      <service-group/>
-      <schedule/>
+      <service>
+        <entry name='srv'>
+          <protocol>
+            <sctp>
+              <port>1-10</port>
+              <source-port>80,90,100</source-port>
+            </sctp>
+          </protocol>
+          <tag>
+            <member>a</member>
+          </tag>
+          <description>desc</description>
+        </entry>
+      </service>
+      <service-group>
+        <entry name='srvgrp'>
+          <members>
+            <member>service-https</member>
+            <member>srv</member>
+          </members>
+        </entry>
+      </service-group>
+      <schedule>
+        <entry name='sched'>
+          <schedule-type>
+            <recurring>
+              <daily>
+                <member>00:45-03:00</member>
+              </daily>
+            </recurring>
+          </schedule-type>
+        </entry>
+      </schedule>
       <rulebase/>
       <log-settings>
         <profiles>
@@ -42,6 +131,599 @@
           </interface>
         </network>
       </import>
+      <tag>
+        <entry name='a'/>
+        <entry name='b'/>
+      </tag>
+      <address>
+        <entry name='address'>
+          <ip-netmask>1.2.3.4/28</ip-netmask>
+          <tag>
+            <member>a</member>
+          </tag>
+          <description>some address</description>
+        </entry>
+      </address>
+      <address-group>
+        <entry name='address group'>
+          <static>
+            <member>address</member>
+          </static>
+          <tag>
+            <member>b</member>
+          </tag>
+          <description>description</description>
+        </entry>
+      </address-group>
+      <region>
+        <entry name='AT'>
+          <address>
+            <member>1.2.3.4/29</member>
+          </address>
+        </entry>
+      </region>
+      <application-filter>
+        <entry name='appfilt'>
+          <subcategory>
+            <member>audio-streaming</member>
+          </subcategory>
+          <technology>
+            <member>peer-to-peer</member>
+          </technology>
+        </entry>
+      </application-filter>
+      <external-list>
+        <entry name='extdynlist'>
+          <type>
+            <ip>
+              <recurring>
+                <hourly/>
+              </recurring>
+              <description>dasd</description>
+              <url>http://www.example.net</url>
+            </ip>
+          </type>
+        </entry>
+      </external-list>
+      <profiles>
+        <data-objects>
+          <entry name='data patterns'>
+            <pattern-type>
+              <file-properties>
+                <pattern>
+                  <entry name='pat'>
+                    <file-type>xlsx</file-type>
+                    <file-property>panav-rsp-office-dlp-titus-classification</file-property>
+                    <property-value>value</property-value>
+                  </entry>
+                </pattern>
+              </file-properties>
+            </pattern-type>
+            <description>some patterns</description>
+          </entry>
+          <entry name='data pattern'>
+            <pattern-type>
+              <regex>
+                <pattern>
+                  <entry name='name'>
+                    <file-type>
+                      <member>text/html</member>
+                    </file-type>
+                    <regex>foobarblubb</regex>
+                  </entry>
+                </pattern>
+              </regex>
+            </pattern-type>
+            <description>desc</description>
+          </entry>
+        </data-objects>
+        <custom-url-category>
+          <entry name='urlcat'>
+            <list>
+              <member>example.net</member>
+            </list>
+            <description>caturl</description>
+          </entry>
+        </custom-url-category>
+        <virus>
+          <entry name='default-1'>
+            <decoder>
+              <entry name='http'>
+                <action>default</action>
+                <wildfire-action>allow</wildfire-action>
+              </entry>
+              <entry name='smtp'>
+                <action>default</action>
+                <wildfire-action>allow</wildfire-action>
+              </entry>
+              <entry name='imap'>
+                <action>default</action>
+                <wildfire-action>allow</wildfire-action>
+              </entry>
+              <entry name='pop3'>
+                <action>default</action>
+                <wildfire-action>allow</wildfire-action>
+              </entry>
+              <entry name='ftp'>
+                <action>default</action>
+                <wildfire-action>allow</wildfire-action>
+              </entry>
+              <entry name='smb'>
+                <action>default</action>
+                <wildfire-action>allow</wildfire-action>
+              </entry>
+            </decoder>
+          </entry>
+        </virus>
+        <spyware>
+          <entry name='strict-1'>
+            <rules>
+              <entry name='simple-critical'>
+                <threat-name>any</threat-name>
+                <category>any</category>
+                <severity>
+                  <member>critical</member>
+                </severity>
+                <action>
+                  <reset-both/>
+                </action>
+              </entry>
+              <entry name='simple-high'>
+                <threat-name>any</threat-name>
+                <category>any</category>
+                <severity>
+                  <member>high</member>
+                </severity>
+                <action>
+                  <reset-both/>
+                </action>
+              </entry>
+              <entry name='simple-medium'>
+                <threat-name>any</threat-name>
+                <category>any</category>
+                <severity>
+                  <member>medium</member>
+                </severity>
+                <action>
+                  <reset-both/>
+                </action>
+              </entry>
+              <entry name='simple-informational'>
+                <threat-name>any</threat-name>
+                <category>any</category>
+                <severity>
+                  <member>informational</member>
+                </severity>
+                <action>
+                  <default/>
+                </action>
+              </entry>
+              <entry name='simple-low'>
+                <threat-name>any</threat-name>
+                <category>any</category>
+                <severity>
+                  <member>low</member>
+                </severity>
+                <action>
+                  <default/>
+                </action>
+              </entry>
+            </rules>
+            <botnet-domains minver='7.1.0'>
+              <lists>
+                <entry name='default-paloalto-dns'>
+                  <action>
+                    <block/>
+                  </action>
+                </entry>
+              </lists>
+              <packet-capture>disable</packet-capture>
+            </botnet-domains>
+          </entry>
+        </spyware>
+        <vulnerability>
+          <entry name='default-1'>
+            <rules>
+              <entry name='simple-client-critical'>
+                <host>client</host>
+                <threat-name>any</threat-name>
+                <category>any</category>
+                <severity>
+                  <member>critical</member>
+                </severity>
+                <cve>
+                  <member>any</member>
+                </cve>
+                <vendor-id>
+                  <member>any</member>
+                </vendor-id>
+                <action>
+                  <default/>
+                </action>
+              </entry>
+              <entry name='simple-client-high'>
+                <host>client</host>
+                <threat-name>any</threat-name>
+                <category>any</category>
+                <severity>
+                  <member>high</member>
+                </severity>
+                <cve>
+                  <member>any</member>
+                </cve>
+                <vendor-id>
+                  <member>any</member>
+                </vendor-id>
+                <action>
+                  <default/>
+                </action>
+              </entry>
+              <entry name='simple-client-medium'>
+                <host>client</host>
+                <threat-name>any</threat-name>
+                <category>any</category>
+                <severity>
+                  <member>medium</member>
+                </severity>
+                <cve>
+                  <member>any</member>
+                </cve>
+                <vendor-id>
+                  <member>any</member>
+                </vendor-id>
+                <action>
+                  <default/>
+                </action>
+              </entry>
+              <entry name='simple-server-critical'>
+                <host>server</host>
+                <threat-name>any</threat-name>
+                <category>any</category>
+                <severity>
+                  <member>critical</member>
+                </severity>
+                <cve>
+                  <member>any</member>
+                </cve>
+                <vendor-id>
+                  <member>any</member>
+                </vendor-id>
+                <action>
+                  <default/>
+                </action>
+              </entry>
+              <entry name='simple-server-high'>
+                <host>server</host>
+                <threat-name>any</threat-name>
+                <category>any</category>
+                <severity>
+                  <member>high</member>
+                </severity>
+                <cve>
+                  <member>any</member>
+                </cve>
+                <vendor-id>
+                  <member>any</member>
+                </vendor-id>
+                <action>
+                  <default/>
+                </action>
+              </entry>
+              <entry name='simple-server-medium'>
+                <host>server</host>
+                <threat-name>any</threat-name>
+                <category>any</category>
+                <severity>
+                  <member>medium</member>
+                </severity>
+                <cve>
+                  <member>any</member>
+                </cve>
+                <vendor-id>
+                  <member>any</member>
+                </vendor-id>
+                <action>
+                  <default/>
+                </action>
+              </entry>
+            </rules>
+          </entry>
+        </vulnerability>
+        <url-filtering>
+          <entry name='default-1'>
+            <action>block</action>
+            <block>
+              <member>adult</member>
+              <member>questionable</member>
+              <member>abused-drugs</member>
+              <member>hacking</member>
+              <member>gambling</member>
+              <member>weapons</member>
+              <member>malware</member>
+              <member>phishing</member>
+              <member>command-and-control</member>
+            </block>
+          </entry>
+        </url-filtering>
+        <file-blocking>
+          <entry name='basic file blocking-1'>
+            <rules>
+              <entry name='Block high risk file types'>
+                <application>
+                  <member>any</member>
+                </application>
+                <file-type>
+                  <member>7z</member>
+                  <member>bat</member>
+                  <member>chm</member>
+                  <member>class</member>
+                  <member>cpl</member>
+                  <member>dll</member>
+                  <member>exe</member>
+                  <member>hlp</member>
+                  <member>hta</member>
+                  <member>jar</member>
+                  <member>ocx</member>
+                  <member>PE</member>
+                  <member>pif</member>
+                  <member>rar</member>
+                  <member>scr</member>
+                  <member>torrent</member>
+                  <member>vbe</member>
+                  <member>wsf</member>
+                </file-type>
+                <direction>both</direction>
+                <action>block</action>
+              </entry>
+              <entry name='Continue prompt encrypted files'>
+                <application>
+                  <member>any</member>
+                </application>
+                <file-type>
+                  <member>encrypted-rar</member>
+                  <member>encrypted-zip</member>
+                </file-type>
+                <direction>both</direction>
+                <action>continue</action>
+              </entry>
+              <entry name='Log all other file types'>
+                <application>
+                  <member>any</member>
+                </application>
+                <file-type>
+                  <member>any</member>
+                </file-type>
+                <direction>both</direction>
+                <action>alert</action>
+              </entry>
+            </rules>
+          </entry>
+        </file-blocking>
+        <wildfire-analysis>
+          <entry name='default-1'>
+            <rules>
+              <entry name='default'>
+                <analysis>public-cloud</analysis>
+                <file-type>
+                  <member>any</member>
+                </file-type>
+                <application>
+                  <member>any</member>
+                </application>
+                <direction>both</direction>
+              </entry>
+            </rules>
+          </entry>
+        </wildfire-analysis>
+        <data-filtering>
+          <entry name='data filt'>
+            <rules>
+              <entry name='rule0'>
+                <application>
+                  <member>any</member>
+                </application>
+                <file-type>
+                  <member>any</member>
+                </file-type>
+                <direction>both</direction>
+                <alert-threshold>0</alert-threshold>
+                <block-threshold>0</block-threshold>
+                <data-object>data pattern</data-object>
+                <log-severity>informational</log-severity>
+              </entry>
+            </rules>
+            <description>desc</description>
+          </entry>
+        </data-filtering>
+        <dos-protection>
+          <entry name='dosprot'>
+            <flood>
+              <tcp-syn>
+                <red>
+                  <alarm-rate>10000</alarm-rate>
+                  <activate-rate>10000</activate-rate>
+                  <maximal-rate>40000</maximal-rate>
+                </red>
+                <enable>yes</enable>
+              </tcp-syn>
+              <udp>
+                <red>
+                  <maximal-rate>40000</maximal-rate>
+                  <alarm-rate>10000</alarm-rate>
+                  <activate-rate>10000</activate-rate>
+                </red>
+                <enable>yes</enable>
+              </udp>
+              <icmp>
+                <red>
+                  <maximal-rate>40000</maximal-rate>
+                  <alarm-rate>10000</alarm-rate>
+                  <activate-rate>10000</activate-rate>
+                </red>
+                <enable>yes</enable>
+              </icmp>
+              <icmpv6>
+                <red>
+                  <maximal-rate>40000</maximal-rate>
+                  <alarm-rate>10000</alarm-rate>
+                  <activate-rate>10000</activate-rate>
+                </red>
+                <enable>yes</enable>
+              </icmpv6>
+              <other-ip>
+                <red>
+                  <maximal-rate>40000</maximal-rate>
+                  <alarm-rate>10000</alarm-rate>
+                  <activate-rate>10000</activate-rate>
+                </red>
+                <enable>yes</enable>
+              </other-ip>
+            </flood>
+            <resource>
+              <sessions>
+                <enabled>yes</enabled>
+              </sessions>
+            </resource>
+            <type>aggregate</type>
+            <description>desc</description>
+          </entry>
+        </dos-protection>
+        <decryption>
+          <entry name='default-1'>
+            <ssl-protocol-settings/>
+          </entry>
+        </decryption>
+      </profiles>
+      <threats>
+        <spyware>
+          <entry name='17000'>
+            <signature>
+              <standard>
+                <entry name='test'>
+                  <and-condition>
+                    <entry name='And Condition 1'>
+                      <or-condition>
+                        <entry name='Or Condition 1'>
+                          <operator>
+                            <pattern-match>
+                              <pattern>dasdasda</pattern>
+                              <context>dns-req-section</context>
+                              <negate>no</negate>
+                            </pattern-match>
+                          </operator>
+                        </entry>
+                      </or-condition>
+                    </entry>
+                  </and-condition>
+                  <order-free>no</order-free>
+                  <scope>protocol-data-unit</scope>
+                  <comment>test</comment>
+                </entry>
+              </standard>
+            </signature>
+            <default-action>
+              <alert/>
+            </default-action>
+            <cve>
+              <member>CVE-2000-123</member>
+            </cve>
+            <reference>
+              <member>http://example.net</member>
+            </reference>
+            <vendor>
+              <member>MS03-123</member>
+            </vendor>
+            <bugtraq>
+              <member>1234</member>
+            </bugtraq>
+            <threatname>spyware sign</threatname>
+            <severity>high</severity>
+            <direction>client2server</direction>
+            <comment>lol</comment>
+          </entry>
+        </spyware>
+        <vulnerability>
+          <entry name='41234'>
+            <signature>
+              <combination>
+                <time-attribute>
+                  <interval>4</interval>
+                  <threshold>2</threshold>
+                </time-attribute>
+                <and-condition>
+                  <entry name='And Condition 1'>
+                    <or-condition>
+                      <entry name='Or Condition 1'>
+                        <threat-id>10004</threat-id>
+                      </entry>
+                    </or-condition>
+                  </entry>
+                </and-condition>
+              </combination>
+            </signature>
+            <default-action>
+              <alert/>
+            </default-action>
+            <cve>
+              <member>cve</member>
+            </cve>
+            <reference>
+              <member>example.net</member>
+            </reference>
+            <vendor>
+              <member>ms03-666</member>
+            </vendor>
+            <bugtraq>
+              <member>bugtraq</member>
+            </bugtraq>
+            <threatname>custvuln</threatname>
+            <severity>medium</severity>
+            <direction>both</direction>
+            <comment>testsig</comment>
+            <affected-host>
+              <client>yes</client>
+            </affected-host>
+          </entry>
+        </vulnerability>
+      </threats>
+      <profile-group>
+        <entry name='secprofgrp'>
+          <virus>
+            <member>default-1</member>
+          </virus>
+          <spyware>
+            <member>strict-1</member>
+          </spyware>
+          <vulnerability>
+            <member>default-1</member>
+          </vulnerability>
+          <url-filtering>
+            <member>default</member>
+          </url-filtering>
+          <file-blocking>
+            <member>basic file blocking</member>
+          </file-blocking>
+          <data-filtering>
+            <member>data filt</member>
+          </data-filtering>
+          <wildfire-analysis>
+            <member>default-1</member>
+          </wildfire-analysis>
+        </entry>
+      </profile-group>
+      <authentication-object>
+        <entry name='default-no-captive-portal-1'>
+          <authentication-method>no-captive-portal</authentication-method>
+          <authentication-profile>authprof</authentication-profile>
+        </entry>
+      </authentication-object>
+      <application-tag>
+        <entry name='app'>
+          <tag>
+            <member>a</member>
+          </tag>
+        </entry>
+      </application-tag>
     </entry>
   </vsys>
 </result></response>
