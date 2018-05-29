@@ -1,0 +1,47 @@
+<response code='19' status='success'><result count='1' total-count='1'>
+  <vsys>
+    <entry name='vsys1'>
+      <application/>
+      <application-group/>
+      <zone>
+        <entry name='test-zone'>
+          <network>
+            <layer3>
+              <member>loopback.1</member>
+            </layer3>
+            <log-setting>test-lfp</log-setting>
+          </network>
+        </entry>
+      </zone>
+      <service/>
+      <service-group/>
+      <schedule/>
+      <rulebase/>
+      <log-settings>
+        <profiles>
+          <entry name='test-lfp'>
+            <match-list>
+              <entry name='test match list'>
+                <send-syslog>
+                  <member>syslog server profile</member>
+                </send-syslog>
+                <action-desc>test match list description</action-desc>
+                <log-type>traffic</log-type>
+                <filter>All Logs</filter>
+                <send-to-panorama>no</send-to-panorama>
+              </entry>
+            </match-list>
+            <description>a test log forwarding profile</description>
+          </entry>
+        </profiles>
+      </log-settings>
+      <import>
+        <network>
+          <interface>
+            <member>loopback.1</member>
+          </interface>
+        </network>
+      </import>
+    </entry>
+  </vsys>
+</result></response>

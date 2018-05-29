@@ -1,0 +1,15 @@
+<response code='19' status='success'><result count='1' total-count='1'>
+  <mgt-config>
+    <users>
+      <entry name='admin'>
+        <phash>$1$mxvntool$5sH0Z7t7WqsXOViRpgCFD/</phash>
+        <permissions>
+          <role-based>
+            <superuser>yes</superuser>
+          </role-based>
+        </permissions>
+        <public-key>c3NoLXJzYSBBQUFBQjNOemFDMXljMkVBQUFBREFRQUJBQUFCQVFDTUFudERsbXR2YmIzZGIrQ1pyRXhRWWRWZlh1b01iWjdrOFo3SDBjcnN2M0hmb3Bnb3B6OVVJSXc1TDFhWHJ4Y3J0ZHByT2ZEbVBxaFVWUmEybE5RaDRhZjhsSEc1SjYreG1tZ3Y3bmJOMkU2TDVtb2lQQ1B5c2FyMzUxek5IQ0NnclFNRlBkK3R1c01QRU5EWit5cVFFTjRaRWZxMjZ1VmpVNGZSQjAvekRZeTVUU0NncE8wS2lacUtpOHdqZ1dJcFNwakNtQzQvQlJFQ3M5anMvZ0h4MnlXR3dnTGVYNm16NlQ3Y2RiaGYvV1FRQkg0bFBjSEJFUExVdEJVRFVQZFRheGRPdThDQmVzY0tQdVJPdmlKeEQ5OEpyZFBOLzJ1VUZISDRVelZCQkFrb0xIZmxzek8waDlXUEJZb1ptcHo0RjNJaEhLYUIwbnIrYWJPWkRVZkYgZGF2aWQuc2NobWl0dA==</public-key>
+      </entry>
+    </users>
+  </mgt-config>
+</result></response>

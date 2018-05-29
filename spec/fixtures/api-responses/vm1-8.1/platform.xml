@@ -1,0 +1,136 @@
+<response code='19' status='success'><result count='1' total-count='1'>
+  <platform>
+    <limits>
+      <max-address>10000</max-address>
+      <max-address-group>1000</max-address-group>
+      <max-address-per-group>2500</max-address-per-group>
+      <max-nat-policy-rule>5000</max-nat-policy-rule>
+      <max-oride-policy-rule>1000</max-oride-policy-rule>
+      <max-policy-rule>10000</max-policy-rule>
+      <max-service>2000</max-service>
+      <max-service-per-group>500</max-service-per-group>
+      <max-ssl-policy-rule>1000</max-ssl-policy-rule>
+      <max-auth-policy-rule>1000</max-auth-policy-rule>
+      <max-pbf-policy-rule>500</max-pbf-policy-rule>
+      <max-qos-policy-rule>1000</max-qos-policy-rule>
+      <max-dos-policy-rule>1000</max-dos-policy-rule>
+      <max-session>819202</max-session>
+      <max-vlan>4096</max-vlan>
+      <max-vrouter>10</max-vrouter>
+      <max-shared-gateway>0</max-shared-gateway>
+      <max-vsys>2</max-vsys>
+      <base-vsys>1</base-vsys>
+      <licensed-vsys>1</licensed-vsys>
+      <max-vwire>1024</max-vwire>
+      <max-zone>40</max-zone>
+      <max-ifnet>2048</max-ifnet>
+      <max-ike-peers>1000</max-ike-peers>
+      <max-tunnel>2000</max-tunnel>
+      <max-ssl-tunnel>2000</max-ssl-tunnel>
+      <max-ssl-portal>11</max-ssl-portal>
+      <max-qosif>6</max-qosif>
+      <max-qosnet>32</max-qosnet>
+      <max-aeqosnet>256</max-aeqosnet>
+      <max-qosbw>10000</max-qosbw>
+      <max-signature>6000</max-signature>
+      <max-threat-signature>6000</max-threat-signature>
+      <max-tsagents>400</max-tsagents>
+      <max-profile>375</max-profile>
+    </limits>
+    <interfaces>
+      <ethernet>
+        <entry name='ethernet1/1'>
+          <duplex>
+            <entry name='auto'/>
+            <entry name='half'/>
+            <entry name='full'/>
+          </duplex>
+          <speed>
+            <entry name='auto'/>
+            <entry name='10'/>
+            <entry name='100'/>
+            <entry name='1000'/>
+          </speed>
+        </entry>
+        <entry name='ethernet1/2'>
+          <duplex>
+            <entry name='auto'/>
+            <entry name='half'/>
+            <entry name='full'/>
+          </duplex>
+          <speed>
+            <entry name='auto'/>
+            <entry name='10'/>
+            <entry name='100'/>
+            <entry name='1000'/>
+          </speed>
+        </entry>
+        <entry name='ethernet1/3'>
+          <duplex>
+            <entry name='auto'/>
+            <entry name='half'/>
+            <entry name='full'/>
+          </duplex>
+          <speed>
+            <entry name='auto'/>
+            <entry name='10'/>
+            <entry name='100'/>
+            <entry name='1000'/>
+          </speed>
+        </entry>
+        <entry name='ethernet1/4'>
+          <duplex>
+            <entry name='auto'/>
+            <entry name='half'/>
+            <entry name='full'/>
+          </duplex>
+          <speed>
+            <entry name='auto'/>
+            <entry name='10'/>
+            <entry name='100'/>
+            <entry name='1000'/>
+          </speed>
+        </entry>
+        <entry name='ethernet1/5'>
+          <duplex>
+            <entry name='auto'/>
+            <entry name='half'/>
+            <entry name='full'/>
+          </duplex>
+          <speed>
+            <entry name='auto'/>
+            <entry name='10'/>
+            <entry name='100'/>
+            <entry name='1000'/>
+          </speed>
+        </entry>
+        <entry name='ethernet1/6'>
+          <duplex>
+            <entry name='auto'/>
+            <entry name='half'/>
+            <entry name='full'/>
+          </duplex>
+          <speed>
+            <entry name='auto'/>
+            <entry name='10'/>
+            <entry name='100'/>
+            <entry name='1000'/>
+          </speed>
+        </entry>
+        <entry name='ethernet1/7'>
+          <duplex>
+            <entry name='auto'/>
+            <entry name='half'/>
+            <entry name='full'/>
+          </duplex>
+          <speed>
+            <entry name='auto'/>
+            <entry name='10'/>
+            <entry name='100'/>
+            <entry name='1000'/>
+          </speed>
+        </entry>
+      </ethernet>
+    </interfaces>
+  </platform>
+</result></response>
