@@ -1,7 +1,30 @@
 <response code='19' status='success'><result count='1' total-count='1'>
   <network>
     <interface>
-      <ethernet/>
+      <ethernet>
+        <entry name='ethernet1/1'>
+          <comment>test</comment>
+          <ha/>
+        </entry>
+        <entry name='ethernet1/2'>
+          <layer3>
+            <ipv6>
+              <neighbor-discovery>
+                <router-advertisement>
+                  <enable>no</enable>
+                </router-advertisement>
+              </neighbor-discovery>
+            </ipv6>
+            <ndp-proxy>
+              <enabled>no</enabled>
+            </ndp-proxy>
+            <lldp>
+              <enable>no</enable>
+            </lldp>
+          </layer3>
+          <comment>test2</comment>
+        </entry>
+      </ethernet>
       <loopback>
         <units>
           <entry name='loopback.1'>
@@ -173,11 +196,33 @@
                 <enable>yes</enable>
               </entry>
             </dampening-profile>
+            <routing-options>
+              <graceful-restart>
+                <enable>yes</enable>
+              </graceful-restart>
+            </routing-options>
           </bgp>
+          <rip>
+            <enable>no</enable>
+          </rip>
+          <ospf>
+            <enable>no</enable>
+          </ospf>
+          <ospfv3>
+            <enable>no</enable>
+          </ospfv3>
         </protocol>
         <interface>
           <member>loopback.1</member>
         </interface>
+        <ecmp>
+          <algorithm>
+            <ip-modulo/>
+          </algorithm>
+        </ecmp>
+        <admin-dists>
+          <static-ipv6>20</static-ipv6>
+        </admin-dists>
       </entry>
     </virtual-router>
   </network>

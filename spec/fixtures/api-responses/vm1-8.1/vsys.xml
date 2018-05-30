@@ -128,6 +128,7 @@
         <network>
           <interface>
             <member>loopback.1</member>
+            <member>ethernet1/2</member>
           </interface>
         </network>
       </import>
@@ -137,11 +138,25 @@
       </tag>
       <address>
         <entry name='address'>
-          <ip-netmask>1.2.3.4/28</ip-netmask>
+          <ip-netmask>1.2.3.4/30</ip-netmask>
           <tag>
             <member>a</member>
           </tag>
           <description>some address</description>
+        </entry>
+        <entry name='address-1'>
+          <tag>
+            <member>a</member>
+          </tag>
+          <description>some address</description>
+          <ip-range>10.0.0.1-10.0.0.4</ip-range>
+        </entry>
+        <entry name='address-2'>
+          <tag>
+            <member>a</member>
+          </tag>
+          <description>some address</description>
+          <fqdn>example.net</fqdn>
         </entry>
       </address>
       <address-group>
