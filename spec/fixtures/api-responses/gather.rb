@@ -33,6 +33,19 @@ def get(http, key, xpath)
   doc
 end
 
+def complete(http, key, xpath)
+  uri = URI::HTTP.build(path: '/api/')
+  params = { type: 'config', action: 'complete', key: key, xpath: xpath }
+  uri.query = URI.encode_www_form(params)
+
+  res = http.get(uri)
+  unless res.is_a?(Net::HTTPSuccess)
+    raise "Error: #{res}"
+  end
+  doc = REXML::Document.new(res.body)
+  doc
+end
+
 Net::HTTP.start(
   uri.hostname,
   uri.port,
@@ -55,4 +68,9 @@ Net::HTTP.start(
   File.open('spec/fixtures/api-responses/vm1-8.1/mgt-config.xml', 'w') do |f|
     doc.write(f, -1)
   end
+
+  complete(http, key, "/config/devices/entry[@name='localhost.localdomain']/vsys").write($stdout, 2)
+  puts
+  complete(http, key, "/config/devices/entry[@name='localhost.localdomain']/vsys[@name='vsys1']/address/entry").write($stdout, 2)
+  puts
 end
