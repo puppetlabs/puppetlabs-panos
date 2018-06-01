@@ -20,11 +20,13 @@ class Puppet::Provider::PanosAddress::PanosAddress < Puppet::ResourceApi::Simple
   end
 
   def create(context, name, should)
+    validate_should(should)
     context.notice("Creating '#{name}' with #{should.inspect}")
     context.device.set_config(context.type.definition[:base_xpath], xml_from_should(name, should))
   end
 
   def update(context, name, should)
+    validate_should(should)
     context.notice("Updating '#{name}' with #{should.inspect}")
     context.device.edit_config(context.type.definition[:base_xpath] + "/entry[@name='#{name}']", xml_from_should(name, should))
   end
@@ -32,6 +34,12 @@ class Puppet::Provider::PanosAddress::PanosAddress < Puppet::ResourceApi::Simple
   def delete(context, name)
     context.notice("Deleting '#{name}'")
     context.device.delete_config(context.type.definition[:base_xpath] + "/entry[@name='#{name}']")
+  end
+
+  def validate_should(should)
+    if [should[:ip_netmask], should[:ip_range], should[:fqdn]].compact.size > 1
+      raise Puppet::ResourceError, 'ip_netmask, ip_range, and fqdn are mutually exclusive fields'
+    end
   end
 
   def xml_from_should(name, should)
