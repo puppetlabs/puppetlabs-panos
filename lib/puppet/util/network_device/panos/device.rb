@@ -50,13 +50,34 @@ module Puppet::Util::NetworkDevice::Panos
     end
 
     def edit_config(xpath, document)
+      Puppet.debug("Updating #{xpath}")
       # https://<firewall>/api/?key=apikey&type=config&action=edit&xpath=xpath-value&element=element-value
-      raise "not implemented"
+      uri = URI::HTTP.build(path: '/api/')
+      params = { type: 'config', action: 'edit', key: apikey, xpath: xpath, element: document.to_s }
+      uri.query = URI.encode_www_form(params)
+
+      res = http.get(uri)
+      unless res.is_a?(Net::HTTPSuccess)
+        raise "Error: #{res}: #{res.message}"
+      end
+      doc = REXML::Document.new(res.body)
+      handle_response_errors(doc)
+      doc
     end
 
     def delete_config(xpath)
       # https://<firewall>/api/?key=apikey&type=config&action=delete&xpath=xpath-value
-      raise "not implemented"
+      uri = URI::HTTP.build(path: '/api/')
+      params = { type: 'config', action: 'delete', key: apikey, xpath: xpath }
+      uri.query = URI.encode_www_form(params)
+
+      res = http.get(uri)
+      unless res.is_a?(Net::HTTPSuccess)
+        raise "Error: #{res}: #{res.message}"
+      end
+      doc = REXML::Document.new(res.body)
+      handle_response_errors(doc)
+      doc
     end
 
     private
