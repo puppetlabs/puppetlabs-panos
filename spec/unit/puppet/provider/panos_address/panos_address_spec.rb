@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'support/matchers/have_xml'
 
 # TODO: needs some cleanup/helper to avoid this misery
 module Puppet::Provider::PanosAddress; end
@@ -43,11 +44,12 @@ EOF
   before(:each) do
     allow(context).to receive(:device).with(no_args).and_return(device)
     allow(context).to receive(:type).with(no_args).and_return(typedef)
+    allow(context).to receive(:notice)
+    allow(typedef).to receive(:definition).with(no_args).and_return(base_xpath: 'some xpath')
   end
 
   describe '#get' do
     it 'processes resources' do
-      allow(typedef).to receive(:definition).with(no_args).and_return(base_xpath: 'some xpath')
       allow(typedef).to receive(:attributes).with(no_args).and_return(description: { xpath: 'description' },
                                                                       ip_netmask: { xpath: 'ip-netmask' },
                                                                       ip_range: { xpath: 'ip-range' },
@@ -88,24 +90,147 @@ EOF
   end
 
   describe 'create(context, name, should)' do
-    it 'creates the resource' do
-      expect(context).to receive(:notice).with(%r{\ACreating 'a'})
+    before(:each) do
+      allow(device).to receive(:set_config)
+    end
 
+    it 'logs the call' do
+      expect(context).to receive(:notice).with(%r{\ACreating 'a'})
+      provider.create(context, 'a', name: 'a', ensure: 'present', ip_netmask: 'netmask')
+    end
+
+    it 'uses the correct base structure' do
+      expect(device).to receive(:set_config).with("some xpath/entry[@name='a']", instance_of(REXML::Document)) do |_xpath, doc|
+        expect(doc).to have_xml("entry[@name='a']")
+      end
       provider.create(context, 'a', name: 'a', ensure: 'present')
+    end
+
+    context 'when providing a netmask' do
+      it 'creates the resource' do
+        expect(device).to receive(:set_config).with("some xpath/entry[@name='a']", instance_of(REXML::Document)) do |_xpath, doc|
+          expect(doc).to have_xml('entry/ip-netmask', 'netmask')
+          expect(doc).not_to have_xml('entry/ip-range')
+          expect(doc).not_to have_xml('entry/fqdn')
+        end
+
+        provider.create(context, 'a', name: 'a', ensure: 'present', ip_netmask: 'netmask')
+      end
+    end
+
+    context 'when providing a range' do
+      it 'creates the resource' do
+        expect(device).to receive(:set_config).with("some xpath/entry[@name='a']", instance_of(REXML::Document)) do |_xpath, doc|
+          expect(doc).not_to have_xml('entry/ip-netmask')
+          expect(doc).to have_xml('entry/ip-range', 'range')
+          expect(doc).not_to have_xml('entry/fqdn')
+        end
+
+        provider.create(context, 'a', name: 'a', ensure: 'present', ip_range: 'range')
+      end
+    end
+
+    context 'when providing an fqdn' do
+      it 'creates the resource' do
+        expect(device).to receive(:set_config).with("some xpath/entry[@name='a']", instance_of(REXML::Document)) do |_xpath, doc|
+          expect(doc).not_to have_xml('entry/ip-netmask')
+          expect(doc).not_to have_xml('entry/ip-range')
+          expect(doc).to have_xml('entry/fqdn', 'example.com')
+        end
+
+        provider.create(context, 'a', name: 'a', ensure: 'present', fqdn: 'example.com')
+      end
+    end
+
+    context 'with tags' do
+      it 'creates the resource' do
+        expect(device).to receive(:set_config).with("some xpath/entry[@name='a']", instance_of(REXML::Document)) do |_xpath, doc|
+          expect(doc).to have_xml('entry/tag/member', 'a')
+          expect(doc).to have_xml('entry/tag/member', 'b')
+        end
+
+        provider.create(context, 'a', name: 'a', ensure: 'present', fqdn: 'example.com', tags: ['a', 'b'])
+      end
     end
   end
 
   describe 'update(context, name, should)' do
-    it 'updates the resource' do
-      expect(context).to receive(:notice).with(%r{\AUpdating 'foo'})
+    before(:each) do
+      allow(device).to receive(:edit_config)
+    end
 
+    it 'logs the call' do
+      expect(context).to receive(:notice).with(%r{\AUpdating 'foo'})
       provider.update(context, 'foo', name: 'foo', ensure: 'present')
+    end
+
+    it 'uses the correct base structure' do
+      expect(device).to receive(:edit_config).with("some xpath/entry[@name='foo']", instance_of(REXML::Document)) do |_xpath, doc|
+        expect(doc).to have_xml("entry[@name='foo']")
+      end
+      provider.update(context, 'foo', name: 'foo', ensure: 'present')
+    end
+
+    context 'when providing a netmask' do
+      it 'updates the resource' do
+        expect(device).to receive(:edit_config).with("some xpath/entry[@name='foo']", instance_of(REXML::Document)) do |_xpath, doc|
+          expect(doc).to have_xml('entry/ip-netmask', 'netmask')
+          expect(doc).not_to have_xml('entry/ip-range')
+          expect(doc).not_to have_xml('entry/fqdn')
+        end
+
+        provider.update(context, 'foo', name: 'foo', ensure: 'present', ip_netmask: 'netmask')
+      end
+    end
+
+    context 'when providing a range' do
+      it 'updates the resource' do
+        expect(device).to receive(:edit_config).with("some xpath/entry[@name='foo']", instance_of(REXML::Document)) do |_xpath, doc|
+          expect(doc).not_to have_xml('entry/ip-netmask')
+          expect(doc).to have_xml('entry/ip-range', 'range')
+          expect(doc).not_to have_xml('entry/fqdn')
+        end
+
+        provider.update(context, 'foo', name: 'foo', ensure: 'present', ip_range: 'range')
+      end
+    end
+
+    context 'when providing an fqdn' do
+      it 'updates the resource' do
+        expect(device).to receive(:edit_config).with("some xpath/entry[@name='foo']", instance_of(REXML::Document)) do |_xpath, doc|
+          expect(doc).not_to have_xml('entry/ip-netmask')
+          expect(doc).not_to have_xml('entry/ip-range')
+          expect(doc).to have_xml('entry/fqdn', 'example.com')
+        end
+
+        provider.update(context, 'foo', name: 'foo', ensure: 'present', fqdn: 'example.com')
+      end
+    end
+
+    context 'with tags' do
+      it 'updates the resource' do
+        expect(device).to receive(:edit_config).with("some xpath/entry[@name='foo']", instance_of(REXML::Document)) do |_xpath, doc|
+          expect(doc).to have_xml('entry/tag/member', 'a')
+          expect(doc).to have_xml('entry/tag/member', 'b')
+        end
+
+        provider.update(context, 'foo', name: 'foo', ensure: 'present', fqdn: 'example.com', tags: ['a', 'b'])
+      end
     end
   end
 
   describe 'delete(context, name, should)' do
-    it 'deletes the resource' do
+    before(:each) do
+      allow(device).to receive(:delete_config)
+    end
+
+    it 'logs the call' do
       expect(context).to receive(:notice).with(%r{\ADeleting 'foo'})
+      provider.delete(context, 'foo')
+    end
+
+    it 'deletes the resource' do
+      expect(device).to receive(:delete_config).with("some xpath/entry[@name='foo']")
 
       provider.delete(context, 'foo')
     end

@@ -25,14 +25,24 @@ module Puppet::Util::NetworkDevice::Panos
 
       res = http.get(uri)
       unless res.is_a?(Net::HTTPSuccess)
-        raise "Error: #{res}"
+        raise "Error: #{res}: #{res.message}"
       end
       doc = REXML::Document.new(res.body)
       doc
     end
 
-    def set_config(xpath, element)
+    def set_config(xpath, document)
       # https://<firewall>/api/?key=apikey&type=config&action=set&xpath=xpath-value&element=element-value
+      uri = URI::HTTP.build(path: '/api/')
+      params = { type: 'config', action: 'set', key: apikey, xpath: xpath, element: document.to_s }
+      uri.query = URI.encode_www_form(params)
+
+      res = http.get(uri)
+      unless res.is_a?(Net::HTTPSuccess)
+        raise "Error: #{res}: #{res.message}"
+      end
+      doc = REXML::Document.new(res.body)
+      doc
     end
 
     def delete_config(xpath)
