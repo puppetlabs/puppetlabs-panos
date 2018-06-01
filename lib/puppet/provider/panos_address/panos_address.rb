@@ -37,6 +37,9 @@ class Puppet::Provider::PanosAddress::PanosAddress < Puppet::ResourceApi::Simple
   def xml_from_should(name, should)
     entry = REXML::Element.new 'entry'
     entry.attributes['name'] = name
+    if should[:description]
+      entry.elements << REXML::Element.new('description').add_text(should[:description])
+    end
     if should[:ip_netmask]
       entry.elements << REXML::Element.new('ip-netmask').add_text(should[:ip_netmask])
     elsif should[:ip_range]

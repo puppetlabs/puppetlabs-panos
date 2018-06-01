@@ -152,6 +152,16 @@ EOF
         provider.create(context, 'a', name: 'a', ensure: 'present', fqdn: 'example.com', tags: ['a', 'b'])
       end
     end
+
+    context 'with a description' do
+      it 'creates the resource' do
+        expect(device).to receive(:set_config).with('some xpath', instance_of(REXML::Document)) do |_xpath, doc|
+          expect(doc).to have_xml('entry/description', 'help')
+        end
+
+        provider.create(context, 'a', name: 'a', ensure: 'present', fqdn: 'example.com', description: 'help')
+      end
+    end
   end
 
   describe 'update(context, name, should)' do
@@ -215,6 +225,16 @@ EOF
         end
 
         provider.update(context, 'foo', name: 'foo', ensure: 'present', fqdn: 'example.com', tags: ['a', 'b'])
+      end
+    end
+
+    context 'with a description' do
+      it 'creates the resource' do
+        expect(device).to receive(:edit_config).with("some xpath/entry[@name='foo']", instance_of(REXML::Document)) do |_xpath, doc|
+          expect(doc).to have_xml('entry/description', 'help')
+        end
+
+        provider.update(context, 'foo', name: 'foo', ensure: 'present', fqdn: 'example.com', description: 'help')
       end
     end
   end
