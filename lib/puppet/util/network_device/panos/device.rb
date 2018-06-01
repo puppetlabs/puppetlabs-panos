@@ -39,7 +39,18 @@ module Puppet::Util::NetworkDevice::Panos
       Puppet.debug("Deleting #{xpath}")
       # https://<firewall>/api/?key=apikey&type=config&action=delete&xpath=xpath-value
       api_request('config', action: 'delete', xpath: xpath)
+    end
 
+    def validate
+      Puppet.debug('Validating configuration')
+      # https://<firewall>/api/?type=op&cmd=<validate><full></full></validate>
+      job_request('op', cmd: '<validate><full></full></validate>')
+    end
+
+    def commit
+      Puppet.debug('Committing outstanding changes')
+      # https://<firewall>/api/?type=commit&cmd=<commit></commit>
+      job_request('commit', cmd: '<commit></commit>')
     end
 
     private
@@ -79,6 +90,43 @@ module Puppet::Util::NetworkDevice::Panos
       doc = REXML::Document.new(res.body)
       handle_response_errors(doc)
       doc
+    end
+
+    def job_request(type, **options)
+      commit_result = api_request('commit', cmd: '<commit></commit>')
+      no_changes_message = commit_result.elements['/response/msg']
+      if no_changes_message
+        Puppet.debug('api response (no changes): %{msg}' % { msg: no_changes_message.text })
+        return
+      end
+
+      job_id = commit_result.elements['/response/result/job'].text
+      job_msg = []
+      commit_result.elements['/response/result/msg'].each_element_with_text { |e| job_msg << e.text}
+      Puppet.debug('api response (job queued): %{msg}' % { msg: job_msg.join("\n") })
+
+      tries = 0
+      while true
+        # https://<firewall>/api/?type=op&cmd=<show><jobs><id>4</id></jobs></show>
+        commit_result = api_request('op', cmd: "<show><jobs><id>#{job_id}</id></jobs></show>")
+        status = commit_result.elements['/response/result/job/status'].text
+        result = commit_result.elements['/response/result/job/result'].text
+        progress = commit_result.elements['/response/result/job/progress'].text
+        details = []
+        commit_result.elements['/response/result/job/details'].each_element_with_text { |e| details << e.text}
+        if status =='FIN'
+          commit_result.write($stdout,2)
+          break if result == 'OK'
+          raise Puppet::ResourceError, 'job failed. result="%{result}": %{details}' % {result: result, details: details.join("\n")}
+        end
+        tries += 1
+
+        details.unshift("sleeping for #{tries} seconds")
+        Puppet.debug('job still in progress (%{progress}%%). result="%{result}": %{details}' % {result: result, progress:progress, details: details.join("\n")})
+        sleep tries
+      end
+
+      Puppet.debug('job was successful')
     end
 
     def get_apikey(user, password)
@@ -140,7 +188,8 @@ module Puppet::Util::NetworkDevice::Panos
       })
       # require 'pry';binding.pry
       if status == 'success'
-        Puppet.debug(error_message)
+        # Messages without a code require more processing by the caller
+        Puppet.debug(error_message) if code
       else
         error_message << "\n"
         doc.write(error_message, 2)

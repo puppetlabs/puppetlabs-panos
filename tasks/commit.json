@@ -1,0 +1,11 @@
+{
+  "puppet_task_version": 1,
+  "supports_noop": false,
+  "description": "Commit a candidate configuration to a firewall.",
+  "parameters": {
+    "credentials_file": {
+      "description": "The filename of the credentials file (as referenced in device.conf)",
+      "type": "String"
+    }
+  }
+}
