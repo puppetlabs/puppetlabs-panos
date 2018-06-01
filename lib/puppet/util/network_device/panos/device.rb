@@ -20,64 +20,26 @@ module Puppet::Util::NetworkDevice::Panos
     def get_config(xpath)
       Puppet.debug("Retrieving #{xpath}")
       # https://<firewall>/api/?key=apikey&type=config&action=get&xpath=<path-to-config-node>
-      uri = URI::HTTP.build(path: '/api/')
-      params = { type: 'config', action: 'get', key: apikey, xpath: xpath }
-      uri.query = URI.encode_www_form(params)
-
-      res = http.get(uri)
-      unless res.is_a?(Net::HTTPSuccess)
-        raise "Error: #{res}: #{res.message}"
-      end
-      doc = REXML::Document.new(res.body)
-      handle_response_errors(doc)
-      doc
+      api_request('config', action: 'get', xpath: xpath)
     end
 
     def set_config(xpath, document)
       Puppet.debug("Writing to #{xpath}")
       # https://<firewall>/api/?key=apikey&type=config&action=set&xpath=xpath-value&element=element-value
-      uri = URI::HTTP.build(path: '/api/')
-      params = { type: 'config', action: 'set', key: apikey, xpath: xpath, element: document.to_s }
-      uri.query = URI.encode_www_form(params)
-
-      res = http.get(uri)
-      unless res.is_a?(Net::HTTPSuccess)
-        raise "Error: #{res}: #{res.message}"
-      end
-      doc = REXML::Document.new(res.body)
-      handle_response_errors(doc)
-      doc
+      api_request('config', action: 'set', xpath: xpath, element: document.to_s)
     end
 
     def edit_config(xpath, document)
       Puppet.debug("Updating #{xpath}")
       # https://<firewall>/api/?key=apikey&type=config&action=edit&xpath=xpath-value&element=element-value
-      uri = URI::HTTP.build(path: '/api/')
-      params = { type: 'config', action: 'edit', key: apikey, xpath: xpath, element: document.to_s }
-      uri.query = URI.encode_www_form(params)
-
-      res = http.get(uri)
-      unless res.is_a?(Net::HTTPSuccess)
-        raise "Error: #{res}: #{res.message}"
-      end
-      doc = REXML::Document.new(res.body)
-      handle_response_errors(doc)
-      doc
+      api_request('config', action: 'edit', xpath: xpath, element: document.to_s)
     end
 
     def delete_config(xpath)
+      Puppet.debug("Deleting #{xpath}")
       # https://<firewall>/api/?key=apikey&type=config&action=delete&xpath=xpath-value
-      uri = URI::HTTP.build(path: '/api/')
-      params = { type: 'config', action: 'delete', key: apikey, xpath: xpath }
-      uri.query = URI.encode_www_form(params)
+      api_request('config', action: 'delete', xpath: xpath)
 
-      res = http.get(uri)
-      unless res.is_a?(Net::HTTPSuccess)
-        raise "Error: #{res}: #{res.message}"
-      end
-      doc = REXML::Document.new(res.body)
-      handle_response_errors(doc)
-      doc
     end
 
     private
@@ -101,6 +63,22 @@ module Puppet::Util::NetworkDevice::Panos
                else
                  get_apikey(config['user'], config['password'])
                end
+    end
+
+    def api_request(type, **options)
+      params = { type: type, key: apikey }
+      params.merge!(options)
+
+      uri = URI::HTTP.build(path: '/api/')
+      uri.query = URI.encode_www_form(params)
+
+      res = http.get(uri)
+      unless res.is_a?(Net::HTTPSuccess)
+        raise "Error: #{res}: #{res.message}"
+      end
+      doc = REXML::Document.new(res.body)
+      handle_response_errors(doc)
+      doc
     end
 
     def get_apikey(user, password)
