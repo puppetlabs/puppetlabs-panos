@@ -5,7 +5,7 @@ require 'rexml/document'
 # Implementation for the panos_address type using the Resource API.
 class Puppet::Provider::PanosAddress::PanosAddress < Puppet::ResourceApi::SimpleProvider
   def get(context)
-    config = context.device.get_config(context.type.definition[:base_xpath])
+    config = context.device.get_config(context.type.definition[:base_xpath] + '/entry')
     config.elements.collect('/response/result/entry') do |entry|
       result = {
         name: entry.attributes['name'],
@@ -21,7 +21,7 @@ class Puppet::Provider::PanosAddress::PanosAddress < Puppet::ResourceApi::Simple
 
   def create(context, name, should)
     context.notice("Creating '#{name}' with #{should.inspect}")
-    context.device.set_config(context.type.definition[:base_xpath] + "/entry[@name='#{name}']", xml_from_should(name, should))
+    context.device.set_config(context.type.definition[:base_xpath], xml_from_should(name, should))
   end
 
   def update(context, name, should)
