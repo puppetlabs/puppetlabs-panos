@@ -37,7 +37,7 @@ class Puppet::Provider::PanosAddress::PanosAddress < Puppet::ResourceApi::Simple
   end
 
   def validate_should(should)
-    if [should[:ip_netmask], should[:ip_range], should[:fqdn]].compact.size > 1
+    if [should[:ip_netmask], should[:ip_range], should[:fqdn]].compact.size > 1 # rubocop:disable Style/GuardClause # line too long
       raise Puppet::ResourceError, 'ip_netmask, ip_range, and fqdn are mutually exclusive fields'
     end
   end

@@ -119,36 +119,36 @@ module Puppet::Util::NetworkDevice::Panos
 
     def message_from_code(code)
       case code
-      when "1"
-        "Unkown command: The specific config or operational command is not recognized."
-      when "2", "3", "4", "5", "11", "21"
+      when '1'
+        'Unkown command: The specific config or operational command is not recognized.'
+      when '2', '3', '4', '5', '11', '21'
         "Internal error: Check with Palo Alto's technical support."
-      when "6"
-        "Bad XPath: The xpath specified in one or more attributes of the command is invalid."
-      when "7"
+      when '6'
+        'Bad XPath: The xpath specified in one or more attributes of the command is invalid.'
+      when '7'
         "Object not present: Object specified by the xpath is not present. For example, entry[@name='value'] where no object with name 'value' is present."
-      when "8"
-        "Object not unique: For commands that operate on a single object, the specified object is not unique."
-      when "10"
-        "Reference count not zero: Object cannot be deleted as there are other objects that refer to it. For example, address object still in use in policy."
-      when "12"
-        "Invalid object: Xpath or element values provided are not complete."
-      when "14"
-        "Operation not possible: Operation is allowed but not possible in this case. For example, moving a rule up one position when it is already at the top."
-      when "15"
-        "Operation denied: Operation is allowed. For example, Admin not allowed to delete own account, Running a command that is not allowed on a passive device."
-      when "16"
-        "Unauthorized: The API role does not have access rights to run this query."
-      when "17"
-        "Invalid command: Invalid command or parameters."
-      when "18"
-        "Malformed command: The XML is malformed."
-      when "19", "20"
-        "Success: Command completed successfully."
-      when "22"
-        "Session timed out: The session for this query timed out."
+      when '8'
+        'Object not unique: For commands that operate on a single object, the specified object is not unique.'
+      when '10'
+        'Reference count not zero: Object cannot be deleted as there are other objects that refer to it. For example, address object still in use in policy.'
+      when '12'
+        'Invalid object: Xpath or element values provided are not complete.'
+      when '14'
+        'Operation not possible: Operation is allowed but not possible in this case. For example, moving a rule up one position when it is already at the top.'
+      when '15'
+        'Operation denied: Operation is allowed. For example, Admin not allowed to delete own account, Running a command that is not allowed on a passive device.'
+      when '16'
+        'Unauthorized: The API role does not have access rights to run this query.'
+      when '17'
+        'Invalid command: Invalid command or parameters.'
+      when '18'
+        'Malformed command: The XML is malformed.'
+      when '19', '20'
+        'Success: Command completed successfully.'
+      when '22'
+        'Session timed out: The session for this query timed out.'
       else
-        "Unknown error code %{code}" % {code:code}
+        'Unknown error code %{code}' % { code: code }
       end
     end
 
@@ -158,10 +158,10 @@ module Puppet::Util::NetworkDevice::Panos
       error_message = ('Received "%{status}" with code %{code}: %{message}' % {
         status: status,
         code: code,
-        message: message_from_code(code)
+        message: message_from_code(code),
       })
       # require 'pry';binding.pry
-      if status == "success"
+      if status == 'success'
         Puppet.debug(error_message)
       else
         error_message << "\n"
