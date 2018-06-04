@@ -93,36 +93,37 @@ module Puppet::Util::NetworkDevice::Panos
     end
 
     def job_request(type, **options)
-      commit_result = api_request('commit', cmd: '<commit></commit>')
-      no_changes_message = commit_result.elements['/response/msg']
-      if no_changes_message
-        Puppet.debug('api response (no changes): %{msg}' % { msg: no_changes_message.text })
+      result = api_request(type, options)
+      response_message = result.elements['/response/msg']
+      if response_message
+        Puppet.debug('api response (no changes): %{msg}' % { msg: response_message.text })
         return
       end
 
-      job_id = commit_result.elements['/response/result/job'].text
+      job_id = result.elements['/response/result/job'].text
       job_msg = []
-      commit_result.elements['/response/result/msg'].each_element_with_text { |e| job_msg << e.text}
+      result.elements['/response/result/msg'].each_element_with_text { |e| job_msg << e.text }
       Puppet.debug('api response (job queued): %{msg}' % { msg: job_msg.join("\n") })
 
       tries = 0
-      while true
+      loop do
         # https://<firewall>/api/?type=op&cmd=<show><jobs><id>4</id></jobs></show>
-        commit_result = api_request('op', cmd: "<show><jobs><id>#{job_id}</id></jobs></show>")
-        status = commit_result.elements['/response/result/job/status'].text
-        result = commit_result.elements['/response/result/job/result'].text
-        progress = commit_result.elements['/response/result/job/progress'].text
+        poll_result = api_request('op', cmd: "<show><jobs><id>#{job_id}</id></jobs></show>")
+        status = poll_result.elements['/response/result/job/status'].text
+        result = poll_result.elements['/response/result/job/result'].text
+        progress = poll_result.elements['/response/result/job/progress'].text
         details = []
-        commit_result.elements['/response/result/job/details'].each_element_with_text { |e| details << e.text}
-        if status =='FIN'
-          commit_result.write($stdout,2)
+        poll_result.elements['/response/result/job/details'].each_element_with_text { |e| details << e.text }
+        if status == 'FIN'
+          # TODO: go to debug
+          poll_result.write($stdout, 2)
           break if result == 'OK'
-          raise Puppet::ResourceError, 'job failed. result="%{result}": %{details}' % {result: result, details: details.join("\n")}
+          raise Puppet::ResourceError, 'job failed. result="%{result}": %{details}' % { result: result, details: details.join("\n") }
         end
         tries += 1
 
         details.unshift("sleeping for #{tries} seconds")
-        Puppet.debug('job still in progress (%{progress}%%). result="%{result}": %{details}' % {result: result, progress:progress, details: details.join("\n")})
+        Puppet.debug('job still in progress (%{progress}%%). result="%{result}": %{details}' % { result: result, progress: progress, details: details.join("\n") })
         sleep tries
       end
 
