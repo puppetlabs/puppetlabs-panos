@@ -2,14 +2,21 @@
   "name": "puppetlabs-panos",
   "version": "0.1.0",
   "author": "David Schmitt <david.schmitt@puppet.com>",
-  "summary": "",
+  "summary": "Manage Palo Alto firewalls",
   "license": "Apache-2.0",
-  "source": "",
+  "source": "https://github.com/puppetlabs/puppetlabs-panos",
+  "project_page": "https://github.com/puppetlabs/puppetlabs-panos",
+  "issues_url": "https://github.com/puppetlabs/puppetlabs-panos/issues",
   "dependencies": [
 
   ],
   "operatingsystem_support": [
-
+    {
+      "operatingsystem": "PAN-OS",
+      "operatingsystemrelease": [
+        "8.1"
+      ]
+    }
   ],
   "requirements": [
     {
@@ -17,7 +24,7 @@
       "version_requirement": ">= 4.7.0 < 6.0.0"
     }
   ],
-  "pdk-version": "1.5.0",
+  "pdk-version": "1.6.0.pre (43)",
   "template-url": "https://github.com/puppetlabs/pdk-templates.git",
-  "template-ref": "heads/master-0-g7b5f6d2"
+  "template-ref": "heads/master-0-g6654f6d"
 }
