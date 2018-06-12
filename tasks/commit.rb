@@ -5,15 +5,14 @@
 require 'puppet'
 Puppet.settings.initialize_app_defaults(
   Puppet::Settings.app_defaults_for_run_mode(
-    Puppet::Util::RunMode[:master]
-  )
+    Puppet::Util::RunMode[:master],
+  ),
 )
 $LOAD_PATH.unshift(Puppet[:plugindest])
 
 # setup logging to stdout/stderr which will be available to task executors
 Puppet::Util::Log.newdestination(:console)
 Puppet[:log_level] = 'debug'
-
 
 #### the real task ###
 
