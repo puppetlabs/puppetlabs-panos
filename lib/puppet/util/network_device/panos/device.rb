@@ -17,6 +17,14 @@ module Puppet::Util::NetworkDevice::Panos
       super
     end
 
+    def apikey
+      @key ||= if config.key? 'apikey'
+                 config['apikey']
+               else
+                 get_apikey(config['user'], config['password'])
+               end
+    end
+
     def get_config(xpath)
       Puppet.debug("Retrieving #{xpath}")
       # https://<firewall>/api/?key=apikey&type=config&action=get&xpath=<path-to-config-node>
@@ -66,14 +74,6 @@ module Puppet::Util::NetworkDevice::Panos
       @http ||= Net::HTTP.start(host, port,
                                 use_ssl: true,
                                 verify_mode: OpenSSL::SSL::VERIFY_NONE)
-    end
-
-    def apikey
-      @key ||= if config.key? 'apikey'
-                 config['apikey']
-               else
-                 get_apikey(config['user'], config['password'])
-               end
     end
 
     def api_request(type, **options)

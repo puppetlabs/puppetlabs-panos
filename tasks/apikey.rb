@@ -20,7 +20,5 @@ require 'json'
 require 'puppet/util/network_device/panos/device'
 
 params = JSON.parse(ENV['PARAMS'] || STDIN.read)
-device = Puppet::Util::NetworkDevice::Panos::Device.new(params['credentials_file'])
-
-# device.validate
-device.commit
+device = Puppet::Util::NetworkDevice::Panos::Device.new(params)
+puts JSON.generate(apikey: device.apikey)
