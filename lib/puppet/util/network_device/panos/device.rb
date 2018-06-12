@@ -49,6 +49,12 @@ module Puppet::Util::NetworkDevice::Panos
       api_request('config', action: 'delete', xpath: xpath)
     end
 
+    def change_summary
+      Puppet.debug('Checking for changes between the active and candidate configuration.')
+      # https://<firewall>/api/?type=op&cmd=<show><config><list><change-summary/></list></config></show>
+      api_request('op', cmd: '<show><config><list><change-summary/></list></config></show>')
+    end
+
     def validate
       Puppet.debug('Validating configuration')
       # https://<firewall>/api/?type=op&cmd=<validate><full></full></validate>
