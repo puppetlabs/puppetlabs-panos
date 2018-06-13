@@ -55,6 +55,11 @@ module Puppet::Util::NetworkDevice::Panos
       api_request('op', cmd: '<show><config><list><change-summary/></list></config></show>')
     end
 
+    def outstanding_changes?
+      # enforce booleanity
+      !!change_summary.elements['/response/result/summary'] # rubocop:disable Style/DoubleNegation
+    end
+
     def validate
       Puppet.debug('Validating configuration')
       # https://<firewall>/api/?type=op&cmd=<validate><full></full></validate>
@@ -122,7 +127,7 @@ module Puppet::Util::NetworkDevice::Panos
         poll_result.elements['/response/result/job/details'].each_element_with_text { |e| details << e.text }
         if status == 'FIN'
           # TODO: go to debug
-          poll_result.write($stdout, 2)
+          # poll_result.write($stdout, 2)
           break if result == 'OK'
           raise Puppet::ResourceError, 'job failed. result="%{result}": %{details}' % { result: result, details: details.join("\n") }
         end
