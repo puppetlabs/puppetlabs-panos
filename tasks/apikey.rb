@@ -5,7 +5,7 @@
 require 'puppet'
 Puppet.settings.initialize_app_defaults(
   Puppet::Settings.app_defaults_for_run_mode(
-    Puppet::Util::RunMode[:master],
+    Puppet::Util::RunMode[:agent],
   ),
 )
 $LOAD_PATH.unshift(Puppet[:plugindest])
