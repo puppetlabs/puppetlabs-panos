@@ -49,15 +49,10 @@ module Puppet::Util::NetworkDevice::Panos
       api_request('config', action: 'delete', xpath: xpath)
     end
 
-    def change_summary
-      Puppet.debug('Checking for changes between the active and candidate configuration.')
-      # https://<firewall>/api/?type=op&cmd=<show><config><list><change-summary/></list></config></show>
-      api_request('op', cmd: '<show><config><list><change-summary/></list></config></show>')
-    end
-
     def outstanding_changes?
-      # enforce booleanity
-      !!change_summary.elements['/response/result/summary'] # rubocop:disable Style/DoubleNegation
+      # /api/?type=op&cmd=<check><pending-changes></pending-changes></check>
+      result = api_request('op', cmd: '<check><pending-changes></pending-changes></check>')
+      result.elements['/response/result'].text == 'yes'
     end
 
     def validate
