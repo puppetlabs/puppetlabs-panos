@@ -7,7 +7,7 @@ module Puppet::Util::NetworkDevice::Panos
   # The main connection class to a PAN-OS API endpoint
   class Device < Puppet::Util::NetworkDevice::Simple::Device
     def facts
-      {}
+      @facts ||= parse_device_facts(fetch_device_facts)
     end
 
     def config
@@ -23,6 +23,25 @@ module Puppet::Util::NetworkDevice::Panos
                else
                  get_apikey(config['user'], config['password'])
                end
+    end
+
+    def fetch_device_facts
+      Puppet.debug('Retreiving PANOS Device Facts')
+      # https://<firewall>/api/?key=apikey&type=version
+      api_request('version')
+    end
+
+    def parse_device_facts(response)
+      facts = {}
+
+      model = response.elements['/response/result/model'].text
+      version = response.elements['/response/result/sw-version'].text
+      vsys = response.elements['/response/result/multi-vsys'].text
+
+      facts['operatingsystem'] = model if model
+      facts['operatingsystemrelease'] = version if version
+      facts['multi-vsys'] = vsys if vsys
+      facts
     end
 
     def get_config(xpath)
@@ -94,7 +113,7 @@ module Puppet::Util::NetworkDevice::Panos
         raise "Error: #{res}: #{res.message}"
       end
       doc = REXML::Document.new(res.body)
-      handle_response_errors(doc)
+      handle_response_errors(doc) unless res.is_a?(Net::HTTPSuccess)
       doc
     end
 
