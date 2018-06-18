@@ -5,7 +5,7 @@
 require 'puppet'
 Puppet.settings.initialize_app_defaults(
   Puppet::Settings.app_defaults_for_run_mode(
-    Puppet::Util::RunMode[:master],
+    Puppet::Util::RunMode[:agent],
   ),
 )
 $LOAD_PATH.unshift(Puppet[:plugindest])
@@ -22,5 +22,6 @@ require 'puppet/util/network_device/panos/device'
 params = JSON.parse(ENV['PARAMS'] || STDIN.read)
 device = Puppet::Util::NetworkDevice::Panos::Device.new(params['credentials_file'])
 
-# device.validate
-device.commit
+if device.outstanding_changes?
+  device.commit
+end

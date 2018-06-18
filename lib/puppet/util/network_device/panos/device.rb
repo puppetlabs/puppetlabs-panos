@@ -49,6 +49,12 @@ module Puppet::Util::NetworkDevice::Panos
       api_request('config', action: 'delete', xpath: xpath)
     end
 
+    def outstanding_changes?
+      # /api/?type=op&cmd=<check><pending-changes></pending-changes></check>
+      result = api_request('op', cmd: '<check><pending-changes></pending-changes></check>')
+      result.elements['/response/result'].text == 'yes'
+    end
+
     def validate
       Puppet.debug('Validating configuration')
       # https://<firewall>/api/?type=op&cmd=<validate><full></full></validate>
@@ -116,7 +122,7 @@ module Puppet::Util::NetworkDevice::Panos
         poll_result.elements['/response/result/job/details'].each_element_with_text { |e| details << e.text }
         if status == 'FIN'
           # TODO: go to debug
-          poll_result.write($stdout, 2)
+          # poll_result.write($stdout, 2)
           break if result == 'OK'
           raise Puppet::ResourceError, 'job failed. result="%{result}": %{details}' % { result: result, details: details.join("\n") }
         end

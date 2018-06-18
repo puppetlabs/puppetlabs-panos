@@ -52,4 +52,7 @@ DESC
       default:   [],
     },
   },
+  autobefore: {
+    panos_commit: 'commit',
+  },
 )
