@@ -3,5 +3,8 @@ Gemfile:
   optional:
     ':development':
       - gem: 'puppet-resource_api'
+        version: '~> 1.4'
 spec/spec_helper.rb:
   mock_with: ':rspec'
+.travis.yml:
+  simplecov: true
