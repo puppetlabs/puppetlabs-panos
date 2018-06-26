@@ -162,6 +162,16 @@ EOF
         provider.create(context, 'a', name: 'a', ensure: 'present', fqdn: 'example.com', description: 'help')
       end
     end
+
+    context 'when providing netmask and range' do
+      it 'throws an error' do
+        expect(device).to receive(:set_config).never
+
+        expect {
+          provider.create(context, 'a', name: 'a', ensure: 'present', ip_netmask: 'netmask', ip_range: 'range')
+        }.to raise_error Puppet::ResourceError, %r{ip_netmask, ip_range, and fqdn are mutually exclusive fields}
+      end
+    end
   end
 
   describe 'update(context, name, should)' do
