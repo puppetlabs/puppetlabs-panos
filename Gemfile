@@ -33,8 +33,7 @@ group :development do
   gem "puppet-module-posix-dev-r#{minor_version}",     require: false, platforms: [:ruby]
   gem "puppet-module-win-default-r#{minor_version}",   require: false, platforms: [:mswin, :mingw, :x64_mingw]
   gem "puppet-module-win-dev-r#{minor_version}",       require: false, platforms: [:mswin, :mingw, :x64_mingw]
-  # use a version that contains https://github.com/puppetlabs/puppet-resource_api/pull/96 "Allow `SimpleDevice` to be initialized with a config hash "
-  gem "puppet-resource_api",                           require: false, git: 'https://github.com/puppetlabs/puppet-resource_api.git', branch: '838b76fd2061beb7e2b2b1915f0d6826d0a63dee'
+  gem "puppet-resource_api", '~> 1.4',                 require: false
 end
 
 puppet_version = ENV['PUPPET_GEM_VERSION']
