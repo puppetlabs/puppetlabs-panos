@@ -2,6 +2,7 @@
 # inspired by: https://gist.github.com/pxlpnk/7223848
 RSpec::Matchers.define :have_xml do |xpath, text|
   match do |doc|
+    doc = REXML::Document.new(doc) if doc.is_a? String
     nodes = doc.elements.to_a(xpath)
     @nodes_empty = nodes.empty?
     return false if @nodes_empty

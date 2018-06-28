@@ -157,7 +157,7 @@ EOF
     end
 
     it 'uses the correct base structure' do
-      expect(device).to receive(:set_config).with('some xpath', instance_of(REXML::Document)) do |_xpath, doc|
+      expect(device).to receive(:set_config).with('some xpath', instance_of(String)) do |_xpath, doc|
         expect(doc).to have_xml("entry[@name='user_a']")
       end
       provider.create(context, 'user_a', name: 'user_a', ensure: 'present', password_hash: '12345', role: 'superuser')
@@ -165,7 +165,7 @@ EOF
 
     context 'when providing a password_hash' do
       it 'creates the resource' do
-        expect(device).to receive(:set_config).with('some xpath', instance_of(REXML::Document)) do |_xpath, doc|
+        expect(device).to receive(:set_config).with('some xpath', instance_of(String)) do |_xpath, doc|
           expect(doc).to have_xml('entry/phash', '12345')
           expect(doc).not_to have_xml('entry/public-key')
         end
@@ -176,7 +176,7 @@ EOF
 
     context 'when providing an ssh_key' do
       it 'creates the resource' do
-        expect(device).to receive(:set_config).with('some xpath', instance_of(REXML::Document)) do |_xpath, doc|
+        expect(device).to receive(:set_config).with('some xpath', instance_of(String)) do |_xpath, doc|
           expect(doc).to have_xml('entry/public-key', 'fake_key')
           expect(doc).not_to have_xml('entry/password_hash')
         end
@@ -187,7 +187,7 @@ EOF
 
     context 'when client_certificate_only' do
       it 'creates the resource' do
-        expect(device).to receive(:set_config).with('some xpath', instance_of(REXML::Document)) do |_xpath, doc|
+        expect(device).to receive(:set_config).with('some xpath', instance_of(String)) do |_xpath, doc|
           expect(doc).to have_xml('entry/client-certificate-only', 'yes')
           expect(doc).to have_xml('entry/public-key', 'fake_key')
         end
@@ -198,7 +198,7 @@ EOF
 
     context 'when user is superreader' do
       it 'creates the resource' do
-        expect(device).to receive(:set_config).with('some xpath', instance_of(REXML::Document)) do |_xpath, doc|
+        expect(device).to receive(:set_config).with('some xpath', instance_of(String)) do |_xpath, doc|
           expect(doc).to have_xml('entry/permissions/role-based/superreader')
           expect(doc).not_to have_xml('permissions/role-based/custom')
         end
@@ -209,7 +209,7 @@ EOF
 
     context 'when user is devicereader' do
       it 'creates the resource' do
-        expect(device).to receive(:set_config).with('some xpath', instance_of(REXML::Document)) do |_xpath, doc|
+        expect(device).to receive(:set_config).with('some xpath', instance_of(String)) do |_xpath, doc|
           expect(doc).to have_xml('entry/permissions/role-based/devicereader')
           expect(doc).not_to have_xml('permissions/role-based/custom')
         end
@@ -220,7 +220,7 @@ EOF
 
     context 'when user has a custom role' do
       it 'creates the resource' do
-        expect(device).to receive(:set_config).with('some xpath', instance_of(REXML::Document)) do |_xpath, doc|
+        expect(device).to receive(:set_config).with('some xpath', instance_of(String)) do |_xpath, doc|
           expect(doc).to have_xml('entry/permissions/role-based/custom')
           expect(doc).to have_xml('entry/permissions/role-based/custom/profile', 'wibble')
         end
@@ -241,7 +241,7 @@ EOF
     end
 
     it 'uses the correct base structure' do
-      expect(device).to receive(:edit_config).with("some xpath/entry[@name='bob']", instance_of(REXML::Document)) do |_xpath, doc|
+      expect(device).to receive(:edit_config).with("some xpath/entry[@name='bob']", instance_of(String)) do |_xpath, doc|
         expect(doc).to have_xml("entry[@name='bob']")
       end
       provider.update(context, 'bob', name: 'bob', ensure: 'present', password_hash: '12345', role: 'superuser')
@@ -249,7 +249,7 @@ EOF
 
     context 'when providing a password_hash' do
       it 'creates the resource' do
-        expect(device).to receive(:edit_config).with('some xpath/entry[@name=\'bob\']', instance_of(REXML::Document)) do |_xpath, doc|
+        expect(device).to receive(:edit_config).with('some xpath/entry[@name=\'bob\']', instance_of(String)) do |_xpath, doc|
           expect(doc).to have_xml('entry/phash', '12345')
           expect(doc).not_to have_xml('entry/public-key')
         end
@@ -260,7 +260,7 @@ EOF
 
     context 'when providing an ssh_key' do
       it 'creates the resource' do
-        expect(device).to receive(:edit_config).with('some xpath/entry[@name=\'bob\']', instance_of(REXML::Document)) do |_xpath, doc|
+        expect(device).to receive(:edit_config).with('some xpath/entry[@name=\'bob\']', instance_of(String)) do |_xpath, doc|
           expect(doc).to have_xml('entry/public-key', 'fake_key')
           expect(doc).not_to have_xml('entry/password_hash')
         end
@@ -271,7 +271,7 @@ EOF
 
     context 'when user is superreader' do
       it 'creates the resource' do
-        expect(device).to receive(:edit_config).with('some xpath/entry[@name=\'bob\']', instance_of(REXML::Document)) do |_xpath, doc|
+        expect(device).to receive(:edit_config).with('some xpath/entry[@name=\'bob\']', instance_of(String)) do |_xpath, doc|
           expect(doc).to have_xml('entry/permissions/role-based/superreader')
           expect(doc).not_to have_xml('permissions/role-based/custom')
         end
@@ -282,7 +282,7 @@ EOF
 
     context 'when user is devicereader' do
       it 'creates the resource' do
-        expect(device).to receive(:edit_config).with('some xpath/entry[@name=\'bob\']', instance_of(REXML::Document)) do |_xpath, doc|
+        expect(device).to receive(:edit_config).with('some xpath/entry[@name=\'bob\']', instance_of(String)) do |_xpath, doc|
           expect(doc).to have_xml('entry/permissions/role-based/devicereader')
           expect(doc).not_to have_xml('permissions/role-based/custom')
         end
@@ -293,7 +293,7 @@ EOF
 
     context 'when user has a custom role' do
       it 'creates the resource' do
-        expect(device).to receive(:edit_config).with('some xpath/entry[@name=\'bob\']', instance_of(REXML::Document)) do |_xpath, doc|
+        expect(device).to receive(:edit_config).with('some xpath/entry[@name=\'bob\']', instance_of(String)) do |_xpath, doc|
           expect(doc).to have_xml('entry/permissions/role-based/custom')
           expect(doc).to have_xml('entry/permissions/role-based/custom/profile', 'wibble')
         end

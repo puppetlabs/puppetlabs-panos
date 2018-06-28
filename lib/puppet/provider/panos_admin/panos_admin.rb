@@ -2,6 +2,7 @@
 require 'puppet/resource_api/simple_provider'
 require 'rexml/document'
 require 'rexml/xpath'
+require 'builder'
 
 # Implementation for the panos_admin type using the Resource API.
 class Puppet::Provider::PanosAdmin::PanosAdmin < Puppet::ResourceApi::SimpleProvider
@@ -56,36 +57,27 @@ class Puppet::Provider::PanosAdmin::PanosAdmin < Puppet::ResourceApi::SimpleProv
   end
 
   def xml_from_should(name, should)
-    entry = REXML::Element.new 'entry'
-    entry.add_attribute('name', name)
-
-    if should[:password_hash]
-      entry.elements << REXML::Element.new('phash').add_text(should[:password_hash])
-    elsif should[:client_certificate_only] && should[:client_certificate_only] == true
-      entry.elements << REXML::Element.new('client-certificate-only').add_text('yes')
-    end
-
-    if should[:ssh_key]
-      entry.elements << REXML::Element.new('public-key').add_text(should[:ssh_key])
-    end
-
-    if should[:role]
-      rb = REXML::Element.new('role-based')
-      role = REXML::Element.new(should[:role])
-      if should[:role] == 'custom'
-        profile = REXML::Element.new('profile').add_text(should[:role_profile])
-        role.add_element(profile)
-      else
-        role.add_text('yes')
+    builder = Builder::XmlMarkup.new
+    builder.entry('name' => name) do
+      if should[:password_hash]
+        builder.phash(should[:password_hash])
+      elsif should[:client_certificate_only] && should[:client_certificate_only] == true
+        builder.__send__('client-certificate-only', 'yes')
       end
-      rb.add_element(role)
-      permissions = REXML::Element.new('permissions')
-      permissions.add_element(rb)
-      entry.add_element(permissions)
-    end
 
-    result = REXML::Document.new
-    result.elements << entry
-    result
+      if should[:ssh_key]
+        builder.__send__('public-key', should[:ssh_key])
+      end
+
+      builder.permissions do
+        builder.__send__('role-based') do
+          builder.__send__(should[:role], (!should[:role] == 'custom') ? 'yes' : nil) do
+            if should[:role] == 'custom'
+              builder.profile(should[:role_profile])
+            end
+          end
+        end
+      end
+    end
   end
 end
