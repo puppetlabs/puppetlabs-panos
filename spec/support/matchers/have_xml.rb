@@ -13,6 +13,7 @@ RSpec::Matchers.define :have_xml do |xpath, text|
   end
 
   failure_message do |doc|
+    doc = REXML::Document.new(doc) if doc.is_a? String
     message = if @nodes_empty
                 "expected to find xml tag #{xpath} in:\n"
               else
@@ -23,6 +24,7 @@ RSpec::Matchers.define :have_xml do |xpath, text|
   end
 
   failure_message_when_negated do |doc|
+    doc = REXML::Document.new(doc) if doc.is_a? String
     message = if !@nodes_empty && text.nil?
                 "found xml tag #{xpath} in:\n"
               else
