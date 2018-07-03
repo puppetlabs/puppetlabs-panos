@@ -113,7 +113,7 @@ module Puppet::Util::NetworkDevice::Panos
         raise "Error: #{res}: #{res.message}"
       end
       doc = REXML::Document.new(res.body)
-      handle_response_errors(doc) unless res.is_a?(Net::HTTPSuccess)
+      handle_response_errors(doc)
       doc
     end
 
