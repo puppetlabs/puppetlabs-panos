@@ -17,18 +17,10 @@ module Puppet::Util::NetworkDevice::Panos
       super
     end
 
-    def apikey
-      @key ||= if config.key? 'apikey'
-                 config['apikey']
-               else
-                 get_apikey(config['user'], config['password'])
-               end
-    end
-
     def fetch_device_facts
-      Puppet.debug('Retreiving PANOS Device Facts')
+      Puppet.debug('Retrieving PANOS Device Facts')
       # https://<firewall>/api/?key=apikey&type=version
-      api_request('version')
+      api.api_request('version')
     end
 
     def parse_device_facts(response)
@@ -47,58 +39,90 @@ module Puppet::Util::NetworkDevice::Panos
     def get_config(xpath)
       Puppet.debug("Retrieving #{xpath}")
       # https://<firewall>/api/?key=apikey&type=config&action=get&xpath=<path-to-config-node>
-      api_request('config', action: 'get', xpath: xpath)
+      api.api_request('config', action: 'get', xpath: xpath)
     end
 
     def set_config(xpath, document)
       Puppet.debug("Writing to #{xpath}")
       # https://<firewall>/api/?key=apikey&type=config&action=set&xpath=xpath-value&element=element-value
-      api_request('config', action: 'set', xpath: xpath, element: document)
+      api.api_request('config', action: 'set', xpath: xpath, element: document)
     end
 
     def edit_config(xpath, document)
       Puppet.debug("Updating #{xpath}")
       # https://<firewall>/api/?key=apikey&type=config&action=edit&xpath=xpath-value&element=element-value
-      api_request('config', action: 'edit', xpath: xpath, element: document)
+      api.api_request('config', action: 'edit', xpath: xpath, element: document)
     end
 
     def delete_config(xpath)
       Puppet.debug("Deleting #{xpath}")
       # https://<firewall>/api/?key=apikey&type=config&action=delete&xpath=xpath-value
-      api_request('config', action: 'delete', xpath: xpath)
+      api.api_request('config', action: 'delete', xpath: xpath)
     end
 
     def outstanding_changes?
       # /api/?type=op&cmd=<check><pending-changes></pending-changes></check>
-      result = api_request('op', cmd: '<check><pending-changes></pending-changes></check>')
+      result = api.api_request('op', cmd: '<check><pending-changes></pending-changes></check>')
       result.elements['/response/result'].text == 'yes'
     end
 
     def validate
       Puppet.debug('Validating configuration')
       # https://<firewall>/api/?type=op&cmd=<validate><full></full></validate>
-      job_request('op', cmd: '<validate><full></full></validate>')
+      api.job_request('op', cmd: '<validate><full></full></validate>')
     end
 
     def commit
       Puppet.debug('Committing outstanding changes')
       # https://<firewall>/api/?type=commit&cmd=<commit></commit>
-      job_request('commit', cmd: '<commit></commit>')
+      api.job_request('commit', cmd: '<commit></commit>')
     end
 
     private
 
+    def api
+      @api ||= API.new(config)
+    end
+  end
+
+  # A simple adaptor to expose the basic PAN-OS XML API operations.
+  # Having this in a separate class aids with keeping the gnarly HTTP code
+  # away from the business logic, and helps with testing, too.
+  # @api private
+  class API
+    def initialize(credentials)
+      @host = credentials['host']
+      @port = credentials.key?('port') ? credentials['port'].to_i : 443
+      @user = credentials['user']
+      @password = credentials['password']
+      @apikey = credentials['apikey']
+    end
+
     def http
-      host = config['host']
-      port = if config.key? 'port'
-               config['port'].to_i
-             else
-               443
-             end
-      Puppet.debug('Connecting to https://%{host}:%{port}' % { host: host, port: port })
-      @http ||= Net::HTTP.start(host, port,
-                                use_ssl: true,
-                                verify_mode: OpenSSL::SSL::VERIFY_NONE)
+      @http ||= begin
+                  Puppet.debug('Connecting to https://%{host}:%{port}' % { host: @host, port: @port })
+                  Net::HTTP.start(@host, @port,
+                                  use_ssl: true,
+                                  verify_mode: OpenSSL::SSL::VERIFY_NONE)
+                end
+    end
+
+    def fetch_apikey(user, password)
+      uri = URI::HTTP.build(path: '/api/')
+      params = { type: 'keygen', user: user, password: password }
+      uri.query = URI.encode_www_form(params)
+      Puppet.debug(uri)
+      res = http.get(uri)
+      unless res.is_a?(Net::HTTPSuccess)
+        raise "Error: #{res}: #{res.message}"
+      end
+      doc = REXML::Document.new(res.body)
+      handle_response_errors(doc)
+      doc.elements['/response/result/key'].text
+    end
+
+    def apikey
+      @apikey ||= fetch_apikey(@user, @password)
     end
 
     def api_request(type, **options)
@@ -155,53 +179,32 @@ module Puppet::Util::NetworkDevice::Panos
       Puppet.debug('job was successful')
     end
 
-    def get_apikey(user, password)
-      uri = URI::HTTP.build(path: '/api/')
-      params = { type: 'keygen', user: user, password: password }
-      uri.query = URI.encode_www_form(params)
-      Puppet.debug(uri)
-      res = http.get(uri)
-      unless res.is_a?(Net::HTTPSuccess)
-        raise "Error: #{res}: #{res.message}"
-      end
-      doc = REXML::Document.new(res.body)
-      handle_response_errors(doc)
-      doc.elements['/response/result/key'].text
-    end
-
     def message_from_code(code)
-      case code
-      when '1'
-        'Unkown command: The specific config or operational command is not recognized.'
-      when '2', '3', '4', '5', '11', '21'
-        "Internal error: Check with Palo Alto's technical support."
-      when '6'
-        'Bad XPath: The xpath specified in one or more attributes of the command is invalid.'
-      when '7'
-        "Object not present: Object specified by the xpath is not present. For example, entry[@name='value'] where no object with name 'value' is present."
-      when '8'
-        'Object not unique: For commands that operate on a single object, the specified object is not unique.'
-      when '10'
-        'Reference count not zero: Object cannot be deleted as there are other objects that refer to it. For example, address object still in use in policy.'
-      when '12'
-        'Invalid object: Xpath or element values provided are not complete.'
-      when '14'
-        'Operation not possible: Operation is allowed but not possible in this case. For example, moving a rule up one position when it is already at the top.'
-      when '15'
-        'Operation denied: Operation is allowed. For example, Admin not allowed to delete own account, Running a command that is not allowed on a passive device.'
-      when '16'
-        'Unauthorized: The API role does not have access rights to run this query.'
-      when '17'
-        'Invalid command: Invalid command or parameters.'
-      when '18'
-        'Malformed command: The XML is malformed.'
-      when '19', '20'
-        'Success: Command completed successfully.'
-      when '22'
-        'Session timed out: The session for this query timed out.'
-      else
-        'Unknown error code %{code}' % { code: code }
+      message_codes ||= begin
+        h = Hash.new { |_hash, key| 'Unknown error code %{code}' % { code: key } }
+        h['1'] = 'Unknown command: The specific config or operational command is not recognized.'
+        h['2'] = "Internal error: Check with Palo Alto's technical support."
+        h['3'] = "Internal error: Check with Palo Alto's technical support."
+        h['4'] = "Internal error: Check with Palo Alto's technical support."
+        h['5'] = "Internal error: Check with Palo Alto's technical support."
+        h['11'] = "Internal error: Check with Palo Alto's technical support."
+        h['21'] = "Internal error: Check with Palo Alto's technical support."
+        h['6'] = 'Bad XPath: The xpath specified in one or more attributes of the command is invalid.'
+        h['7'] = "Object not present: Object specified by the xpath is not present. For example, entry[@name='value'] where no object with name 'value' is present."
+        h['8'] = 'Object not unique: For commands that operate on a single object, the specified object is not unique.'
+        h['10'] = 'Reference count not zero: Object cannot be deleted as there are other objects that refer to it. For example, address object still in use in policy.'
+        h['12'] = 'Invalid object: Xpath or element values provided are not complete.'
+        h['14'] = 'Operation not possible: Operation is allowed but not possible in this case. For example, moving a rule up one position when it is already at the top.'
+        h['15'] = 'Operation denied: Operation is allowed. For example, Admin not allowed to delete own account, Running a command that is not allowed on a passive device.'
+        h['16'] = 'Unauthorized: The API role does not have access rights to run this query.'
+        h['17'] = 'Invalid command: Invalid command or parameters.'
+        h['18'] = 'Malformed command: The XML is malformed.'
+        h['19'] = 'Success: Command completed successfully.'
+        h['20'] = 'Success: Command completed successfully.'
+        h['22'] = 'Session timed out: The session for this query timed out.'
+        h
       end
+      message_codes[code]
     end
 
     def handle_response_errors(doc)
