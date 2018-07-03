@@ -1,6 +1,7 @@
 # rubocop:disable Style/CollectionMethods # REXML only knows collect(xpath), but not map(xpath)
 require 'puppet/resource_api/simple_provider'
 require 'rexml/document'
+require 'builder'
 
 # Implementation for the panos_address type using the Resource API.
 class Puppet::Provider::PanosAddress::PanosAddress < Puppet::ResourceApi::SimpleProvider
@@ -43,27 +44,23 @@ class Puppet::Provider::PanosAddress::PanosAddress < Puppet::ResourceApi::Simple
   end
 
   def xml_from_should(name, should)
-    entry = REXML::Element.new 'entry'
-    entry.attributes['name'] = name
-    if should[:description]
-      entry.elements << REXML::Element.new('description').add_text(should[:description])
-    end
-    if should[:ip_netmask]
-      entry.elements << REXML::Element.new('ip-netmask').add_text(should[:ip_netmask])
-    elsif should[:ip_range]
-      entry.elements << REXML::Element.new('ip-range').add_text(should[:ip_range])
-    elsif should[:fqdn]
-      entry.elements << REXML::Element.new('fqdn').add_text(should[:fqdn])
-    end
-    if should[:tags]
-      base_tag = REXML::Element.new('tag')
-      should[:tags].each do |tag|
-        base_tag.elements << REXML::Element.new('member').add_text(tag)
+    builder = Builder::XmlMarkup.new
+    builder.entry('name' => name) do
+      builder.description(should[:description]) if should[:description]
+      if should[:ip_netmask]
+        builder.__send__('ip-netmask', should[:ip_netmask])
+      elsif should[:ip_range]
+        builder.__send__('ip-range', should[:ip_range])
+      elsif should[:fqdn]
+        builder.fqdn(should[:fqdn])
       end
-      entry.elements << base_tag
+      if should[:tags]
+        builder.tag do
+          should[:tags].each do |tag|
+            builder.member(tag)
+          end
+        end
+      end
     end
-    result = REXML::Document.new
-    result.elements << entry
-    result
   end
 end

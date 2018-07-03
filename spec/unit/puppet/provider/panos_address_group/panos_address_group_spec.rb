@@ -88,7 +88,7 @@ EOF
     end
 
     it 'uses the correct base structure' do
-      expect(device).to receive(:set_config).with('some xpath', instance_of(REXML::Document)) do |_xpath, doc|
+      expect(device).to receive(:set_config).with('some xpath', instance_of(String)) do |_xpath, doc|
         expect(doc).to have_xml("entry[@name='group_a']")
       end
       provider.create(context, 'group_a', {})
@@ -96,7 +96,7 @@ EOF
 
     context 'when providing static_members' do
       it 'creates the resource' do
-        expect(device).to receive(:set_config).with('some xpath', instance_of(REXML::Document)) do |_xpath, doc|
+        expect(device).to receive(:set_config).with('some xpath', instance_of(String)) do |_xpath, doc|
           expect(doc).to have_xml('entry/static/member', 'foo')
           expect(doc).to have_xml('entry/static/member', 'bar')
           expect(doc).not_to have_xml('entry/dynamic')
@@ -108,7 +108,7 @@ EOF
 
     context 'when providing dynamic filter' do
       it 'creates the resource' do
-        expect(device).to receive(:set_config).with('some xpath', instance_of(REXML::Document)) do |_xpath, doc|
+        expect(device).to receive(:set_config).with('some xpath', instance_of(String)) do |_xpath, doc|
           expect(doc).to have_xml('entry/dynamic/filter', 'test filter')
           expect(doc).not_to have_xml('entry/static')
         end
@@ -119,7 +119,7 @@ EOF
 
     context 'when providing tags' do
       it 'creates the resource' do
-        expect(device).to receive(:set_config).with('some xpath', instance_of(REXML::Document)) do |_xpath, doc|
+        expect(device).to receive(:set_config).with('some xpath', instance_of(String)) do |_xpath, doc|
           expect(doc).to have_xml('entry/tag/member', 'tag1')
           expect(doc).to have_xml('entry/tag/member', 'tag2')
         end
@@ -140,7 +140,7 @@ EOF
     end
 
     it 'uses the correct base structure' do
-      expect(device).to receive(:edit_config).with("some xpath/entry[@name='group_a']", instance_of(REXML::Document)) do |_xpath, doc|
+      expect(device).to receive(:edit_config).with("some xpath/entry[@name='group_a']", instance_of(String)) do |_xpath, doc|
         expect(doc).to have_xml("entry[@name='group_a']")
       end
       provider.update(context, 'group_a', {})
@@ -148,7 +148,7 @@ EOF
 
     context 'when providing static_members' do
       it 'updates the resource' do
-        expect(device).to receive(:edit_config).with('some xpath/entry[@name=\'group_a\']', instance_of(REXML::Document)) do |_xpath, doc|
+        expect(device).to receive(:edit_config).with('some xpath/entry[@name=\'group_a\']', instance_of(String)) do |_xpath, doc|
           expect(doc).to have_xml('entry/static')
           expect(doc).to have_xml('entry/static/member', 'foo')
           expect(doc).to have_xml('entry/static/member', 'bar')
@@ -161,7 +161,7 @@ EOF
 
     context 'when providing dynamic filter' do
       it 'updates the resource' do
-        expect(device).to receive(:edit_config).with('some xpath/entry[@name=\'group_a\']', instance_of(REXML::Document)) do |_xpath, doc|
+        expect(device).to receive(:edit_config).with('some xpath/entry[@name=\'group_a\']', instance_of(String)) do |_xpath, doc|
           expect(doc).to have_xml('entry/dynamic/filter', 'test filter')
           expect(doc).not_to have_xml('entry/static')
         end
@@ -172,7 +172,7 @@ EOF
 
     context 'when providing tags' do
       it 'updates the resource' do
-        expect(device).to receive(:edit_config).with('some xpath/entry[@name=\'group_a\']', instance_of(REXML::Document)) do |_xpath, doc|
+        expect(device).to receive(:edit_config).with('some xpath/entry[@name=\'group_a\']', instance_of(String)) do |_xpath, doc|
           expect(doc).to have_xml('entry/tag/member', 'tag1')
           expect(doc).to have_xml('entry/tag/member', 'tag2')
         end

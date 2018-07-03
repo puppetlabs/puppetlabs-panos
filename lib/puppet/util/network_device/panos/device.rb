@@ -53,13 +53,13 @@ module Puppet::Util::NetworkDevice::Panos
     def set_config(xpath, document)
       Puppet.debug("Writing to #{xpath}")
       # https://<firewall>/api/?key=apikey&type=config&action=set&xpath=xpath-value&element=element-value
-      api_request('config', action: 'set', xpath: xpath, element: document.to_s)
+      api_request('config', action: 'set', xpath: xpath, element: document)
     end
 
     def edit_config(xpath, document)
       Puppet.debug("Updating #{xpath}")
       # https://<firewall>/api/?key=apikey&type=config&action=edit&xpath=xpath-value&element=element-value
-      api_request('config', action: 'edit', xpath: xpath, element: document.to_s)
+      api_request('config', action: 'edit', xpath: xpath, element: document)
     end
 
     def delete_config(xpath)
@@ -113,7 +113,7 @@ module Puppet::Util::NetworkDevice::Panos
         raise "Error: #{res}: #{res.message}"
       end
       doc = REXML::Document.new(res.body)
-      handle_response_errors(doc) unless res.is_a?(Net::HTTPSuccess)
+      handle_response_errors(doc)
       doc
     end
 

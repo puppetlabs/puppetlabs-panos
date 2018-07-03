@@ -100,7 +100,7 @@ EOF
     end
 
     it 'uses the correct base structure' do
-      expect(device).to receive(:set_config).with('some xpath', instance_of(REXML::Document)) do |_xpath, doc|
+      expect(device).to receive(:set_config).with('some xpath', instance_of(String)) do |_xpath, doc|
         expect(doc).to have_xml("entry[@name='a']")
       end
       provider.create(context, 'a', name: 'a', ensure: 'present')
@@ -108,7 +108,7 @@ EOF
 
     context 'when providing a netmask' do
       it 'creates the resource' do
-        expect(device).to receive(:set_config).with('some xpath', instance_of(REXML::Document)) do |_xpath, doc|
+        expect(device).to receive(:set_config).with('some xpath', instance_of(String)) do |_xpath, doc|
           expect(doc).to have_xml('entry/ip-netmask', 'netmask')
           expect(doc).not_to have_xml('entry/ip-range')
           expect(doc).not_to have_xml('entry/fqdn')
@@ -120,7 +120,7 @@ EOF
 
     context 'when providing a range' do
       it 'creates the resource' do
-        expect(device).to receive(:set_config).with('some xpath', instance_of(REXML::Document)) do |_xpath, doc|
+        expect(device).to receive(:set_config).with('some xpath', instance_of(String)) do |_xpath, doc|
           expect(doc).not_to have_xml('entry/ip-netmask')
           expect(doc).to have_xml('entry/ip-range', 'range')
           expect(doc).not_to have_xml('entry/fqdn')
@@ -132,7 +132,7 @@ EOF
 
     context 'when providing an fqdn' do
       it 'creates the resource' do
-        expect(device).to receive(:set_config).with('some xpath', instance_of(REXML::Document)) do |_xpath, doc|
+        expect(device).to receive(:set_config).with('some xpath', instance_of(String)) do |_xpath, doc|
           expect(doc).not_to have_xml('entry/ip-netmask')
           expect(doc).not_to have_xml('entry/ip-range')
           expect(doc).to have_xml('entry/fqdn', 'example.com')
@@ -144,7 +144,7 @@ EOF
 
     context 'with tags' do
       it 'creates the resource' do
-        expect(device).to receive(:set_config).with('some xpath', instance_of(REXML::Document)) do |_xpath, doc|
+        expect(device).to receive(:set_config).with('some xpath', instance_of(String)) do |_xpath, doc|
           expect(doc).to have_xml('entry/tag/member', 'a')
           expect(doc).to have_xml('entry/tag/member', 'b')
         end
@@ -155,7 +155,7 @@ EOF
 
     context 'with a description' do
       it 'creates the resource' do
-        expect(device).to receive(:set_config).with('some xpath', instance_of(REXML::Document)) do |_xpath, doc|
+        expect(device).to receive(:set_config).with('some xpath', instance_of(String)) do |_xpath, doc|
           expect(doc).to have_xml('entry/description', 'help')
         end
 
@@ -185,7 +185,7 @@ EOF
     end
 
     it 'uses the correct base structure' do
-      expect(device).to receive(:edit_config).with("some xpath/entry[@name='foo']", instance_of(REXML::Document)) do |_xpath, doc|
+      expect(device).to receive(:edit_config).with("some xpath/entry[@name='foo']", instance_of(String)) do |_xpath, doc|
         expect(doc).to have_xml("entry[@name='foo']")
       end
       provider.update(context, 'foo', name: 'foo', ensure: 'present')
@@ -193,7 +193,7 @@ EOF
 
     context 'when providing a netmask' do
       it 'updates the resource' do
-        expect(device).to receive(:edit_config).with("some xpath/entry[@name='foo']", instance_of(REXML::Document)) do |_xpath, doc|
+        expect(device).to receive(:edit_config).with("some xpath/entry[@name='foo']", instance_of(String)) do |_xpath, doc|
           expect(doc).to have_xml('entry/ip-netmask', 'netmask')
           expect(doc).not_to have_xml('entry/ip-range')
           expect(doc).not_to have_xml('entry/fqdn')
@@ -205,7 +205,7 @@ EOF
 
     context 'when providing a range' do
       it 'updates the resource' do
-        expect(device).to receive(:edit_config).with("some xpath/entry[@name='foo']", instance_of(REXML::Document)) do |_xpath, doc|
+        expect(device).to receive(:edit_config).with("some xpath/entry[@name='foo']", instance_of(String)) do |_xpath, doc|
           expect(doc).not_to have_xml('entry/ip-netmask')
           expect(doc).to have_xml('entry/ip-range', 'range')
           expect(doc).not_to have_xml('entry/fqdn')
@@ -217,7 +217,7 @@ EOF
 
     context 'when providing an fqdn' do
       it 'updates the resource' do
-        expect(device).to receive(:edit_config).with("some xpath/entry[@name='foo']", instance_of(REXML::Document)) do |_xpath, doc|
+        expect(device).to receive(:edit_config).with("some xpath/entry[@name='foo']", instance_of(String)) do |_xpath, doc|
           expect(doc).not_to have_xml('entry/ip-netmask')
           expect(doc).not_to have_xml('entry/ip-range')
           expect(doc).to have_xml('entry/fqdn', 'example.com')
@@ -229,7 +229,7 @@ EOF
 
     context 'with tags' do
       it 'updates the resource' do
-        expect(device).to receive(:edit_config).with("some xpath/entry[@name='foo']", instance_of(REXML::Document)) do |_xpath, doc|
+        expect(device).to receive(:edit_config).with("some xpath/entry[@name='foo']", instance_of(String)) do |_xpath, doc|
           expect(doc).to have_xml('entry/tag/member', 'a')
           expect(doc).to have_xml('entry/tag/member', 'b')
         end
@@ -240,7 +240,7 @@ EOF
 
     context 'with a description' do
       it 'creates the resource' do
-        expect(device).to receive(:edit_config).with("some xpath/entry[@name='foo']", instance_of(REXML::Document)) do |_xpath, doc|
+        expect(device).to receive(:edit_config).with("some xpath/entry[@name='foo']", instance_of(String)) do |_xpath, doc|
           expect(doc).to have_xml('entry/description', 'help')
         end
 
