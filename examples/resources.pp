@@ -27,6 +27,29 @@ panos_address_group {
 #     role          => 'superuser';
 # }
 
+panos_service {
+  'Application':
+    ensure      => 'present',
+    description => 'Demo App',
+    protocol    => 'tcp',
+    dest_port   => '3478-3479',
+    src_port    => '12345',
+    tags        => [];
+  'Comms':
+    ensure      => 'present',
+    description => 'Voice Chat',
+    protocol    => 'udp',
+    dest_port   => '8888,8881,8882',
+    src_port    => '1234,3214,5432',
+    tags        => [];
+  'ftp':
+    ensure      => 'present',
+    description => 'ftp server',
+    protocol    => 'tcp',
+    dest_port   => '21',
+    tags        => [];
+}
+
 panos_commit {
   'commit':
     commit => true
