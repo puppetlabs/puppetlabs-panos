@@ -24,6 +24,10 @@ class Puppet::Provider::PanosAdmin::PanosAdmin < Puppet::ResourceApi::SimpleProv
       if result.key? :client_certificate_only
         result[:client_certificate_only] = ((result[:client_certificate_only] == 'yes') ? true : false)
       end
+      # decode the ssh_key
+      if result.key? :ssh_key
+        result[:ssh_key] = Base64.strict_decode64(result[:ssh_key])
+      end
       result
     end
   end
@@ -46,11 +50,8 @@ class Puppet::Provider::PanosAdmin::PanosAdmin < Puppet::ResourceApi::SimpleProv
   end
 
   def validate_should(should)
-    if [should[:password_hash], should[:client_certificate_only]].compact.size > 1
-      raise Puppet::ResourceError, 'password_hash and client_certificate_only are mutually exclusive fields'
-    end
-    if should[:client_certificate_only] == true && !should.key?(:ssh_key)
-      raise Puppet::ResourceError, 'ssh_key required when client_certificate_only is true'
+    if should[:client_certificate_only] == true && should.key?(:password_hash)
+      raise Puppet::ResourceError, 'password_hash should not be configured when client_certificate_only is true'
     end
     if should[:role] == 'custom' && !should.key?(:role_profile) # rubocop:disable Style/GuardClause # line too long
       raise Puppet::ResourceError, 'Role based administrator type missing role_profile'
@@ -67,7 +68,7 @@ class Puppet::Provider::PanosAdmin::PanosAdmin < Puppet::ResourceApi::SimpleProv
       end
 
       if should[:ssh_key]
-        builder.__send__('public-key', encode_ssh(should[:ssh_key]))
+        builder.__send__('public-key', Base64.strict_encode64(should[:ssh_key]))
       end
 
       builder.permissions do
@@ -82,10 +83,5 @@ class Puppet::Provider::PanosAdmin::PanosAdmin < Puppet::ResourceApi::SimpleProv
         end
       end
     end
-  end
-
-  def encode_ssh(ssh_key)
-    return ssh_key unless ssh_key =~ %r{ssh-rsa AAAA[0-9A-Za-z+/]+[=]{0,3}( [^@]+@[^@]+)?}
-    Base64.strict_encode64(ssh_key)
   end
 end

@@ -30,7 +30,7 @@ RSpec.describe Puppet::Provider::PanosAdmin::PanosAdmin do
           </role-based>
         </permissions>
         <client-certificate-only>yes</client-certificate-only>
-        <public-key>fake_key</public-key>
+        <public-key>ZmFrZV9rZXk=</public-key>
       </entry>
       <entry name="bob">
         <permissions>
@@ -38,7 +38,7 @@ RSpec.describe Puppet::Provider::PanosAdmin::PanosAdmin do
             <superuser>yes</superuser>
           </role-based>
         </permissions>
-        <public-key>fake_key</public-key>
+        <public-key>ZmFrZV9rZXk=</public-key>
         <phash>$1$pswmwlep$XonrJ7e5001tIROyO9N3Y0</phash>
       </entry>
       <entry name="bert">
@@ -177,7 +177,7 @@ EOF
     context 'when providing an ssh_key' do
       it 'creates the resource' do
         expect(device).to receive(:set_config).with('some xpath', instance_of(String)) do |_xpath, doc|
-          expect(doc).to have_xml('entry/public-key', 'fake_key')
+          expect(doc).to have_xml('entry/public-key', 'ZmFrZV9rZXk=')
           expect(doc).not_to have_xml('entry/password_hash')
         end
 
@@ -189,7 +189,7 @@ EOF
       it 'creates the resource' do
         expect(device).to receive(:set_config).with('some xpath', instance_of(String)) do |_xpath, doc|
           expect(doc).to have_xml('entry/client-certificate-only', 'yes')
-          expect(doc).to have_xml('entry/public-key', 'fake_key')
+          expect(doc).to have_xml('entry/public-key', 'ZmFrZV9rZXk=')
         end
 
         provider.create(context, 'user_a', name: 'user_a', ensure: 'present', ssh_key: 'fake_key', client_certificate_only: true, role: 'superuser')
@@ -261,7 +261,7 @@ EOF
     context 'when providing an ssh_key' do
       it 'creates the resource' do
         expect(device).to receive(:edit_config).with('some xpath/entry[@name=\'bob\']', instance_of(String)) do |_xpath, doc|
-          expect(doc).to have_xml('entry/public-key', 'fake_key')
+          expect(doc).to have_xml('entry/public-key', 'ZmFrZV9rZXk=')
           expect(doc).not_to have_xml('entry/password_hash')
         end
 
@@ -321,45 +321,7 @@ EOF
   end
 
   describe 'validate_should(should)' do
-    context 'when should contains password_hash' do
-      let(:should_hash) do
-        {
-          name: 'bob',
-          ensure: 'present',
-          password_hash: '$1$pswmwlep$XonrJ7e5001tIROyO9N3Y0',
-          ssh_key: 'fake_key',
-          role: 'superuser',
-        }
-      end
-
-      it { expect { provider.validate_should(should_hash) }.not_to raise_error }
-    end
-    context 'when should contains client_certificate_only' do
-      let(:should_hash) do
-        {
-          name: 'bob',
-          ensure: 'present',
-          client_certificate_only: true,
-          role: 'superuser',
-        }
-      end
-
-      it { expect { provider.validate_should(should_hash) }.to raise_error Puppet::ResourceError, %r{ssh_key required when client_certificate_only is true} }
-    end
-    context 'when should contains client_certificate_only and ssh_key' do
-      let(:should_hash) do
-        {
-          name: 'bob',
-          ensure: 'present',
-          client_certificate_only: true,
-          ssh_key: 'fake_key',
-          role: 'superuser',
-        }
-      end
-
-      it { expect { provider.validate_should(should_hash) }.not_to raise_error }
-    end
-    context 'when should contains both password_hash and client_certificate_only' do
+    context 'when client_certificate_only is true and should contains password_hash' do
       let(:should_hash) do
         {
           name: 'bob',
@@ -371,7 +333,21 @@ EOF
         }
       end
 
-      it { expect { provider.validate_should(should_hash) }.to raise_error Puppet::ResourceError, %r{password_hash and client_certificate_only are mutually exclusive fields} }
+      it { expect { provider.validate_should(should_hash) }.to raise_error Puppet::ResourceError, %r{password_hash should not be configured when client_certificate_only is true} }
+    end
+    context 'when client_certificate_only is false and should contains password_hash' do
+      let(:should_hash) do
+        {
+          name: 'bob',
+          ensure: 'present',
+          password_hash: '$1$pswmwlep$XonrJ7e5001tIROyO9N3Y0',
+          client_certificate_only: false,
+          ssh_key: 'fake_key',
+          role: 'superuser',
+        }
+      end
+
+      it { expect { provider.validate_should(should_hash) }.not_to raise_error }
     end
     context 'when should contains both custom role and role_profile' do
       let(:should_hash) do
@@ -397,39 +373,6 @@ EOF
       end
 
       it { expect { provider.validate_should(should_hash) }.to raise_error Puppet::ResourceError, %r{Role based administrator type missing role_profile} }
-    end
-  end
-
-  describe 'encode_ssh(ssh_key)' do
-    let(:ssh_key) do
-      'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCor6qgz+3zUbQQ1YJhqgHqNjbid+cLjJAT7Hs8I1LuN523PHX+Fa6ypJVKfc+fX/eKNa7wUFZPp12w1mSm99BZuhNp9'\
-      'uzUT9sz/IbRzZvBH4zLL2eSa6DWbA4XEiLurypmTkFQLib9hdFlWALeQGwjo3GqhNV+T0Nv6Z6zxwLLPtZ+vNLy7ZLpGEPtIPXidc08WTvA0zCdFaH7k82LbWU1+nOAUmd2JdlualmFbOhES'\
-      '97A2/Q3uNA+vIPJ5QiyVX+6SZcCxZKMDucx73LZmQ67jXEj+MnD0+uCQwWIJ4rT2THtPoumaT7ir64ltpJvBvgOtpYHO/po5Zz4F3yVexsf578yNyOo27V9MMw+F1DO4F9BX8ITPoalugnpm'\
-      'tG/QCsvxPAn6sKCK18ts7ho2fiNDAGWKB5sHQ0R1GhB7Rmy/4HpT8jfDQqh4vc7lDgA3vImNv6ht1vCadX5Ner6iKDPhj3bfsaBXd2E7dPim7gcUVhyYj6HGQVsFct9PnF4Fj65ahKtwsYFN'\
-      'uy467saHifcKexT+CvgCscuwhfvT334N26D9/L50geddr4jgAPxU3wj6LpqlLK++A44U6H4z9yKOZ6vMGLiwworg/uHLynw+z7EbmE8LZN8iSsL+KXf7rraU3NJDP6m7D2xBBXHocoPDFT5lx'\
-      'JobOvdI8ZliiRhrw== david.armstrong@puppet.com'
-    end
-
-    let(:encoded_ssh_key) do
-      'c3NoLXJzYSBBQUFBQjNOemFDMXljMkVBQUFBREFRQUJBQUFDQVFDb3I2cWd6KzN6VWJRUTFZSmhxZ0hxTmpiaWQrY0xqSkFUN0hzOEkxTHVONTIzUEhYK0ZhNnlwSlZLZmMrZlgv'\
-      'ZUtOYTd3VUZaUHAxMncxbVNtOTlCWnVoTnA5dXpVVDlzei9JYlJ6WnZCSDR6TEwyZVNhNkRXYkE0WEVpTHVyeXBtVGtGUUxpYjloZEZsV0FMZVFHd2pvM0dxaE5WK1QwTnY2WjZ6'\
-      'eHdMTFB0Wit2Tkx5N1pMcEdFUHRJUFhpZGMwOFdUdkEwekNkRmFIN2s4MkxiV1UxK25PQVVtZDJKZGx1YWxtRmJPaEVTOTdBMi9RM3VOQSt2SVBKNVFpeVZYKzZTWmNDeFpLTUR1'\
-      'Y3g3M0xabVE2N2pYRWorTW5EMCt1Q1F3V0lKNHJUMlRIdFBvdW1hVDdpcjY0bHRwSnZCdmdPdHBZSE8vcG81Wno0RjN5VmV4c2Y1Nzh5TnlPbzI3VjlNTXcrRjFETzRGOUJYOElUU'\
-      'G9hbHVnbnBtdEcvUUNzdnhQQW42c0tDSzE4dHM3aG8yZmlOREFHV0tCNXNIUTBSMUdoQjdSbXkvNEhwVDhqZkRRcWg0dmM3bERnQTN2SW1OdjZodDF2Q2FkWDVOZXI2aUtEUGhqM2J'\
-      'mc2FCWGQyRTdkUGltN2djVVZoeVlqNkhHUVZzRmN0OVBuRjRGajY1YWhLdHdzWUZOdXk0NjdzYUhpZmNLZXhUK0N2Z0NzY3V3aGZ2VDMzNE4yNkQ5L0w1MGdlZGRyNGpnQVB4VTN3a'\
-      'jZMcHFsTEsrK0E0NFU2SDR6OXlLT1o2dk1HTGl3d29yZy91SEx5bncrejdFYm1FOExaTjhpU3NMK0tYZjdycmFVM05KRFA2bTdEMnhCQlhIb2NvUERGVDVseEpvYk92ZEk4WmxpaVJ'\
-      'ocnc9PSBkYXZpZC5hcm1zdHJvbmdAcHVwcGV0LmNvbQ=='
-    end
-
-    context 'when ssh_key is already `encoded`' do
-      it 'will not encode the value' do
-        expect(provider.encode_ssh(encoded_ssh_key)).to eq(encoded_ssh_key)
-      end
-    end
-    context 'when ssh_key is not yet `encoded`' do
-      it 'will encode the value' do
-        expect(provider.encode_ssh(ssh_key)).to eq(encoded_ssh_key)
-      end
     end
   end
 end
