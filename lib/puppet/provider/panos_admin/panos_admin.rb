@@ -71,10 +71,12 @@ class Puppet::Provider::PanosAdmin::PanosAdmin < Puppet::ResourceApi::SimpleProv
 
       builder.permissions do
         builder.__send__('role-based') do
-          builder.__send__(should[:role], (!should[:role] == 'custom') ? 'yes' : nil) do
-            if should[:role] == 'custom'
+          if should[:role] == 'custom'
+            builder.custom do
               builder.profile(should[:role_profile])
             end
+          else
+            builder.__send__(should[:role], 'yes')
           end
         end
       end
