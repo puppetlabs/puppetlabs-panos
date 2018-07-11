@@ -3,6 +3,7 @@ require 'puppet/resource_api/simple_provider'
 require 'rexml/document'
 require 'rexml/xpath'
 require 'builder'
+require 'base64'
 
 # Implementation for the panos_admin type using the Resource API.
 class Puppet::Provider::PanosAdmin::PanosAdmin < Puppet::ResourceApi::SimpleProvider
@@ -66,7 +67,7 @@ class Puppet::Provider::PanosAdmin::PanosAdmin < Puppet::ResourceApi::SimpleProv
       end
 
       if should[:ssh_key]
-        builder.__send__('public-key', should[:ssh_key])
+        builder.__send__('public-key', encode_ssh(should[:ssh_key]))
       end
 
       builder.permissions do
@@ -81,5 +82,10 @@ class Puppet::Provider::PanosAdmin::PanosAdmin < Puppet::ResourceApi::SimpleProv
         end
       end
     end
+  end
+
+  def encode_ssh(ssh_key)
+    return ssh_key unless ssh_key =~ %r{ssh-rsa AAAA[0-9A-Za-z+/]+[=]{0,3}( [^@]+@[^@]+)?}
+    Base64.strict_encode64(ssh_key)
   end
 end
