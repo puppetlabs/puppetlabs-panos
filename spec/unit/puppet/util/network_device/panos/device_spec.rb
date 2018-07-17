@@ -76,9 +76,9 @@ RSpec.describe Puppet::Util::NetworkDevice::Panos do
       end
     end
 
-    describe '#api_request(type, **options)' do
+    describe '#request(type, **options)' do
       let(:credentials) { super().merge('apikey' => 'APIKEY') }
-      let(:doc) { instance.api_request('THETYPE', option_a: 'ANOPTION') }
+      let(:doc) { instance.request('THETYPE', option_a: 'ANOPTION') }
 
       context 'when the API returns success' do
         before(:each) do

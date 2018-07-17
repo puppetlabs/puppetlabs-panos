@@ -20,7 +20,7 @@ module Puppet::Util::NetworkDevice::Panos
     def fetch_device_facts
       Puppet.debug('Retrieving PANOS Device Facts')
       # https://<firewall>/api/?key=apikey&type=version
-      api.api_request('version')
+      api.request('version')
     end
 
     def parse_device_facts(response)
@@ -39,30 +39,30 @@ module Puppet::Util::NetworkDevice::Panos
     def get_config(xpath)
       Puppet.debug("Retrieving #{xpath}")
       # https://<firewall>/api/?key=apikey&type=config&action=get&xpath=<path-to-config-node>
-      api.api_request('config', action: 'get', xpath: xpath)
+      api.request('config', action: 'get', xpath: xpath)
     end
 
     def set_config(xpath, document)
       Puppet.debug("Writing to #{xpath}")
       # https://<firewall>/api/?key=apikey&type=config&action=set&xpath=xpath-value&element=element-value
-      api.api_request('config', action: 'set', xpath: xpath, element: document)
+      api.request('config', action: 'set', xpath: xpath, element: document)
     end
 
     def edit_config(xpath, document)
       Puppet.debug("Updating #{xpath}")
       # https://<firewall>/api/?key=apikey&type=config&action=edit&xpath=xpath-value&element=element-value
-      api.api_request('config', action: 'edit', xpath: xpath, element: document)
+      api.request('config', action: 'edit', xpath: xpath, element: document)
     end
 
     def delete_config(xpath)
       Puppet.debug("Deleting #{xpath}")
       # https://<firewall>/api/?key=apikey&type=config&action=delete&xpath=xpath-value
-      api.api_request('config', action: 'delete', xpath: xpath)
+      api.request('config', action: 'delete', xpath: xpath)
     end
 
     def outstanding_changes?
       # /api/?type=op&cmd=<check><pending-changes></pending-changes></check>
-      result = api.api_request('op', cmd: '<check><pending-changes></pending-changes></check>')
+      result = api.request('op', cmd: '<check><pending-changes></pending-changes></check>')
       result.elements['/response/result'].text == 'yes'
     end
 
@@ -125,7 +125,7 @@ module Puppet::Util::NetworkDevice::Panos
       @apikey ||= fetch_apikey(@user, @password)
     end
 
-    def api_request(type, **options)
+    def request(type, **options)
       params = { type: type, key: apikey }
       params.merge!(options)
 
@@ -142,7 +142,7 @@ module Puppet::Util::NetworkDevice::Panos
     end
 
     def job_request(type, **options)
-      result = api_request(type, options)
+      result = request(type, options)
       response_message = result.elements['/response/msg']
       if response_message
         Puppet.debug('api response (no changes): %{msg}' % { msg: response_message.text })
@@ -157,7 +157,7 @@ module Puppet::Util::NetworkDevice::Panos
       tries = 0
       loop do
         # https://<firewall>/api/?type=op&cmd=<show><jobs><id>4</id></jobs></show>
-        poll_result = api_request('op', cmd: "<show><jobs><id>#{job_id}</id></jobs></show>")
+        poll_result = request('op', cmd: "<show><jobs><id>#{job_id}</id></jobs></show>")
         status = poll_result.elements['/response/result/job/status'].text
         result = poll_result.elements['/response/result/job/result'].text
         progress = poll_result.elements['/response/result/job/progress'].text
