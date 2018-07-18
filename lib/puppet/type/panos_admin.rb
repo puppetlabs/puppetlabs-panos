@@ -25,7 +25,7 @@ Puppet::ResourceApi.register_type(
     },
     client_certificate_only: {
       type:     'Optional[Boolean]',
-      desc:     'When set to true, uses `ssh_key` for client access.',
+      desc:     'When set to true uses client certificate profile for web UI access.',
       xpath:    'client-certificate-only/text()',
     },
     ssh_key:    {

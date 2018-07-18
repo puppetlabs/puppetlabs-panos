@@ -3,6 +3,7 @@ require 'puppet/resource_api/simple_provider'
 require 'rexml/document'
 require 'rexml/xpath'
 require 'builder'
+require 'base64'
 
 # Implementation for the panos_admin type using the Resource API.
 class Puppet::Provider::PanosAdmin::PanosAdmin < Puppet::ResourceApi::SimpleProvider
@@ -22,6 +23,10 @@ class Puppet::Provider::PanosAdmin::PanosAdmin < Puppet::ResourceApi::SimpleProv
       # handle conversion to boolean
       if result.key? :client_certificate_only
         result[:client_certificate_only] = ((result[:client_certificate_only] == 'yes') ? true : false)
+      end
+      # decode the ssh_key
+      if result.key? :ssh_key
+        result[:ssh_key] = Base64.strict_decode64(result[:ssh_key])
       end
       result
     end
@@ -45,11 +50,8 @@ class Puppet::Provider::PanosAdmin::PanosAdmin < Puppet::ResourceApi::SimpleProv
   end
 
   def validate_should(should)
-    if [should[:password_hash], should[:client_certificate_only]].compact.size > 1
-      raise Puppet::ResourceError, 'password_hash and client_certificate_only are mutually exclusive fields'
-    end
-    if should[:client_certificate_only] == true && !should.key?(:ssh_key)
-      raise Puppet::ResourceError, 'ssh_key required when client_certificate_only is true'
+    if should[:client_certificate_only] == true && should.key?(:password_hash)
+      raise Puppet::ResourceError, 'password_hash should not be configured when client_certificate_only is true'
     end
     if should[:role] == 'custom' && !should.key?(:role_profile) # rubocop:disable Style/GuardClause # line too long
       raise Puppet::ResourceError, 'Role based administrator type missing role_profile'
@@ -66,15 +68,17 @@ class Puppet::Provider::PanosAdmin::PanosAdmin < Puppet::ResourceApi::SimpleProv
       end
 
       if should[:ssh_key]
-        builder.__send__('public-key', should[:ssh_key])
+        builder.__send__('public-key', Base64.strict_encode64(should[:ssh_key]))
       end
 
       builder.permissions do
         builder.__send__('role-based') do
-          builder.__send__(should[:role], (!should[:role] == 'custom') ? 'yes' : nil) do
-            if should[:role] == 'custom'
+          if should[:role] == 'custom'
+            builder.custom do
               builder.profile(should[:role_profile])
             end
+          else
+            builder.__send__(should[:role], 'yes')
           end
         end
       end

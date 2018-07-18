@@ -30,7 +30,7 @@ RSpec.describe Puppet::Provider::PanosAdmin::PanosAdmin do
           </role-based>
         </permissions>
         <client-certificate-only>yes</client-certificate-only>
-        <public-key>fake_key</public-key>
+        <public-key>ZmFrZV9rZXk=</public-key>
       </entry>
       <entry name="bob">
         <permissions>
@@ -38,7 +38,7 @@ RSpec.describe Puppet::Provider::PanosAdmin::PanosAdmin do
             <superuser>yes</superuser>
           </role-based>
         </permissions>
-        <public-key>fake_key</public-key>
+        <public-key>ZmFrZV9rZXk=</public-key>
         <phash>$1$pswmwlep$XonrJ7e5001tIROyO9N3Y0</phash>
       </entry>
       <entry name="bert">
@@ -177,7 +177,7 @@ EOF
     context 'when providing an ssh_key' do
       it 'creates the resource' do
         expect(device).to receive(:set_config).with('some xpath', instance_of(String)) do |_xpath, doc|
-          expect(doc).to have_xml('entry/public-key', 'fake_key')
+          expect(doc).to have_xml('entry/public-key', 'ZmFrZV9rZXk=')
           expect(doc).not_to have_xml('entry/password_hash')
         end
 
@@ -189,7 +189,7 @@ EOF
       it 'creates the resource' do
         expect(device).to receive(:set_config).with('some xpath', instance_of(String)) do |_xpath, doc|
           expect(doc).to have_xml('entry/client-certificate-only', 'yes')
-          expect(doc).to have_xml('entry/public-key', 'fake_key')
+          expect(doc).to have_xml('entry/public-key', 'ZmFrZV9rZXk=')
         end
 
         provider.create(context, 'user_a', name: 'user_a', ensure: 'present', ssh_key: 'fake_key', client_certificate_only: true, role: 'superuser')
@@ -261,7 +261,7 @@ EOF
     context 'when providing an ssh_key' do
       it 'creates the resource' do
         expect(device).to receive(:edit_config).with('some xpath/entry[@name=\'bob\']', instance_of(String)) do |_xpath, doc|
-          expect(doc).to have_xml('entry/public-key', 'fake_key')
+          expect(doc).to have_xml('entry/public-key', 'ZmFrZV9rZXk=')
           expect(doc).not_to have_xml('entry/password_hash')
         end
 
@@ -321,45 +321,7 @@ EOF
   end
 
   describe 'validate_should(should)' do
-    context 'when should contains password_hash' do
-      let(:should_hash) do
-        {
-          name: 'bob',
-          ensure: 'present',
-          password_hash: '$1$pswmwlep$XonrJ7e5001tIROyO9N3Y0',
-          ssh_key: 'fake_key',
-          role: 'superuser',
-        }
-      end
-
-      it { expect { provider.validate_should(should_hash) }.not_to raise_error }
-    end
-    context 'when should contains client_certificate_only' do
-      let(:should_hash) do
-        {
-          name: 'bob',
-          ensure: 'present',
-          client_certificate_only: true,
-          role: 'superuser',
-        }
-      end
-
-      it { expect { provider.validate_should(should_hash) }.to raise_error Puppet::ResourceError, %r{ssh_key required when client_certificate_only is true} }
-    end
-    context 'when should contains client_certificate_only and ssh_key' do
-      let(:should_hash) do
-        {
-          name: 'bob',
-          ensure: 'present',
-          client_certificate_only: true,
-          ssh_key: 'fake_key',
-          role: 'superuser',
-        }
-      end
-
-      it { expect { provider.validate_should(should_hash) }.not_to raise_error }
-    end
-    context 'when should contains both password_hash and client_certificate_only' do
+    context 'when client_certificate_only is true and should contains password_hash' do
       let(:should_hash) do
         {
           name: 'bob',
@@ -371,7 +333,21 @@ EOF
         }
       end
 
-      it { expect { provider.validate_should(should_hash) }.to raise_error Puppet::ResourceError, %r{password_hash and client_certificate_only are mutually exclusive fields} }
+      it { expect { provider.validate_should(should_hash) }.to raise_error Puppet::ResourceError, %r{password_hash should not be configured when client_certificate_only is true} }
+    end
+    context 'when client_certificate_only is false and should contains password_hash' do
+      let(:should_hash) do
+        {
+          name: 'bob',
+          ensure: 'present',
+          password_hash: '$1$pswmwlep$XonrJ7e5001tIROyO9N3Y0',
+          client_certificate_only: false,
+          ssh_key: 'fake_key',
+          role: 'superuser',
+        }
+      end
+
+      it { expect { provider.validate_should(should_hash) }.not_to raise_error }
     end
     context 'when should contains both custom role and role_profile' do
       let(:should_hash) do
