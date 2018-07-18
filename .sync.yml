@@ -2,9 +2,15 @@
 Gemfile:
   optional:
     ':development':
+      - gem: 'webmock'
+      - gem: 'builder'
+        version: '~> 3.2.2'
       - gem: 'puppet-resource_api'
-        version: '~> 1.4'
+        git: 'https://github.com/puppetlabs/puppet-resource_api.git'
+        ref: 'master'
 spec/spec_helper.rb:
   mock_with: ':rspec'
+  spec_overrides:
+    - "require 'webmock/rspec'"
 .travis.yml:
   simplecov: true
