@@ -9,7 +9,7 @@ Puppet::ResourceApi.register_type(
   features: ['remote_resource'],
   attributes:   {
     name:         {
-      type:       'String',
+      type:       'Pattern[/^[a-zA-z0-9\-_\s\.]*$/]',
       desc:       'The display-name of the service.',
       xpath:      'string(@name)',
       behaviour:  :namevar,

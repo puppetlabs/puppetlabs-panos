@@ -1,5 +1,3 @@
-require 'puppet/resource_api/simple_provider'
-
 # Implementation for the panos_commit type using the Resource API.
 class Puppet::Provider::PanosCommit::PanosCommit
   def get(context)
