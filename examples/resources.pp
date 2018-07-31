@@ -51,6 +51,13 @@ panos_service {
     tags        => [];
 }
 
+panos_service_group {
+  'test group 1':
+    ensure   => 'present',
+    services => ['ftp'],
+    tags     => [],
+}
+
 panos_commit {
   'commit':
     commit => true
