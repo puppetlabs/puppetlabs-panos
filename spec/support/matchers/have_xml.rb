@@ -8,7 +8,7 @@ RSpec::Matchers.define :have_xml do |xpath, text|
     return false if @nodes_empty
     return true unless text
     nodes.any? do |node|
-      node.text == text
+      node.get_text == text
     end
   end
 
