@@ -11,7 +11,7 @@ class Puppet::Provider::PanosAdmin::PanosAdmin < Puppet::Provider::PanosProvider
       # decode and remove trailing newline charater
       entry[:ssh_key] = Base64.strict_decode64(entry[:ssh_key])
     end
-    if entry[:client_certificate_only]
+    if entry.key? :client_certificate_only
       entry[:client_certificate_only] = convert_bool(entry[:client_certificate_only])
     end
     entry
@@ -31,7 +31,7 @@ class Puppet::Provider::PanosAdmin::PanosAdmin < Puppet::Provider::PanosProvider
     builder.entry('name' => name) do
       if should[:password_hash]
         builder.phash(should[:password_hash])
-      elsif should[:client_certificate_only] && should[:client_certificate_only] == true
+      elsif should[:client_certificate_only]
         builder.__send__('client-certificate-only', 'yes')
       end
 

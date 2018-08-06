@@ -49,7 +49,7 @@ EOF
     <entry name="value1">
       <isenabled>Yes</isenabled>
       <enabled>No</enabled>
-      <description>desc test</description>
+      <description>&lt;eas&amp;lt;yxss/&gt;</description>
       <tag>
         <member>one</member>
         <member>two</member>
@@ -73,7 +73,7 @@ EOF
     [
       {
         name: 'value1',
-        description: 'desc test',
+        description: '<eas&lt;yxss/>',
         is_enabled: 'Yes',
         maybe_enabled: 'No',
         tags: ['one', 'two', 'three'],
@@ -150,6 +150,9 @@ EOF
     context 'when the value is `no`' do
       it { expect(provider.convert_bool('no')).to be_falsey }
     end
+    context 'when the value is nil' do
+      it { expect(provider.convert_bool(nil)).to be_falsey }
+    end
     context 'when the value is anything else' do
       it 'returns the value passed in' do
         expect(provider.convert_bool('foo')).to eq('foo')
@@ -197,7 +200,7 @@ EOF
   describe 'create(context, name, should)' do
     it 'calls provider functions' do
       expect(device).to receive(:set_config).with('some xpath', instance_of(String)) do |_xpath, doc|
-        expect(doc).to have_xml('entry/description', 'desc test')
+        expect(doc).to have_xml('entry/description', '&lt;eas&amp;lt;yxss/&gt;')
         expect(doc).to have_xml('entry/isenabled', 'Yes')
         expect(doc).to have_xml('entry/enabled', 'No')
         expect(doc).to have_xml('entry/tag/member', 'one')
@@ -212,7 +215,7 @@ EOF
   describe 'update(context, name, should)' do
     it 'calls provider functions' do
       expect(device).to receive(:edit_config).with('some xpath/entry[@name=\'value1\']', instance_of(String)) do |_xpath, doc|
-        expect(doc).to have_xml('entry/description', 'desc test')
+        expect(doc).to have_xml('entry/description', '&lt;eas&amp;lt;yxss/&gt;')
         expect(doc).to have_xml('entry/isenabled', 'Yes')
         expect(doc).to have_xml('entry/enabled', 'No')
         expect(doc).to have_xml('entry/tag/member', 'one')

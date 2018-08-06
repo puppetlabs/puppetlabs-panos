@@ -146,6 +146,24 @@ RSpec.describe Puppet::Provider::PanosAdmin::PanosAdmin do
             </entry>',
     },
     {
+      desc: 'an account with client certificate disabled',
+      attrs:  {
+        name: 'cert_enabled',
+        ensure: 'present',
+        client_certificate_only: false,
+        ssh_key: 'fake_key',
+        role: 'superuser',
+      },
+      xml: '<entry name="cert_enabled">
+              <public-key>ZmFrZV9rZXk=</public-key>
+              <permissions>
+                <role-based>
+                  <superuser>yes</superuser>
+                </role-based>
+              </permissions>
+            </entry>',
+    },
+    {
       desc: 'an ssh_enabled account',
       attrs: {
         name:           'ssh_enabled',
