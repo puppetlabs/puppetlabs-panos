@@ -112,7 +112,7 @@ RSpec.describe Puppet::Provider::PanosAddress::PanosAddress do
     },
     {
       desc:   'an example containing range_address',
-      attrs:  {
+      attrs: {
         name:         'range_address',
         ensure:       'present',
         description:  'some address',
@@ -129,7 +129,7 @@ RSpec.describe Puppet::Provider::PanosAddress::PanosAddress do
     },
     {
       desc: 'an example containing fqdn_address',
-      attrs:  {
+      attrs: {
         name:         'fqdn_address',
         ensure:       'present',
         description:  'some address',

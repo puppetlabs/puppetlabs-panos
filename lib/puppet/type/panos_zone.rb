@@ -7,34 +7,34 @@ Puppet::ResourceApi.register_type(
     EOS
   base_xpath: '/config/devices/entry/vsys/entry/zone',
   features: ['remote_resource'],
-  attributes:   {
-    name:         {
+  attributes: {
+    name: {
       type:            'String',
       desc:            'The display-name of the zone.',
       xpath:           'string(@name)',
       behaviour:       :namevar,
     },
-    ensure:        {
+    ensure: {
       type:            'Enum[present, absent]',
       desc:            'Whether this resource should be present or absent on the target system.',
       default:         'present',
     },
-    network:        {
+    network: {
       type:            'Optional[Enum["tap","virtual-wire","layer2","layer3"]]',
       desc:            'The network type of this zone.',
       xpath:           'local-name(network/*)',
     },
-    interfaces:     {
+    interfaces: {
       type:            'Optional[Array[String]]',
       desc:            'The interfaces used by this zone.',
       xpath_array:     'network//member/text()',
     },
-    zone_protection_profile:        {
+    zone_protection_profile: {
       type:            'Optional[String]',
       desc:            'The protection profile of the zone.',
       xpath:           'network/zone-protection-profile/text()',
     },
-    log_setting:        {
+    log_setting: {
       type:            'Optional[String]',
       desc:            'The log setting of the zone.',
       xpath:           'network/log-setting/text()',

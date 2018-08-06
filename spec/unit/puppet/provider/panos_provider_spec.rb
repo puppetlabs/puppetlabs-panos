@@ -11,23 +11,23 @@ RSpec.describe Puppet::Provider::PanosProvider do
 
   let(:attrs) do
     {
-      name:        {
+      name: {
         type:      'String',
         xpath:      'string(@name)',
       },
-      description:    {
+      description: {
         type:      'Optional[String]',
         xpath:     'description/text()',
       },
-      is_enabled:    {
+      is_enabled: {
         type:      'Boolean',
         xpath:     'isenabled/text()',
       },
-      maybe_enabled:    {
+      maybe_enabled: {
         type:      'Optional[Boolean]',
         xpath:     'enabled/text()',
       },
-      tags:    {
+      tags: {
         type:      'Array[String]',
         xpath_array:     'tag/member/text()',
       },

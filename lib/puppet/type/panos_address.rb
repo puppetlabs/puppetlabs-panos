@@ -7,24 +7,24 @@ Puppet::ResourceApi.register_type(
     EOS
   base_xpath: '/config/devices/entry/vsys/entry/address',
   features: ['remote_resource'],
-  attributes:   {
-    name:        {
+  attributes: {
+    name: {
       type:      'Pattern[/^[a-zA-z0-9\-_\s\.]*$/]',
       desc:      'The display-name of the address.',
       behaviour: :namevar,
       xpath:      'string(@name)',
     },
-    ensure:      {
+    ensure: {
       type:    'Enum[present, absent]',
       desc:    'Whether this resource should be present or absent on the target system.',
       default: 'present',
     },
-    description:    {
+    description: {
       type:      'Optional[String]',
       desc:      'Provide a description of this address.',
       xpath:     'description/text()',
     },
-    ip_netmask:    {
+    ip_netmask: {
       type:      'Optional[String]',
       desc:      <<DESC,
         Provide an IP address or a network using the slash notation (Ex. 192.168.80.150 or 192.168.80.0/24).
@@ -33,7 +33,7 @@ Puppet::ResourceApi.register_type(
 DESC
       xpath:     'ip-netmask/text()',
     },
-    ip_range:    {
+    ip_range: {
       type:      'Optional[String]',
       desc:      <<DESC,
         Provide an IP address range (Ex. 10.0.0.1-10.0.0.4).
@@ -42,12 +42,12 @@ DESC
 DESC
       xpath:     'ip-range/text()',
     },
-    fqdn:    {
+    fqdn: {
       type:      'Optional[String]',
       desc:      'Provide a fully qualified domain name. You need to provide exactly one of ip_netmask, ip_range, or fqdn.',
       xpath:     'fqdn/text()',
     },
-    tags:    {
+    tags: {
       type:      'Array[String]',
       desc:      'The Palo Alto tags to apply to this address. Do not confuse this with the `tag` metaparameter used to filter resource application.',
       default:   [],
