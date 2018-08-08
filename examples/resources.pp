@@ -62,3 +62,10 @@ panos_commit {
   'commit':
     commit => true
 }
+
+panos_tag {
+  'Test Tag':
+    ensure   => 'present',
+    color    => 'red',
+    comments => 'comments 123',
+}
