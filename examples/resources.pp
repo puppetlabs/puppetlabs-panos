@@ -59,6 +59,19 @@ panos_service_group {
     tags     => [],
 }
 
+panos_zone {
+  'test zone':
+    ensure                     => 'present',
+    network                    => 'layer3',
+    interfaces                 => ['vlan'],
+    #  zone_protection_profile => 'zoneProtectionProfile',
+    # log_setting             => 'logSetting',
+    enable_user_identification => true,
+    # nsx_service_profile      => true,
+    include_list               => ['192.35.26.32', '192.63.95.86'],
+    exclude_list               => ['175.65.98.36', '175.82.36.96'],
+}
+
 panos_commit {
   'commit':
     commit => true
