@@ -14,10 +14,18 @@ RSpec.describe Puppet::Provider::PanosTag::PanosTag do
 
       it { expect(panos_tag.munge(entry)).to eq(result) }
     end
-    context 'when an invalid color is provided' do
-      let(:entry) { { color: '12' } }
+  end
 
-      it { expect { panos_tag.munge(entry) }.to raise_error Puppet::ResourceError, %r{Please use one of the existing Palo Alto colors.} }
+  describe 'validate_should(should)' do
+    context 'when an invalid color is provided' do
+      let(:entry) { { color: 'cotton' } }
+
+      it { expect { panos_tag.validate_should(entry) }.to raise_error Puppet::ResourceError, %r{Please use one of the existing Palo Alto colors.} }
+    end
+    context 'when an valid color is provided' do
+      let(:entry) { { color: 'red' } }
+
+      it { expect { panos_tag.validate_should(entry) }.not_to raise_error }
     end
   end
 
