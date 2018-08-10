@@ -7,19 +7,19 @@ Puppet::ResourceApi.register_type(
     EOS
   base_xpath: '/config/mgt-config/users',
   features: ['remote_resource'],
-  attributes:   {
-    name:        {
+  attributes: {
+    name: {
       type:      'Pattern[/^[a-zA-z0-9\-_\s\.]*$/]',
       desc:      'The username.',
       behaviour: :namevar,
       xpath:      'string(@name)',
     },
-    ensure:      {
+    ensure: {
       type:    'Enum[present, absent]',
       desc:    'Whether this resource should be present or absent on the target system.',
       default: 'present',
     },
-    password_hash:    {
+    password_hash: {
       type:      'Optional[String]',
       desc:      'Provide a password hash.',
       xpath:     'phash/text()',
@@ -30,17 +30,17 @@ Puppet::ResourceApi.register_type(
       default:  false,
       xpath:    'client-certificate-only/text()',
     },
-    ssh_key:    {
+    ssh_key: {
       type:      'Optional[String]',
       desc:      'Provide the users public key in plain text',
       xpath:     'public-key/text()',
     },
-    role:       {
+    role: {
       type:     'Enum["superuser", "superreader", "devicereader", "custom"]',
       desc:     'Specify the access level for the administrator',
       xpath:    'local-name(permissions/role-based/*[1])',
     },
-    role_profile:    {
+    role_profile: {
       type:     'Optional[String]',
       desc:     'Specify the role profile for the user',
       xpath:    'permissions/role-based/custom/profile/text()',

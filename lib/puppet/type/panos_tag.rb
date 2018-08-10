@@ -7,24 +7,24 @@ Puppet::ResourceApi.register_type(
     EOS
   base_xpath: '/config/devices/entry/vsys/entry/tag',
   features: ['remote_resource'],
-  attributes:   {
-    name:         {
+  attributes: {
+    name: {
       type:       'String',
       desc:       'The display-name of the tag.',
       xpath:      'string(@name)',
       behaviour:  :namevar,
     },
-    ensure:        {
+    ensure: {
       type:       'Enum[present, absent]',
       desc:       'Whether this resource should be present or absent on the target system.',
       default:    'present',
     },
-    color:        {
+    color: {
       type:       'Optional[String]',
       desc:       'The color of the tag',
       xpath:      'color/text()',
     },
-    comments:  {
+    comments: {
       type:      'Optional[String]',
       desc:      'Provide a comment for this tag.',
       xpath:     'comments/text()',

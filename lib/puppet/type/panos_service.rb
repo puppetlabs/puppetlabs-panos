@@ -7,39 +7,39 @@ Puppet::ResourceApi.register_type(
     EOS
   base_xpath: '/config/devices/entry/vsys/entry/service',
   features: ['remote_resource'],
-  attributes:   {
-    name:         {
+  attributes: {
+    name: {
       type:       'Pattern[/^[a-zA-z0-9\-_\s\.]*$/]',
       desc:       'The display-name of the service.',
       xpath:      'string(@name)',
       behaviour:  :namevar,
     },
-    ensure:        {
+    ensure: {
       type:       'Enum[present, absent]',
       desc:       'Whether this resource should be present or absent on the target system.',
       default:    'present',
     },
-    description:  {
+    description: {
       type:      'Optional[String]',
       desc:      'Provide a description of this service.',
       xpath:     'description/text()',
     },
-    protocol:    {
+    protocol: {
       type:      'Enum["tcp", "udp"]',
       desc:      'The network protocol ther service runs on.',
       xpath:     'local-name(protocol/*[1])',
     },
-    dest_port:    {
+    dest_port: {
       type:      'Optional[String]',
       desc:      'If not specified, src_port must be. Port can be a single port number, a range `1-65535`, or comma separated values  `80, 8080, 443`',
       xpath:      'protocol/*[1]/port/text()',
     },
-    src_port:    {
+    src_port: {
       type:      'Optional[String]',
       desc:      'If not specified, dest_port must be. Port can be a single port number, a range `1-65535`, or comma separated values  `80, 8080, 443`',
       xpath:      'protocol/*[1]/source-port/text()',
     },
-    tags:        {
+    tags: {
       type:      'Array[String]',
       desc:      'The Palo Alto tags to apply to this address-group. Do not confuse this with the `tag` metaparameter used to filter resource application.',
       default:   [],

@@ -128,7 +128,7 @@ RSpec.describe Puppet::Provider::PanosAdmin::PanosAdmin do
     },
     {
       desc: 'an account with client certificate enabled',
-      attrs:  {
+      attrs: {
         name: 'cert_enabled',
         ensure: 'present',
         client_certificate_only: true,
@@ -147,7 +147,7 @@ RSpec.describe Puppet::Provider::PanosAdmin::PanosAdmin do
     },
     {
       desc: 'an account with client certificate disabled',
-      attrs:  {
+      attrs: {
         name: 'cert_enabled',
         ensure: 'present',
         client_certificate_only: false,
