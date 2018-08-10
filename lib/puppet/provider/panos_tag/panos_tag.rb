@@ -26,8 +26,11 @@ class Puppet::Provider::PanosTag::PanosTag < Puppet::Provider::PanosProvider
     @color_from_code = @code_from_color.invert
   end
 
+  def validate_should(should)
+    raise Puppet::ResourceError, 'Please use one of the existing Palo Alto colors.' unless @code_from_color.key? should[:color]
+  end
+
   def munge(entry)
-    raise Puppet::ResourceError, 'Please use one of the existing Palo Alto colors.' unless @color_from_code.key? entry[:color]
     entry[:color] = @color_from_code[entry[:color]]
     entry
   end
