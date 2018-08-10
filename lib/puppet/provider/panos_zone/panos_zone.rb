@@ -4,6 +4,16 @@ require 'builder'
 
 # Implementation for the panos_tags type using the Resource API.
 class Puppet::Provider::PanosZone::PanosZone < Puppet::Provider::PanosProvider
+  def munge(entry)
+    if entry.key? :enable_user_identification
+      entry[:enable_user_identification] = convert_bool(entry[:enable_user_identification])
+    end
+    if entry.key? :nsx_service_profile
+      entry[:nsx_service_profile] = convert_bool(entry[:nsx_service_profile])
+    end
+    entry
+  end
+
   def xml_from_should(name, should)
     builder = Builder::XmlMarkup.new
     builder.entry('name' => name) do
