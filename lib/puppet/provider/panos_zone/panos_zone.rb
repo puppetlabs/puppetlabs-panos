@@ -6,10 +6,10 @@ require 'builder'
 class Puppet::Provider::PanosZone::PanosZone < Puppet::Provider::PanosProvider
   def munge(entry)
     if entry.key? :enable_user_identification
-      entry[:enable_user_identification] = convert_bool(entry[:enable_user_identification])
+      entry[:enable_user_identification] = string_to_bool(entry[:enable_user_identification])
     end
     if entry.key? :nsx_service_profile
-      entry[:nsx_service_profile] = convert_bool(entry[:nsx_service_profile])
+      entry[:nsx_service_profile] = string_to_bool(entry[:nsx_service_profile])
     end
     entry
   end

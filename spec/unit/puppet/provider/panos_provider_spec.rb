@@ -143,19 +143,36 @@ EOF
     end
   end
 
-  describe 'convert_bool(value)' do
+  describe 'string_to_bool(value)' do
     context 'when the value is `yes`' do
-      it { expect(provider.convert_bool('yes')).to be_truthy }
+      it { expect(provider.string_to_bool('yes')).to be_truthy }
     end
     context 'when the value is `no`' do
-      it { expect(provider.convert_bool('no')).to be_falsey }
+      it { expect(provider.string_to_bool('no')).to be_falsey }
     end
     context 'when the value is nil' do
-      it { expect(provider.convert_bool(nil)).to be_falsey }
+      it { expect(provider.string_to_bool(nil)).to be_falsey }
     end
     context 'when the value is anything else' do
       it 'returns the value passed in' do
-        expect(provider.convert_bool('foo')).to eq('foo')
+        expect(provider.string_to_bool('foo')).to eq('foo')
+      end
+    end
+  end
+
+  describe 'bool_to_string(value)' do
+    context 'when the value is `true`' do
+      it { expect(provider.bool_to_string(true)).to eq('yes') }
+    end
+    context 'when the value is `false`' do
+      it { expect(provider.bool_to_string(false)).to eq('no') }
+    end
+    context 'when the value is nil' do
+      it { expect(provider.bool_to_string(nil)).to eq(nil) }
+    end
+    context 'when the value is anything else' do
+      it 'returns the value passed in' do
+        expect(provider.bool_to_string('foo')).to eq('foo')
       end
     end
   end

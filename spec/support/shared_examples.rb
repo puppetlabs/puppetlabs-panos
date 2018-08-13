@@ -5,3 +5,11 @@ RSpec.shared_examples 'xml_from_should(name, should)' do |test_data, provider|
     end
   end
 end
+
+RSpec.shared_examples 'munge(entry)' do |test_data, provider|
+  test_data.each do |test|
+    it "executes correct munge for `#{test[:desc]}`" do
+      expect(provider.munge(test[:entry])).to eq(test[:munged_entry])
+    end
+  end
+end
