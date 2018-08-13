@@ -42,12 +42,12 @@ Puppet::ResourceApi.register_type(
     enable_user_identification: {
       type:            'Optional[Boolean]',
       desc:            'A yes/no value used to specify if the zone has enabled user identification.',
-      xpath_array:     'enable-user-identification/text()',
+      xpath:           'enable-user-identification/text()',
     },
     nsx_service_profile: {
       type:            'Optional[Boolean]',
       desc:            'A yes/no value used to specify if the zone has a nsx service profile.',
-      xpath_array:     'nsx-service-profile/text()',
+      xpath:           'nsx-service-profile/text()',
     },
     include_list: {
       type:            'Optional[Array[String]]',

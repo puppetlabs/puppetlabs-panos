@@ -5,7 +5,39 @@ module Puppet::Provider::PanosZone; end
 require 'puppet/provider/panos_zone/panos_zone'
 
 RSpec.describe Puppet::Provider::PanosZone::PanosZone do
-  subject(:zone) { described_class.new }
+  subject(:provider) { described_class.new }
+
+  describe 'munge(entry)' do
+    context 'when boolean values are found in the entry' do
+      let(:entry) do
+        {
+          name: 'foo',
+          enable_user_identification: in_value,
+          nsx_service_profile: in_value,
+        }
+      end
+      let(:munged_entry) do
+        {
+          name: 'foo',
+          enable_user_identification: out_value,
+          nsx_service_profile: out_value,
+        }
+      end
+
+      context 'when :enable_user_identification is `yes`' do
+        let(:in_value) { 'Yes' }
+        let(:out_value) { true }
+
+        it { expect(provider.munge(entry)).to eq(munged_entry) }
+      end
+      context 'when :enable_user_identification is `yes`' do
+        let(:in_value) { 'No' }
+        let(:out_value) { false }
+
+        it { expect(provider.munge(entry)).to eq(munged_entry) }
+      end
+    end
+  end
 
   describe 'validate_should(should)' do
     context 'when a zone has the correct configuration to use nsx service profile' do
@@ -23,7 +55,7 @@ RSpec.describe Puppet::Provider::PanosZone::PanosZone do
         }
       end
 
-      it { expect { zone.validate_should(should_hash) }.not_to raise_error }
+      it { expect { provider.validate_should(should_hash) }.not_to raise_error }
     end
     context 'when a zone has selected to use nsx service profile, but has also selected interfaces' do
       let(:should_hash) do
@@ -41,7 +73,7 @@ RSpec.describe Puppet::Provider::PanosZone::PanosZone do
         }
       end
 
-      it { expect { zone.validate_should(should_hash) }.to raise_error Puppet::ResourceError, %r{Interfaces cannot be used with NSX Service Profile.} }
+      it { expect { provider.validate_should(should_hash) }.to raise_error Puppet::ResourceError, %r{Interfaces cannot be used with NSX Service Profile.} }
     end
   end
   test_data = [
