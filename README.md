@@ -74,7 +74,31 @@ This is where you list OS compatibility, version compatibility, etc. If there ar
 
 ## Development
 
-Since your module is awesome, other users will want to play with it. Let them know what the ground rules for contributing are.
+To test this module you will need to have a Palo Alto machine available. The virtual machine images from their support area work fine in virtualbox and vmware. Alternatively you can use the PAYG offering on AWS. Note that the VMs do not have to have a license deployed to be usable for development.
+
+* [xml api docs](https://www.paloaltonetworks.com/documentation/81/pan-os/xml-api)
+* [Palo Alto on AWS](https://aws.amazon.com/marketplace/search/results?x=0&y=0&searchTerms=palo+alto&page=1&ref_=nav_search_box)
+
+The acceptance tests locate the Palo Alto box used for testing through environment variables. The current test setup allows for three different scenarios:
+
+* Static configuration: the VM or physical box is already running somewhere.
+  Set `PANOS_TEST_HOST` to the FQDN/IP of the box and `PANOS_TEST_PLATFORM` to a platform string in the form of `palo-alto-VERSION-x86_64`.
+* VMPooler: if you have a VMPooler instance available, set `VMPOOLER_HOST` to the hostname of your VMPooler instance (it defaults to Puppet's internal service), and `PANOS_TEST_PLATFORM` to the platform string of VMPooler you want to use.
+* ABS: When running on Puppet's internal infrastructure, reserved instances are passed into the job through `ABS_RESOURCE_HOSTS`.
+
+To specify the username and password used to connect to the box, set `PANOS_TEST_USER` and `PANOS_TEST_PASSWORD` respectively. Palo Alto's VMs default to `admin`/`admin`, which is also used as a default, if you don't specify anything.
+
+After you have configured the system under test, you can run the acceptance tests directly using
+
+```
+bundle exec rspec spec/acceptance
+```
+
+or using the legacy rake task
+
+```
+bundle exec rake beaker
+```
 
 ## Release Notes/Contributors/Etc. **Optional**
 

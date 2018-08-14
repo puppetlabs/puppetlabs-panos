@@ -8,6 +8,14 @@ Gemfile:
       - gem: 'puppet-resource_api'
         git: 'https://github.com/puppetlabs/puppet-resource_api.git'
         ref: 'master'
+.gitignore:
+  paths:
+    - spec/fixtures/acceptance-credentials.conf
+    - spec/fixtures/acceptance-device.conf
+.pdkignore:
+  paths:
+    - spec/fixtures/acceptance-credentials.conf
+    - spec/fixtures/acceptance-device.conf
 spec/spec_helper.rb:
   mock_with: ':rspec'
   spec_overrides:
