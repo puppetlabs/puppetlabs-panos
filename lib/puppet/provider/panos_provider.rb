@@ -39,9 +39,16 @@ class Puppet::Provider::PanosProvider < Puppet::ResourceApi::SimpleProvider
   end
 
   # PANOS uses Yes/No, convert to bool if the type expects it
-  def convert_bool(value)
+  def string_to_bool(value)
     return false if value.nil? || value.casecmp('no').zero?
     return true if value.casecmp('yes').zero?
+    value # if it doesn't match anything
+  end
+
+  # Puppet type uses bool, convert to Yes/No to suit PANOS system
+  def bool_to_string(value)
+    return 'yes' if value == true
+    return 'no' if value == false
     value # if it doesn't match anything
   end
 
@@ -66,6 +73,7 @@ class Puppet::Provider::PanosProvider < Puppet::ResourceApi::SimpleProvider
     result = REXML::XPath.match(entry, attr[:xpath]).first
     # don't convert nil values to empty strings
     return result if result.is_a? String
+    return nil if result.is_a?(Array) && result.empty?
     result.nil? ? nil : result.value
   end
 end

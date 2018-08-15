@@ -12,7 +12,7 @@ class Puppet::Provider::PanosAdmin::PanosAdmin < Puppet::Provider::PanosProvider
       entry[:ssh_key] = Base64.strict_decode64(entry[:ssh_key])
     end
     if entry.key? :client_certificate_only
-      entry[:client_certificate_only] = convert_bool(entry[:client_certificate_only])
+      entry[:client_certificate_only] = string_to_bool(entry[:client_certificate_only])
     end
     entry
   end

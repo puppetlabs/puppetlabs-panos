@@ -63,7 +63,7 @@ panos_zone {
   'test zone':
     ensure                     => 'present',
     network                    => 'layer3',
-    interfaces                 => ['vlan'],
+    # interfaces                 => ['vlan'], 
     #  zone_protection_profile => 'zoneProtectionProfile',
     # log_setting             => 'logSetting',
     enable_user_identification => true,
@@ -82,4 +82,52 @@ panos_tag {
     ensure   => 'present',
     color    => 'red',
     comments => 'comments 123',
+}
+
+panos_security_policy_rule  {
+  'Default security policy rule':
+    ensure       =>  'present';
+  'Adding a group policy value':
+    ensure       =>  'present',
+    action       =>  'deny',
+    profile_type =>  'group',
+    # group_profile       => 'Custom profile type', 
+    log_start    =>  true,
+    qos_type     =>  'ip-dscp',
+    ip_dscp      =>  'af11';
+  'Adding custom profiles':
+    ensure                    =>  'present',
+    profile_type              =>  'profiles',
+    anti_virus_profile        =>  'none',
+    vulnerability_profile     =>  'default',
+    spyware_profile           =>  'default',
+    url_filtering_profile     =>  'default',
+    file_blocking_profile     =>  'none',
+    # data_filtering_profile  =>  'Custom profile type', 
+    wildfire_analysis_profile =>  'default';
+  'QoS Marking settings':
+    ensure   =>  'present',
+    qos_type =>  'follow-c2s-flow';
+  'All the options':
+    ensure                             => 'present',
+    rule_type                          => 'interzone',
+    description                        => 'This is managed by Puppet.',
+    # tags         => ['puppet', 'test', 'all', 'options'],
+    # source_zones => ['Custom Zone 1', 'Custom Zone 2'],
+    source_address                     =>  ['0.0.0.0-0.255.255.255', '10.0.0.0-10.255.255.255'],
+    # source_users    => ['Custom User', 'Custom User 2'],
+    # hip_profiles      => ['Custom HIP 1', 'Customer HIP 2'],
+    # destination_zones => ['Custom Zone 1', 'Custom Zone 2'],
+    destination_address                =>  ['0.0.0.0-0.255.255.255', '10.0.0.0-10.255.255.255'],
+    applications                       => ['activesync'],
+    services                           => ['service-http'],
+    categories                         => ['games', 'home-and-garden'],
+    action                             => 'reset-client',
+    icmp_unreachable                   => false,
+    # log_setting         => 'custom log settings',
+    # schedule_profile    => 'custom schedule',
+    disable_server_response_inspection =>  false;
+  'Disable a Security Policy Rule':
+    ensure  => 'present',
+    disable =>  true;
 }
