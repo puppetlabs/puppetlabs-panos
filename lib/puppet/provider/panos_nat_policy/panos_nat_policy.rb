@@ -6,6 +6,9 @@ require 'builder'
 class Puppet::Provider::PanosNatPolicy::PanosNatPolicy < Puppet::Provider::PanosProvider
   def munge(entry)
     entry[:bi_directional] = string_to_bool(entry[:bi_directional]) unless entry[:bi_directional].nil?
+    if entry.key?(:source_translation_type) && entry[:source_translation_type].nil?
+      entry[:source_translation_type] = 'none'
+    end
     entry
   end
 
@@ -30,7 +33,7 @@ class Puppet::Provider::PanosNatPolicy::PanosNatPolicy < Puppet::Provider::Panos
   def xml_from_should(name, should)
     builder = Builder::XmlMarkup.new
     builder.entry('name' => name) do
-      if should[:source_translation_type]
+      if should[:source_translation_type] && should[:source_translation_type] != 'none'
         builder.__send__('source-translation') do
           builder.__send__(should[:source_translation_type]) do
             if should[:fallback_address_type]

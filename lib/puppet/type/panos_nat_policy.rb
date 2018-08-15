@@ -61,7 +61,7 @@ Puppet::ResourceApi.register_type(
       xpath_array: 'destination/member/text()',
     },
     source_translation_type: {
-      type:       'Optional[Enum["dynamic-ip", "static-ip", "dynamic-ip-and-port"]]',
+      type:       'Optional[Enum["dynamic-ip", "static-ip", "dynamic-ip-and-port", "none"]]',
       desc:       'The translation applied to the source IP.',
       xpath:      'local-name(source-translation/*[1])',
     },

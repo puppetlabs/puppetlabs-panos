@@ -75,7 +75,7 @@ panos_zone {
   'source_zone':
     ensure                     => 'present',
     network                    => 'layer3',
-    # interfaces                 => ['vlan'], 
+    # interfaces                 => ['vlan'],
     #  zone_protection_profile => 'zoneProtectionProfile',
     # log_setting             => 'logSetting',
     enable_user_identification => true,
@@ -132,6 +132,14 @@ panos_nat_policy {
       destination_address       => ['destination_address'],
       source_translation_type   => 'dynamic-ip-and-port',
       source_translated_address => ['SAT_address'];
+  'UnsetSourceTranslationType':
+      ensure                  => 'present',
+      source_zones            => ['source_zone'],
+      destination_zones       => ['destination_zone'],
+      service                 => 'any',
+      source_address          => ['source_address'],
+      destination_address     => ['destination_address'],
+      source_translation_type => 'none';
 }
 
 panos_security_policy_rule  {
@@ -141,7 +149,7 @@ panos_security_policy_rule  {
     ensure       =>  'present',
     action       =>  'deny',
     profile_type =>  'group',
-    # group_profile       => 'Custom profile type', 
+    # group_profile       => 'Custom profile type',
     log_start    =>  true,
     qos_type     =>  'ip-dscp',
     ip_dscp      =>  'af11';
@@ -153,7 +161,7 @@ panos_security_policy_rule  {
     spyware_profile           =>  'default',
     url_filtering_profile     =>  'default',
     file_blocking_profile     =>  'none',
-    # data_filtering_profile  =>  'Custom profile type', 
+    # data_filtering_profile  =>  'Custom profile type',
     wildfire_analysis_profile =>  'default';
   'QoS Marking settings':
     ensure   =>  'present',

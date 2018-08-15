@@ -7,6 +7,52 @@ require 'puppet/provider/panos_nat_policy/panos_nat_policy'
 RSpec.describe Puppet::Provider::PanosNatPolicy::PanosNatPolicy do
   subject(:provider) { described_class.new }
 
+  describe 'munge(entry)' do
+    context 'when boolean values are found in the entry' do
+      let(:entry) do
+        {
+          name: 'foo',
+          bi_directional: in_value,
+        }
+      end
+      let(:munged_entry) do
+        {
+          name: 'foo',
+          bi_directional: out_value,
+        }
+      end
+
+      context 'when :bi_directional is `yes`' do
+        let(:in_value) { 'Yes' }
+        let(:out_value) { true }
+
+        it { expect(provider.munge(entry)).to eq(munged_entry) }
+      end
+      context 'when :bi_directional is `yes`' do
+        let(:in_value) { 'No' }
+        let(:out_value) { false }
+
+        it { expect(provider.munge(entry)).to eq(munged_entry) }
+      end
+    end
+    context 'when :source_translation_type is nil' do
+      let(:entry) do
+        {
+          name: 'foo',
+          source_translation_type: nil,
+        }
+      end
+      let(:munged_entry) do
+        {
+          name: 'foo',
+          source_translation_type: 'none',
+        }
+      end
+
+      it { expect(provider.munge(entry)).to eq(munged_entry) }
+    end
+  end
+
   describe 'validate_should(should)' do
     context 'When no validation is required' do
       let(:expected_hash) do
