@@ -3,7 +3,19 @@
 panos_address {
   'address-3':
     ip_range    => '192.168.0.1-192.168.0.17',
-    description => '<eas&lt;yxss/>',
+    description => '<eas&lt;yxss/>';
+  'source_address':
+    ip_netmask => '10.20.1.0';
+  'SAT_address':
+    ip_netmask => '10.20.1.1';
+  'SAT_static_address':
+    ip_netmask => '10.30.1.0/32';
+  'fallback_address':
+    ip_netmask  => '10.10.1.0';
+  'destination_address':
+    ip_netmask => '10.30.1.0';
+  'DAT_address':
+    ip_netmask => '10.30.1.1';
 }
 
 panos_address_group {
@@ -60,21 +72,20 @@ panos_service_group {
 }
 
 panos_zone {
-  'test zone':
+  'source_zone':
     ensure                     => 'present',
     network                    => 'layer3',
-    # interfaces                 => ['vlan'], 
+    # interfaces                 => ['vlan'],
     #  zone_protection_profile => 'zoneProtectionProfile',
     # log_setting             => 'logSetting',
     enable_user_identification => true,
-    # nsx_service_profile      => true,
-    include_list               => ['192.35.26.32', '192.63.95.86'],
-    exclude_list               => ['175.65.98.36', '175.82.36.96'],
-}
-
-panos_commit {
-  'commit':
-    commit => true
+    nsx_service_profile        => false;
+  'destination_zone':
+    ensure                     => 'present',
+    network                    => 'layer3',
+    # interfaces                 => ['vlan.3'],
+    enable_user_identification => true,
+    nsx_service_profile        => false;
 }
 
 panos_tag {
@@ -84,6 +95,53 @@ panos_tag {
     comments => 'comments 123',
 }
 
+panos_nat_policy {
+  'FullTestNATPolicy':
+      ensure                         => 'present',
+      source_translation_type        => 'dynamic-ip',
+      source_translated_address      => ['SAT_address'],
+      description                    => 'something interesting',
+      destination_translated_address => 'DAT_address',
+      destination_translated_port    => '5',
+      fallback_address_type          => 'translated-address',
+      fallback_address               => ['fallback_address'],
+      source_zones                   => ['source_zone'],
+      destination_zones              => ['destination_zone'],
+      source_address                 => ['source_address'],
+      destination_address            => ['destination_address'],
+      service                        => 'ftp',
+      # destination_interface          => 'vlan.2',
+      tags                           => ['Test Tag'];
+  'StaticIPSATPolicy':
+      ensure                           => 'present',
+      source_translation_type          => 'static-ip',
+      source_translated_static_address => 'SAT_static_address',
+      bi_directional                   => true,
+      source_zones                     => ['source_zone'],
+      destination_zones                => ['destination_zone'],
+      source_address                   => ['source_address'],
+      destination_address              => ['destination_address'],
+      service                          => 'any',
+      destination_interface            => 'any';
+  'DynamicIPandPortPolicy':
+      ensure                    => 'present',
+      source_zones              => ['source_zone'],
+      destination_zones         => ['destination_zone'],
+      service                   => 'any',
+      source_address            => ['source_address'],
+      destination_address       => ['destination_address'],
+      source_translation_type   => 'dynamic-ip-and-port',
+      source_translated_address => ['SAT_address'];
+  'UnsetSourceTranslationType':
+      ensure                  => 'present',
+      source_zones            => ['source_zone'],
+      destination_zones       => ['destination_zone'],
+      service                 => 'any',
+      source_address          => ['source_address'],
+      destination_address     => ['destination_address'],
+      source_translation_type => 'none';
+}
+
 panos_security_policy_rule  {
   'Default security policy rule':
     ensure       =>  'present';
@@ -91,7 +149,7 @@ panos_security_policy_rule  {
     ensure       =>  'present',
     action       =>  'deny',
     profile_type =>  'group',
-    # group_profile       => 'Custom profile type', 
+    # group_profile       => 'Custom profile type',
     log_start    =>  true,
     qos_type     =>  'ip-dscp',
     ip_dscp      =>  'af11';
@@ -103,7 +161,7 @@ panos_security_policy_rule  {
     spyware_profile           =>  'default',
     url_filtering_profile     =>  'default',
     file_blocking_profile     =>  'none',
-    # data_filtering_profile  =>  'Custom profile type', 
+    # data_filtering_profile  =>  'Custom profile type',
     wildfire_analysis_profile =>  'default';
   'QoS Marking settings':
     ensure   =>  'present',
@@ -130,4 +188,9 @@ panos_security_policy_rule  {
   'Disable a Security Policy Rule':
     ensure  => 'present',
     disable =>  true;
+}
+
+panos_commit {
+  'commit':
+    commit => true
 }
