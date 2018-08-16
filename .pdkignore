@@ -22,3 +22,5 @@
 /convert_report.txt
 /update_report.txt
 .DS_Store
+spec/fixtures/acceptance-credentials.conf
+spec/fixtures/acceptance-device.conf
