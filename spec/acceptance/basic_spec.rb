@@ -1,7 +1,7 @@
 require 'spec_helper_acceptance'
 
 describe 'basic palo alto config' do
-  let(:common_args) { '--detailed-exitcodes --verbose --trace --strict=error --libdir lib --modulepath spec/fixtures/modules --deviceconfig spec/fixtures/acceptance-device.conf --target sut' }
+  let(:common_args) { '--detailed-exitcodes --verbose --debug --trace --strict=error --libdir lib --modulepath spec/fixtures/modules --deviceconfig spec/fixtures/acceptance-device.conf --target sut' }
 
   let(:result) do
     puts "Executing `puppet device #{common_args} #{args}`" if debug_output?
