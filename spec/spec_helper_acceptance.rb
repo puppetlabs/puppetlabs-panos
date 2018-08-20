@@ -43,6 +43,8 @@ RSpec.configure do |c|
       raise 'Could not locate or create a test host'
     end
 
+    puts "Detected #{@platform} config for #{@hostname}"
+
     File.open('spec/fixtures/acceptance-credentials.conf', 'w') do |file|
       file.puts <<CREDENTIALS
 host: #{@hostname}
