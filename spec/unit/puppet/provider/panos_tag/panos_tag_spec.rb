@@ -16,6 +16,47 @@ RSpec.describe Puppet::Provider::PanosTag::PanosTag do
     end
   end
 
+  describe '#canonicalize(_context, resources)' do
+    let(:resource) do
+      [
+        {
+          foo: 'bar',
+          color: color,
+        },
+      ]
+    end
+    let(:canonicalised_resource) do
+      [
+        {
+          foo: 'bar',
+          color: 'red',
+        },
+      ]
+    end
+
+    context 'when resource contains the color `red`' do
+      let(:color) { 'red' }
+
+      it { expect(panos_tag.canonicalize(nil, resource)).to eq canonicalised_resource }
+    end
+    context 'when resource contains the color `RED`' do
+      let(:color) { 'RED' }
+
+      it { expect(panos_tag.canonicalize(nil, resource)).to eq canonicalised_resource }
+    end
+    context 'when resource does not contain a color' do
+      let(:resource) do
+        [
+          {
+            foo: 'bar',
+          },
+        ]
+      end
+
+      it { expect(panos_tag.canonicalize(nil, resource)).to eq resource }
+    end
+  end
+
   describe 'validate_should(should)' do
     context 'when an invalid color is provided' do
       let(:entry) { { color: 'cotton' } }
@@ -24,6 +65,11 @@ RSpec.describe Puppet::Provider::PanosTag::PanosTag do
     end
     context 'when an valid color is provided' do
       let(:entry) { { color: 'red' } }
+
+      it { expect { panos_tag.validate_should(entry) }.not_to raise_error }
+    end
+    context 'when a color is not provided' do
+      let(:entry) { { name: 'red' } }
 
       it { expect { panos_tag.validate_should(entry) }.not_to raise_error }
     end
