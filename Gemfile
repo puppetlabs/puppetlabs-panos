@@ -1,7 +1,7 @@
 source ENV['GEM_SOURCE'] || 'https://rubygems.org'
 
 def location_for(place_or_version, fake_version = nil)
-  if place_or_version =~ %r{\A(git[:@][^#]*)#(.*)}
+  if place_or_version =~ %r{\A((?:https|git)[:@][^#]*)#(.*)}
     [fake_version, { git: Regexp.last_match(1), branch: Regexp.last_match(2), require: false }].compact
   elsif place_or_version =~ %r{\Afile:\/\/(.*)}
     ['>= 0', { path: File.expand_path(Regexp.last_match(1)), require: false }]
@@ -11,7 +11,7 @@ def location_for(place_or_version, fake_version = nil)
 end
 
 def gem_type(place_or_version)
-  if place_or_version =~ %r{\Agit[:@]}
+  if place_or_version =~ %r{\A(https|git)[:@]}
     :git
   elsif !place_or_version.nil? && place_or_version.start_with?('file:')
     :file
