@@ -190,6 +190,19 @@ panos_security_policy_rule  {
     disable =>  true;
 }
 
+panos_arbitrary_commands  {
+  'application-group':
+    ensure    => 'present',
+    xml       => '<application-group>
+                    <entry name="Application Group">
+                      <members>
+                        <member>1c-enterprise</member>
+                      </members>
+                    </entry>
+                  </application-group>';
+    # xml       => file('MODULENAME/file.xml');
+}
+
 panos_commit {
   'commit':
     commit => true

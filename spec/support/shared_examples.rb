@@ -13,3 +13,11 @@ RSpec.shared_examples 'munge(entry)' do |test_data, provider|
     end
   end
 end
+
+RSpec.shared_examples 'str_from_xml(xml)' do |test_data, provider|
+  test_data.each do |test|
+    it "executes correct conversion for `#{test[:desc]}`" do
+      expect(provider.str_from_xml(test[:raw_xml])).to eq(test[:parsed_xml])
+    end
+  end
+end
