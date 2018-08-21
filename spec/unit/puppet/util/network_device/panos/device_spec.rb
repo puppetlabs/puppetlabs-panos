@@ -102,6 +102,25 @@ RSpec.describe Puppet::Util::NetworkDevice::Panos do
         end
       end
 
+      describe '#import(file_path, category)' do
+        let(:file_path) { '/some/file/path/file.txt' }
+        let(:category) { 'foo' }
+
+        it 'calls the api correctly' do
+          expect(api).to receive(:upload).with('import', file_path, category: category)
+          device.import(file_path, category)
+        end
+      end
+
+      describe '#load_config(file_name)' do
+        let(:file_name) { 'file.txt' }
+
+        it 'calls the api correctly' do
+          expect(api).to receive(:request).with('op', cmd: %r{#{file_name}})
+          device.load_config(file_name)
+        end
+      end
+
       describe '#outstanding_changes?' do
         context 'when there are outstanding changes' do
           let(:xml_response) { REXML::Document.new('<response><result>yes</result></response>') }
@@ -164,6 +183,16 @@ RSpec.describe Puppet::Util::NetworkDevice::Panos do
         .to_return(options)
     end
 
+    def stub_upload_request(**options)
+      stub_request(:post, 'https://www.example.com/api/?key=APIKEY&type=THETYPE&category=CATEGORY')
+        .to_return(options)
+      # Error: "WebMock does not support matching body for multipart/form-data requests yet"
+      # .with(body: /filename=\"#{file_name}\".*#{Regexp.escape(file_content)}/m,
+      #       headers: {
+      #         'Content-Type' => /multipart\/form-data/
+      #       })
+    end
+
     describe '#fetch_apikey(user, password)' do
       context 'with valid username and password' do
         it 'fetches the API key' do
@@ -196,6 +225,52 @@ RSpec.describe Puppet::Util::NetworkDevice::Panos do
         expect(instance.apikey).to eq 'SOMEKEY'
 
         expect(a_request(:get, 'https://www.example.com/api/?password=password&type=keygen&user=user')).to have_been_made.once
+      end
+    end
+
+    describe '#upload(file_name, file_content, **options)' do
+      let(:credentials) { super().merge('apikey' => 'APIKEY') }
+      let(:doc) { instance.upload('THETYPE', '/path/to/file/test.txt', category: 'CATEGORY') }
+      let(:file_content) { '<test>some config info</test>' }
+
+      before(:each) do
+        allow(File).to receive(:exist?).and_return(true)
+        allow(File).to receive(:open).and_return(file_content)
+      end
+
+      context 'when the API returns success' do
+        before(:each) do
+          stub_upload_request(status: 200, body: "<response status='success'><msg><line>test.txt saved</line></msg></response>")
+        end
+
+        it {
+          doc
+          expect(a_request(:post, 'https://www.example.com/api/?key=APIKEY&type=THETYPE&category=CATEGORY')).to have_been_made.once
+        }
+        it { expect(doc).to be_a REXML::Document }
+        it { expect(doc).to have_xml('response[@status="success"]') }
+      end
+
+      context 'when the file provided does not exist' do
+        it do
+          allow(File).to receive(:exist?).and_return(false)
+          expect { doc }.to raise_error Puppet::ResourceError, 'File: `/path/to/file/test.txt` does not exist'
+        end
+      end
+
+      context 'when the API returns an HTTP error' do
+        it do
+          stub_upload_request(status: 400, body: "<response status='error' code='400'><result><msg>TESTMESSAGE.</msg></result></response>")
+
+          expect { doc }.to raise_error RuntimeError, %r{HTTPBadRequest}
+        end
+      end
+      context 'when the API returns a semantic error' do
+        it do
+          stub_upload_request(status: 200, body: "<response status='error' code='18'><msg><line>Malformed Request</line></msg></response>")
+
+          expect { doc }.to raise_error Puppet::ResourceError, %r{Malformed Request}
+        end
       end
     end
 

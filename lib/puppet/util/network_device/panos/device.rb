@@ -2,6 +2,8 @@ require 'net/http'
 require 'openssl'
 require 'puppet/util/network_device/simple/device'
 require 'rexml/document'
+require 'securerandom'
+require 'cgi'
 
 module Puppet::Util::NetworkDevice::Panos
   # The main connection class to a PAN-OS API endpoint
@@ -58,6 +60,19 @@ module Puppet::Util::NetworkDevice::Panos
       Puppet.debug("Deleting #{xpath}")
       # https://<firewall>/api/?key=apikey&type=config&action=delete&xpath=xpath-value
       api.request('config', action: 'delete', xpath: xpath)
+    end
+
+    def import(file_path, category)
+      Puppet.debug("Importing #{category}")
+      # https://<firewall>/api/?key=apikey&type=import&category=category
+      # POST: File(file_path)
+      api.upload('import', file_path, category: category)
+    end
+
+    def load_config(file_name)
+      Puppet.debug('Loading Config')
+      # https://<firewall>/api/?type=op&cmd=<load><config><from>file_name</from></config></load>
+      api.request('op', cmd: "<load><config><from>#{file_name}</from></config></load>")
     end
 
     def outstanding_changes?
@@ -133,6 +148,40 @@ module Puppet::Util::NetworkDevice::Panos
       uri.query = URI.encode_www_form(params)
 
       res = http.get(uri)
+      unless res.is_a?(Net::HTTPSuccess)
+        raise "Error: #{res}: #{res.message}"
+      end
+      doc = REXML::Document.new(res.body)
+      handle_response_errors(doc)
+      doc
+    end
+
+    def upload(type, file, **options)
+      params = { type: type, key: apikey }
+      params.merge!(options)
+
+      uri = URI::HTTP.build(path: '/api/')
+      uri.query = URI.encode_www_form(params)
+
+      raise Puppet::ResourceError, "File: `#{file}` does not exist" unless File.exist?(file)
+
+      # from: http://www.rubyinside.com/nethttp-cheat-sheet-2940.html
+      # Token used to terminate the file in the post body.
+      @boundary ||= SecureRandom.hex(25)
+
+      post_body = []
+      post_body << "--#{@boundary}\r\n"
+      post_body << "Content-Disposition: form-data; name=\"file\"; filename=\"#{CGI.escape(File.basename(file))}\"\r\n"
+      post_body << "Content-Type: text/plain\r\n"
+      post_body << "\r\n"
+      post_body << File.open(file, 'rb') { |f| f.read }
+      post_body << "\r\n--#{@boundary}--\r\n"
+
+      request = Net::HTTP::Post.new(uri.request_uri)
+      request.body = post_body.join
+      request.content_type = "multipart/form-data, boundary=#{@boundary}"
+
+      res = http.request(request)
       unless res.is_a?(Net::HTTPSuccess)
         raise "Error: #{res}: #{res.message}"
       end
