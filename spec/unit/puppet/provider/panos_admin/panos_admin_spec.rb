@@ -9,12 +9,6 @@ RSpec.describe Puppet::Provider::PanosAdmin::PanosAdmin do
 
   describe 'munge(entry)' do
     context 'when is :ssh_key is found in the entry' do
-      let(:entry) do
-        {
-          name: 'foo',
-          ssh_key: 'dGVzdA==',
-        }
-      end
       let(:decoded_entry) do
         {
           name: 'foo',
@@ -22,8 +16,28 @@ RSpec.describe Puppet::Provider::PanosAdmin::PanosAdmin do
         }
       end
 
-      it { expect(provider.munge(entry)).to eq(decoded_entry) }
+      context 'with new lines' do
+        let(:entry) do
+          {
+            name: 'foo',
+            ssh_key: "\ndGVzdA==\n\n",
+          }
+        end
+
+        it { expect(provider.munge(entry)).to eq(decoded_entry) }
+      end
+      context 'with no new lines' do
+        let(:entry) do
+          {
+            name: 'foo',
+            ssh_key: 'dGVzdA==',
+          }
+        end
+
+        it { expect(provider.munge(entry)).to eq(decoded_entry) }
+      end
     end
+
     context 'when is :ssh_key is NOT found in the entry' do
       let(:entry) do
         {
