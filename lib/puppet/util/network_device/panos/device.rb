@@ -111,7 +111,7 @@ module Puppet::Util::NetworkDevice::Panos
       uri = URI::HTTP.build(path: '/api/')
       params = { type: 'keygen', user: user, password: password }
       uri.query = URI.encode_www_form(params)
-      Puppet.debug(uri)
+
       res = http.get(uri)
       unless res.is_a?(Net::HTTPSuccess)
         raise "Error: #{res}: #{res.message}"
