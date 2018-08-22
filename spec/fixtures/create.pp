@@ -55,40 +55,60 @@ panos_admin {
 }
 
 panos_service {
-  # namespace overlap with panos_address: '<![CDATA[ minimal 'minimal' is already in use]]>'
-  'minimal service group':
-    ensure   => 'present',
-    protocol => 'tcp',
-    src_port => '21';
-  'Application':
+  'minimal':
+    ensure    => 'present',
+    port      => '21';
+  'description':
     ensure      => 'present',
-    description => 'Demo App',
-    protocol    => 'tcp',
-    dest_port   => '3478-3479',
-    src_port    => '12345',
-    tags        => [];
-  'Comms':
+    port        => '21',
+    description => 'This is managed by Puppet.';
+  'source port':
     ensure      => 'present',
-    description => 'Voice Chat',
+    port        => '21',
+    src_port    => '23',
+    description => 'This is managed by Puppet.';
+  'udp_description':
+    ensure      => 'present',
+    port        => '21',
     protocol    => 'udp',
-    dest_port   => '8888,8881,8882',
-    src_port    => '1234,3214,5432',
-    tags        => [];
-  'ftp':
+    description => 'This is managed by Puppet.';
+  'udp_source port':
     ensure      => 'present',
-    description => 'ftp server',
-    protocol    => 'tcp',
-    dest_port   => '21',
-    tags        => [];
+    port        => '15',
+    src_port    => '23',
+    protocol    => 'udp',
+    description => 'This is managed by Puppet.';
+  'csv ports':
+    ensure      => 'present',
+    port        => '17, 42, 53',
+    src_port    => '21, 25, 80',
+    description => 'This is managed by Puppet.';
+  'udp_csv ports':
+    ensure      => 'present',
+    port        => '21, 25, 80',
+    src_port    => '21, 24, 82',
+    protocol    => 'udp',
+    description => 'This is managed by Puppet.';
+  'range ports':
+    ensure      => 'present',
+    port        => '21-61',
+    src_port    => '23-82',
+    description => 'This is managed by Puppet.';
+  'udp_range ports':
+    ensure      => 'present',
+    port        => '25-37',
+    src_port    => '20-57',
+    protocol    => 'udp',
+    description => 'This is managed by Puppet.';
 }
 
 panos_service_group {
-  'minimal':
+  'minimal service group':
     ensure   => 'present',
-    services => ['ftp'];
+    services => ['udp_source port'];
   'test group 1':
     ensure   => 'present',
-    services => ['ftp'],
+    services => ['udp_source port'],
     tags     => [],
 }
 
