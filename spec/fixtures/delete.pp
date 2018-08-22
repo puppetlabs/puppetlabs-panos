@@ -41,8 +41,44 @@ panos_nat_policy {
 }
 
 panos_security_policy_rule  {
-  'Default security policy rule':
-    ensure => absent;
+  'minimal':
+    ensure => 'absent';
+  'description':
+    ensure => 'absent';
+  'universal':
+    ensure => 'absent';
+  'intrazone':
+    ensure => 'absent';
+  'interzone':
+    ensure => 'absent';
+  'tags':
+    ensure => 'absent';
+  'sources':
+    ensure => 'absent';
+  'destination':
+    ensure => 'absent';
+  'users':
+    ensure => 'absent';
+  'hip-profiles':
+    ensure => 'absent';
+  'applications':
+    ensure => 'absent';
+  'services':
+    ensure => 'absent';
+  'actions':
+    ensure => 'absent';
+  'log-settings':
+    ensure => 'absent';
+  'profile-setting-profiles':
+    ensure => 'absent';
+  'profile-setting-group':
+    ensure => 'absent';
+  'other-settings':
+    ensure =>  'absent';
+  'ip-dscp-settings':
+    ensure =>  'absent';
+  'ip-precedence-settings':
+    ensure =>  'absent';
 }
 
 panos_commit {
