@@ -25,9 +25,43 @@ panos_service_group {
     ensure => absent;
 }
 
+panos_arbitrary_commands {
+  'network/interface/ethernet':
+    ensure  => 'present',
+    xml     => '<ethernet/>';
+}
+
 panos_zone {
-  'source_zone':
+  'minimal':
     ensure => absent;
+  'tap':
+    ensure => absent;
+  'virtual-wire':
+    ensure => absent;
+  'layer2':
+    ensure => absent;
+  'layer3':
+    ensure => absent;
+  'included lists':
+    ensure => absent;
+  'excluded lists':
+    ensure => absent;
+  'user identification':
+    ensure => absent;
+}
+
+if $::facts['operatingsystemrelease'] == '8.1.0' {
+  panos_zone {
+    'tunnel 8.1.0':
+      ensure  => absent;
+  }
+}
+
+if $::facts['operatingsystemrelease'] == '7.1.0' {
+  panos_zone {
+    'nsx_service_profile':
+      ensure              => absent;
+  }
 }
 
 panos_tag {

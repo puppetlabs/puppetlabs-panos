@@ -69,27 +69,88 @@ panos_service_group {
     tags     => [],
 }
 
-panos_zone {
-  'source_zone':
-    ensure                     => 'present',
-    network                    => 'layer3',
-    # interfaces                 => ['vlan'],
-    #  zone_protection_profile => 'zoneProtectionProfile',
-    # log_setting             => 'logSetting',
-    enable_user_identification => false,
-    # nsx_service_profile        => false;
-  'destination_zone':
-    ensure                     => 'present',
-    network                    => 'layer3',
-    # interfaces                 => ['vlan.3'],
-    enable_user_identification => true,
-    # nsx_service_profile        => $facts['osversion'] ? { '8.1' => true, default => false };
+panos_arbitrary_commands {
+  'network/interface/ethernet':
+    ensure  => 'present',
+    xml     => '<ethernet>
+                  <entry name="ethernet1/1">
+                    <layer2/>
+                  </entry>
+                  <entry name="ethernet1/2">
+                    <virtual-wire>
+                      <lldp>
+                        <enable>no</enable>
+                      </lldp>
+                    </virtual-wire>
+                  </entry>
+                  <entry name="ethernet1/3">
+                    <layer3/>
+                  </entry>
+                  <entry name="ethernet1/4">
+                    <virtual-wire>
+                      <lldp>
+                        <enable>no</enable>
+                      </lldp>
+                    </virtual-wire>
+                  </entry>
+                  <entry name="ethernet1/5">
+                    <layer3/>
+                  </entry>
+                  <entry name="ethernet1/6">
+                    <tap/>
+                  </entry>
+                  <entry name="ethernet1/7">
+                    <layer2/>
+                  </entry>
+                  <entry name="ethernet1/10">
+                    <tap/>
+                  </entry>
+                </ethernet>';
 }
 
-# TODO:
-if $::facts['osversion'] == '8.1' {
-  Panos_zone['destination_zone'] {
-    nsx_service_profile => true
+panos_zone {
+  'minimal':
+    ensure                     => 'present';
+  'tap':
+    ensure                     => 'present',
+    network                    => 'tap',
+    interfaces                 => ['ethernet1/6'];
+  'virtual-wire':
+    ensure                     => 'present',
+    network                    => 'virtual-wire',
+    interfaces                 => ['ethernet1/2', 'ethernet1/4'];
+  'layer2':
+    ensure                     => 'present',
+    network                    => 'layer2',
+    interfaces                 => ['ethernet1/1', 'ethernet1/7'];
+  'layer3':
+    ensure                     => 'present',
+    network                    => 'layer3',
+    interfaces                 => ['ethernet1/3'];
+  'included lists':
+    ensure                     => 'present',
+    include_list               => ['10.10.10.22', '192.168.1.1'];
+  'excluded lists':
+    ensure                     => 'present',
+    exclude_list               => ['10.10.10.22', '192.168.1.1'];
+  'user identification':
+    ensure                     => 'present',
+    enable_user_identification => false;
+}
+
+if $::facts['operatingsystemrelease'] == '8.1.0' {
+  panos_zone {
+    'nsx_service_profile':
+      ensure  => 'present',
+      network => 'tunnel';
+  }
+}
+
+if $::facts['operatingsystemrelease'] == '7.1.0' {
+  panos_zone {
+    'nsx_service_profile':
+      ensure              => 'present',
+      nsx_service_profile => false;
   }
 }
 
@@ -254,7 +315,7 @@ panos_security_policy_rule  {
 }
 
 panos_arbitrary_commands  {
-  'application-group':
+  'vsys/entry/application-group':
     ensure    => 'present',
     xml       => '<application-group>
                     <entry name="Application Group">

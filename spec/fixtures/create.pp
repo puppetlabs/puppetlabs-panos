@@ -89,23 +89,76 @@ panos_service_group {
     tags     => [],
 }
 
+panos_arbitrary_commands {
+  'network/interface/ethernet':
+    ensure  => 'present',
+    xml     => '<ethernet>
+                  <entry name="ethernet1/1">
+                    <layer2/>
+                  </entry>
+                  <entry name="ethernet1/2">
+                    <virtual-wire>
+                      <lldp>
+                        <enable>no</enable>
+                    </lldp>
+                    </virtual-wire>
+                  </entry>
+                  <entry name="ethernet1/3">
+                    <layer3/>
+                  </entry>
+                  <entry name="ethernet1/5">
+                    <layer3/>
+                  </entry>
+                  <entry name="ethernet1/10">
+                    <tap/>
+                  </entry>
+                </ethernet>';
+}
+
 panos_zone {
   'minimal':
     ensure                     => 'present';
-  'source_zone':
+  'tap':
+    ensure                     => 'present',
+    network                    => 'tap',
+    interfaces                 => ['ethernet1/10'];
+  'virtual-wire':
+    ensure                     => 'present',
+    network                    => 'virtual-wire',
+    interfaces                 => ['ethernet1/2'];
+  'layer2':
+    ensure                     => 'present',
+    network                    => 'layer2',
+    interfaces                 => ['ethernet1/1'];
+  'layer3':
     ensure                     => 'present',
     network                    => 'layer3',
-    # interfaces                 => ['vlan'],
-    #  zone_protection_profile => 'zoneProtectionProfile',
-    # log_setting             => 'logSetting',
-    enable_user_identification => true,
-    nsx_service_profile        => false;
-  'destination_zone':
+    interfaces                 => ['ethernet1/3', 'ethernet1/5'];
+  'included lists':
     ensure                     => 'present',
-    network                    => 'layer3',
-    # interfaces                 => ['vlan.3'],
-    enable_user_identification => true,
-    nsx_service_profile        => false;
+    include_list               => ['10.10.10.10', '192.168.1.1'];
+  'excluded lists':
+    ensure                     => 'present',
+    exclude_list               => ['10.10.10.10', '192.168.1.1'];
+  'user identification':
+    ensure                     => 'present',
+    enable_user_identification => true;
+}
+
+if $::facts['operatingsystemrelease'] == '8.1.0' {
+  panos_zone {
+    'nsx_service_profile':
+      ensure  => 'present',
+      network => 'tunnel';
+  }
+}
+
+if $::facts['operatingsystemrelease'] == '7.1.0' {
+  panos_zone {
+    'nsx_service_profile':
+      ensure              => 'present',
+      nsx_service_profile => false;
+  }
 }
 
 panos_tag {
@@ -270,6 +323,22 @@ panos_security_policy_rule  {
     qos_type                            =>  'ip-precedence',
     ip_precedence                       =>  'cs0',
     disable_server_response_inspection  =>  true;
+}
+
+if $::facts['operatingsystemrelease'] == '8.1.0' {
+  panos_zone {
+    'tunnel 8.1.0':
+      ensure  => 'present',
+      network => 'tunnel';
+  }
+}
+
+if $::facts['operatingsystemrelease'] == '7.1.0' {
+  panos_zone {
+    'nsx_service_profile':
+      ensure              => 'present',
+      nsx_service_profile => true;
+  }
 }
 
 panos_commit {

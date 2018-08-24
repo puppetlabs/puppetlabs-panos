@@ -75,6 +75,18 @@ RSpec.describe Puppet::Provider::PanosZone::PanosZone do
 
       it { expect { provider.validate_should(should_hash) }.to raise_error Puppet::ResourceError, %r{Interfaces cannot be used with NSX Service Profile.} }
     end
+    context 'when a `tunnel` supplied for `network`, but has also selected interfaces' do
+      let(:should_hash) do
+        {
+          name: 'panos_zone 2',
+          ensure: 'present',
+          network: 'tunnel',
+          interfaces: ['vlan'],
+        }
+      end
+
+      it { expect { provider.validate_should(should_hash) }.to raise_error Puppet::ResourceError, %r{Interfaces cannot be used when `network` is set to `tunnel`.} }
+    end
   end
   test_data = [
     {
@@ -188,6 +200,37 @@ RSpec.describe Puppet::Provider::PanosZone::PanosZone do
               </user-acl>
               <enable-user-identification>yes</enable-user-identification>
               <nsx-service-profile>yes</nsx-service-profile>
+          </entry>',
+    },
+    {
+      desc: 'an example with `enable_packet_buffer_protection` enabled',
+      attrs: {
+        name:                             'test zone 4',
+        ensure:                           'present',
+        network:                          'virtual-wire',
+        enable_packet_buffer_protection:  true,
+      },
+      xml: '<entry name="test zone 4">
+              <network>
+                <virtual-wire/>
+                <enable-packet-buffer-protection>yes</enable-packet-buffer-protection>
+              </network>
+          </entry>',
+    },
+    {
+      desc: 'an example with `enable_packet_buffer_protection`, `enable_user_identification` and `nsx_service_profile` disabled',
+      attrs: {
+        name:                             'test zone 4',
+        ensure:                           'present',
+        network:                          'virtual-wire',
+        enable_packet_buffer_protection:  false,
+        enable_user_identification:       false,
+        nsx_service_profile:              false,
+      },
+      xml: '<entry name="test zone 4">
+              <network>
+                <virtual-wire/>
+              </network>
           </entry>',
     },
     {
