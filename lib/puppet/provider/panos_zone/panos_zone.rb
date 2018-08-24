@@ -5,11 +5,11 @@ require 'builder'
 # Implementation for the panos_tags type using the Resource API.
 class Puppet::Provider::PanosZone::PanosZone < Puppet::Provider::PanosProvider
   def munge(entry)
-    if entry.key? :enable_user_identification
-      entry[:enable_user_identification] = string_to_bool(entry[:enable_user_identification])
-    end
-    if entry.key? :nsx_service_profile
-      entry[:nsx_service_profile] = string_to_bool(entry[:nsx_service_profile])
+    bool_attrs = [:enable_user_identification, :enable_packet_buffer_protection, :nsx_service_profile]
+    bool_attrs.each do |attr|
+      if entry.key? attr
+        entry[attr] = string_to_bool(entry[attr])
+      end
     end
     entry
   end
@@ -29,6 +29,7 @@ class Puppet::Provider::PanosZone::PanosZone < Puppet::Provider::PanosProvider
             end
           end
         end
+        builder.__send__('enable-packet-buffer-protection', bool_to_string(should[:enable_packet_buffer_protection])) if should[:enable_packet_buffer_protection]
         builder.__send__('zone-protection-profile', should[:zone_protection_profile]) unless should[:zone_protection_profile].nil?
         builder.__send__('log-setting', should[:log_setting]) unless should[:log_setting].nil?
       end
@@ -42,14 +43,17 @@ class Puppet::Provider::PanosZone::PanosZone < Puppet::Provider::PanosProvider
           end
         end
       end
-      builder.__send__('enable-user-identification', 'yes') if should[:enable_user_identification] == true
-      builder.__send__('nsx-service-profile', 'yes') if should[:nsx_service_profile] == true
+      builder.__send__('enable-user-identification', bool_to_string(should[:enable_user_identification])) if should[:enable_user_identification]
+      builder.__send__('nsx-service-profile', bool_to_string(should[:nsx_service_profile])) if should[:nsx_service_profile]
     end
   end
 
   def validate_should(should)
-    if should[:nsx_service_profile] == true && (!should[:interfaces].nil? || should[:network].nil?) # rubocop:disable Style/GuardClause # line too long
+    if should[:nsx_service_profile] == true && (!should[:interfaces].nil? || should[:network].nil?)
       raise Puppet::ResourceError, 'Interfaces cannot be used with NSX Service Profile, and a network type must be provided.'
+    end
+    if should[:network] == 'tunnel' && !should[:interfaces].nil? # rubocop:disable Style/GuardClause
+      raise Puppet::ResourceError, 'Interfaces cannot be used when `network` is set to `tunnel`.'
     end
   end
 end
