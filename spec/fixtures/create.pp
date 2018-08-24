@@ -328,22 +328,6 @@ panos_security_policy_rule  {
     disable_server_response_inspection  =>  true;
 }
 
-if $::facts['operatingsystemrelease'] == '8.1.0' {
-  panos_zone {
-    'tunnel 8.1.0':
-      ensure  => 'present',
-      network => 'tunnel';
-  }
-}
-
-if $::facts['operatingsystemrelease'] == '7.1.0' {
-  panos_zone {
-    'nsx_service_profile':
-      ensure              => 'present',
-      nsx_service_profile => true;
-  }
-}
-
 panos_commit {
   'commit':
     commit => true

@@ -11,7 +11,7 @@ RSpec.describe 'the panos_security_policy_rule type' do
   end
 
   context 'when `name` exceeds 63 characters' do
-    let(:name) { 'longer string exceeding the 63 character limit on a PAN-OS 8.1.2' }
+    let(:name) { 'longer string exceeding the 63 character limit on a PAN-OS 8.1.0' }
 
     it 'throws an error' do
       expect(name.length).to eq 64
@@ -25,7 +25,7 @@ RSpec.describe 'the panos_security_policy_rule type' do
   end
 
   context 'when `name` does not exceed 63 characters' do
-    let(:name) { 'the shorter string within a 63 character limit for PAN-OS 8.1.2' }
+    let(:name) { 'the shorter string within a 63 character limit for PAN-OS 8.1.0' }
 
     it 'does not throw an error' do
       expect(name.length).to eq 63
