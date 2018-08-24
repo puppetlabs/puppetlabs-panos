@@ -254,7 +254,7 @@ panos_security_policy_rule  {
 }
 
 panos_arbitrary_commands  {
-  'application-group':
+  'vsys/entry/application-group':
     ensure    => 'present',
     xml       => '<application-group>
                     <entry name="Application Group">
