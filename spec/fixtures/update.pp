@@ -16,6 +16,8 @@ panos_address {
     ip_netmask => '10.30.1.0';
   'DAT_address':
     ip_netmask => '10.30.1.1';
+  'fqdn':
+    fqdn  =>  'google-public-dns-b.google.com';
 }
 
 panos_address_group {

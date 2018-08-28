@@ -2,7 +2,8 @@
 
 panos_address {
   'minimal':
-    ensure => 'present';
+    ensure      => 'present',
+    ip_range    => '192.168.0.1-192.168.0.17';
   'address-3':
     ip_range    => '192.168.0.1-192.168.0.17',
     description => '<eas&lt;yxss/>';
@@ -18,6 +19,8 @@ panos_address {
     ip_netmask => '10.30.1.0';
   'DAT_address':
     ip_netmask => '10.30.1.1';
+  'fqdn':
+    fqdn => 'google-public-dns-a.google.com';
 }
 
 panos_address_group {

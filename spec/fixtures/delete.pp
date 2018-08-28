@@ -1,7 +1,23 @@
 # bundle exec puppet device --modulepath spec/fixtures/modules/ --deviceconfig spec/fixtures/device.conf --target pavm --verbose --trace --apply tests/test_commit.pp
 
 panos_address {
+  'minimal':
+    ensure => absent;
+  'address-3':
+    ensure => absent;
   'source_address':
+    ensure => absent;
+  'SAT_address':
+    ensure => absent;
+  'SAT_static_address':
+    ensure => absent;
+  'fallback_address':
+    ensure => absent;
+  'destination_address':
+    ensure => absent;
+  'DAT_address':
+    ensure => absent;
+  'fqdn':
     ensure => absent;
 }
 
