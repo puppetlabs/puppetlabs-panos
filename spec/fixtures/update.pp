@@ -42,32 +42,58 @@ panos_admin {
 }
 
 panos_service {
-  'Application':
+  'minimal':
+    ensure    => 'present',
+    protocol  => 'udp',
+    port      => '21';
+  'description':
     ensure      => 'present',
-    description => 'Demo App',
-    protocol    => 'tcp',
-    dest_port   => '3478-3480',
-    src_port    => '12345',
-    tags        => [];
-  'Comms':
+    port        => '220',
+    description => 'This is managed by Puppet.';
+  'source port':
     ensure      => 'present',
-    description => 'Voice Chat',
+    port        => '201',
+    src_port    => '259',
+    description => 'This is managed by Puppet.';
+  'udp_description':
+    ensure      => 'present',
+    port        => '220',
     protocol    => 'udp',
-    dest_port   => '8888,8881,8882',
-    src_port    => '1234,3214,5432',
-    tags        => [];
-  'ftp':
+    description => 'This is managed by Puppet.';
+  'udp_source port':
     ensure      => 'present',
-    description => 'ftp server',
-    protocol    => 'tcp',
-    dest_port   => '21',
-    tags        => [];
+    port        => '213',
+    src_port    => '220',
+    protocol    => 'udp',
+    description => 'This is managed by Puppet.';
+  'csv ports':
+    ensure      => 'present',
+    port        => '201, 23, 220',
+    src_port    => '212, 38, 312',
+    description => 'This is managed by Puppet.';
+  'udp_csv ports':
+    ensure      => 'present',
+    port        => '213, 23, 220',
+    src_port    => '56, 38, 47',
+    protocol    => 'udp',
+    description => 'This is managed by Puppet.';
+  'range ports':
+    ensure      => 'present',
+    port        => '212-312',
+    src_port    => '23-50',
+    description => 'This is managed by Puppet.';
+  'udp_range ports':
+    ensure      => 'present',
+    port        => '212-312',
+    src_port    => '17-22',
+    protocol    => 'udp',
+    description => 'This is managed by Puppet.';
 }
 
 panos_service_group {
   'test group 1':
     ensure   => 'present',
-    services => ['ftp', 'Comms'],
+    services => ['udp_range ports', 'csv ports'],
     tags     => [],
 }
 

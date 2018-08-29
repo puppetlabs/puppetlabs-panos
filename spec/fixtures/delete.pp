@@ -36,14 +36,32 @@ panos_admin {
     ensure => absent;
 }
 
-panos_service {
-  'Application':
+panos_service_group {
+  'minimal service group':
+    ensure => absent;
+  'test group 1':
     ensure => absent;
 }
 
-panos_service_group {
-  'test group 1':
-    ensure => absent;
+panos_service {
+  'minimal':
+    ensure  => 'absent';
+  'description':
+    ensure  => 'absent';
+  'source port':
+    ensure  => 'absent';
+  'udp_description':
+    ensure  => 'absent';
+  'udp_source port':
+    ensure  => 'absent';
+  'csv ports':
+    ensure  => 'absent';
+  'udp_csv ports':
+    ensure  => 'absent';
+  'range ports':
+    ensure  => 'absent'; 
+  'udp_range ports':
+    ensure  => 'absent';  
 }
 
 panos_arbitrary_commands {
