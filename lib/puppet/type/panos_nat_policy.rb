@@ -30,13 +30,14 @@ Puppet::ResourceApi.register_type(
       xpath:      'nat-type/text()',
       default:    'ipv4',
     },
-    source_zones: {
-      type:        'Optional[Array[String]]',
+    from: {
+      type:        'Array[String]',
       desc:        'The source zone.',
       xpath_array: 'from/member/text()',
+      default:      ['any'],
     },
-    destination_zones: {
-      type:        'Optional[Array[String]]',
+    to: {
+      type:        'Array[String]',
       desc:        'One or more destination zones for the source packet.',
       xpath_array: 'to/member/text()',
     },
@@ -46,19 +47,22 @@ Puppet::ResourceApi.register_type(
       xpath:      'to-interface/text()',
     },
     service: {
-      type:       'Optional[String]',
+      type:       'String',
       desc:       'The service the firewall is translating for.',
       xpath:      'service/text()',
+      default:    'any',
     },
-    source_address: {
-      type:        'Optional[Array[String]]',
+    source: {
+      type:        'Array[String]',
       desc:        'The source address of the translated packets.',
       xpath_array: 'source/member/text()',
+      default:      ['any'],
     },
-    destination_address: {
-      type:        'Optional[Array[String]]',
+    destination: {
+      type:        'Array[String]',
       desc:        'The destination of the translated packet.',
       xpath_array: 'destination/member/text()',
+      default:      ['any'],
     },
     source_translation_type: {
       type:       'Optional[Enum["dynamic-ip", "static-ip", "dynamic-ip-and-port", "none"]]',

@@ -68,11 +68,9 @@ class Puppet::Provider::PanosNatPolicy::PanosNatPolicy < Puppet::Provider::Panos
           end
         end
       end
-      if should[:destination_zones]
-        builder.to do
-          should[:destination_zones].each do |zone|
-            builder.member(zone)
-          end
+      builder.to do
+        should[:to].each do |zone|
+          builder.member(zone)
         end
       end
       unless should[:destination_translated_address].nil?
@@ -81,29 +79,23 @@ class Puppet::Provider::PanosNatPolicy::PanosNatPolicy < Puppet::Provider::Panos
           builder.__send__('translated-address', should[:destination_translated_address]) if should[:destination_translated_address]
         end
       end
-      if should[:source_zones]
-        builder.from do
-          should[:source_zones].each do |zone|
-            builder.member(zone)
-          end
+      builder.from do
+        should[:from].each do |zone|
+          builder.member(zone)
         end
       end
-      if should[:source_address]
-        builder.source do
-          should[:source_address].each do |addr|
-            builder.member(addr)
-          end
+      builder.source do
+        should[:source].each do |addr|
+          builder.member(addr)
         end
       end
-      if should[:destination_address]
-        builder.destination do
-          should[:destination_address].each do |addr|
-            builder.member(addr)
-          end
+      builder.destination do
+        should[:destination].each do |addr|
+          builder.member(addr)
         end
       end
       build_tags(builder, should) if should[:tags]
-      builder.service(should[:service]) if should[:service]
+      builder.service(should[:service])
       builder.description(should[:description]) if should[:description]
       builder.__send__('to-interface', should[:destination_interface]) if should[:destination_interface]
       builder.__send__('nat-type', should[:nat_type]) if should[:nat_type]

@@ -140,8 +140,6 @@ panos_arbitrary_commands {
 }
 
 panos_zone {
-  'minimal':
-    ensure                     => 'present';
   'tap':
     ensure                     => 'present',
     network                    => 'tap',
@@ -149,21 +147,21 @@ panos_zone {
   'virtual-wire':
     ensure                     => 'present',
     network                    => 'virtual-wire',
-    interfaces                 => ['ethernet1/2', 'ethernet1/4'];
+    interfaces                 => ['ethernet1/4'];
   'layer2':
     ensure                     => 'present',
     network                    => 'layer2',
-    interfaces                 => ['ethernet1/1', 'ethernet1/7'];
+    interfaces                 => ['ethernet1/7'];
   'layer3':
     ensure                     => 'present',
     network                    => 'layer3',
-    interfaces                 => ['ethernet1/3'];
+    interfaces                 => ['ethernet1/3', 'ethernet1/5'];
   'included lists':
     ensure                     => 'present',
-    include_list               => ['10.10.10.22', '192.168.1.1'];
+    include_list               => ['10.10.1.1', '192.168.1.1'];
   'excluded lists':
     ensure                     => 'present',
-    exclude_list               => ['10.10.10.22', '192.168.1.1'];
+    exclude_list               => ['10.10.1.1', '192.168.1.1'];
   'user identification':
     ensure                     => 'present',
     enable_user_identification => false;
@@ -193,6 +191,9 @@ panos_tag {
 }
 
 panos_nat_policy {
+  'minimal':
+    ensure => 'present',
+    to => ['included lists'];
   'FullTestNATPolicy':
       ensure                         => 'present',
       source_translation_type        => 'dynamic-ip',
@@ -202,40 +203,40 @@ panos_nat_policy {
       destination_translated_port    => '5',
       fallback_address_type          => 'translated-address',
       fallback_address               => ['fallback_address'],
-      source_zones                   => ['source_zone'],
-      destination_zones              => ['destination_zone'],
-      source_address                 => ['source_address'],
-      destination_address            => ['destination_address'],
-      service                        => 'ftp',
-      # destination_interface          => 'vlan.2',
+      from                           => ['excluded lists'],
+      to                             => ['included lists'],
+      source                         => ['source_address'],
+      destination                    => ['destination_address'],
+      service                        => 'source port',
+      # destination_interface        => 'vlan.2',
       tags                           => ['Test Tag'];
   'StaticIPSATPolicy':
       ensure                           => 'present',
       source_translation_type          => 'static-ip',
       source_translated_static_address => 'SAT_static_address',
       bi_directional                   => true,
-      source_zones                     => ['source_zone'],
-      destination_zones                => ['destination_zone'],
-      source_address                   => ['source_address'],
-      destination_address              => ['destination_address'],
+      from                             => ['excluded lists'],
+      to                               => ['included lists'],
+      source                           => ['source_address'],
+      destination                      => ['destination_address'],
       service                          => 'any',
       destination_interface            => 'any';
   'DynamicIPandPortPolicy':
       ensure                    => 'present',
-      source_zones              => ['source_zone'],
-      destination_zones         => ['destination_zone'],
+      from                      => ['excluded lists'],
+      to                        => ['included lists'],
       service                   => 'any',
-      source_address            => ['source_address'],
-      destination_address       => ['destination_address'],
+      source                    => ['source_address'],
+      destination               => ['destination_address'],
       source_translation_type   => 'dynamic-ip-and-port',
       source_translated_address => ['SAT_address'];
   'UnsetSourceTranslationType':
       ensure                  => 'present',
-      source_zones            => ['source_zone'],
-      destination_zones       => ['destination_zone'],
+      from                    => ['excluded lists'],
+      to                      => ['included lists'],
       service                 => 'any',
-      source_address          => ['source_address'],
-      destination_address     => ['destination_address'],
+      source                  => ['source_address'],
+      destination             => ['destination_address'],
       source_translation_type => 'none';
 }
 
@@ -301,7 +302,7 @@ panos_security_policy_rule  {
   'actions':
     ensure      => 'present',
     description => 'This is managed by Puppet.',
-    action      => 'allow',  
+    action      => 'allow',
     rule_type   => 'universal';
   'log-settings':
     ensure      => 'present',
