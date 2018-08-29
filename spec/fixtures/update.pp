@@ -46,21 +46,21 @@ panos_service {
     ensure      => 'present',
     description => 'Demo App',
     protocol    => 'tcp',
-    dest_port   => '3478-3480',
+    port        => '3478-3480',
     src_port    => '12345',
     tags        => [];
   'Comms':
     ensure      => 'present',
     description => 'Voice Chat',
     protocol    => 'udp',
-    dest_port   => '8888,8881,8882',
+    port        => '8888,8881,8882',
     src_port    => '1234,3214,5432',
     tags        => [];
   'ftp':
     ensure      => 'present',
     description => 'ftp server',
     protocol    => 'tcp',
-    dest_port   => '21',
+    port        => '21',
     tags        => [];
 }
 
@@ -272,7 +272,7 @@ panos_security_policy_rule  {
   'actions':
     ensure      => 'present',
     description => 'This is managed by Puppet.',
-    action      => 'allow',  
+    action      => 'allow',
     rule_type   => 'universal';
   'log-settings':
     ensure      => 'present',

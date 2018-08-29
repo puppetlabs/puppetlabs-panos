@@ -29,8 +29,8 @@ Puppet::ResourceApi.register_type(
       desc:      'The network protocol ther service runs on.',
       xpath:     'local-name(protocol/*[1])',
     },
-    dest_port: {
-      type:      'Optional[String]',
+    port: {
+      type:      'String',
       desc:      'If not specified, src_port must be. Port can be a single port number, a range `1-65535`, or comma separated values  `80, 8080, 443`',
       xpath:      'protocol/*[1]/port/text()',
     },
