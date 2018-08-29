@@ -37,9 +37,9 @@ panos_admin {
 }
 
 panos_service_group {
-  'minimal service group':
-    ensure => absent;
   'test group 1':
+    ensure => absent;
+  'minimal service group':
     ensure => absent;
 }
 

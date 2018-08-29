@@ -9,7 +9,7 @@ Puppet::ResourceApi.register_type(
   features: ['remote_resource'],
   attributes: {
     name: {
-      type:      'Pattern[/^[a-zA-z0-9\-_\s\.]*$/]',
+      type:      'Pattern[/^[a-zA-z0-9\-_\s\.]{1,63}$/]',
       desc:      'The display-name of the service-group.',
       behaviour: :namevar,
       xpath:      'string(@name)',
@@ -20,15 +20,15 @@ Puppet::ResourceApi.register_type(
       default: 'present',
     },
     services: {
-      type:      'Array[String]',
-      desc:      'An array of `panos_service`, or `panos_service_group` that form this group.',
-      xpath_array:     'members/member/text()',
+      type:         'Array[String]',
+      desc:         'An array of `panos_service`, or `panos_service_group` that form this group.',
+      xpath_array:  'members/member/text()',
     },
     tags: {
-      type:      'Array[String]',
-      desc:      'The Palo Alto tags to apply to this service-group. Do not confuse this with the `tag` metaparameter used to filter resource application.',
-      default:   [],
-      xpath_array:     'tag/member/text()',
+      type:         'Array[String]',
+      desc:         'The Palo Alto tags to apply to this service-group. Do not confuse this with the `tag` metaparameter used to filter resource application.',
+      default:      [],
+      xpath_array:  'tag/member/text()',
     },
   },
   autobefore: {
