@@ -89,6 +89,18 @@ RSpec.describe Puppet::Provider::PanosAddress::PanosAddress do
 
       it { expect { provider.validate_should(should_hash) }.to raise_error Puppet::ResourceError, %r{ip_netmask, ip_range, and fqdn are mutually exclusive fields} }
     end
+    context 'when ip_range, ip_netmask, or fqdn is not provided' do
+      let(:should_hash) do
+        {
+          name: 'address-2',
+          ensure: 'present',
+          description: 'some address',
+          tags: ['a'],
+        }
+      end
+
+      it { expect { provider.validate_should(should_hash) }.to raise_error Puppet::ResourceError, %r{One of the following attributes must be provided: ip_netmask, ip_range, or fqdn} }
+    end
   end
 
   test_data = [

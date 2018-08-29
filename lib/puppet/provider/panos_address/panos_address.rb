@@ -5,8 +5,11 @@ require 'builder'
 # Implementation for the panos_address type using the Resource API.
 class Puppet::Provider::PanosAddress::PanosAddress < Puppet::Provider::PanosProvider
   def validate_should(should)
-    if [should[:ip_netmask], should[:ip_range], should[:fqdn]].compact.size > 1 # rubocop:disable Style/GuardClause # line too long
+    required = [should[:ip_netmask], should[:ip_range], should[:fqdn]].compact.size
+    if required > 1 # rubocop:disable Style/GuardClause
       raise Puppet::ResourceError, 'ip_netmask, ip_range, and fqdn are mutually exclusive fields'
+    elsif required.zero?
+      raise Puppet::ResourceError, 'One of the following attributes must be provided: ip_netmask, ip_range, or fqdn'
     end
   end
 
