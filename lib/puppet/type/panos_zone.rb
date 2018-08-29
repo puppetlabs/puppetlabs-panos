@@ -21,7 +21,7 @@ Puppet::ResourceApi.register_type(
     },
     network: {
       type:            'Enum["tap", "virtual-wire", "layer2", "layer3", "tunnel"]',
-      desc:            'The network type of this zone. Note: `tunnel` can only be set on PAN-OS version 8.1.2.',
+      desc:            'The network type of this zone. Note: `tunnel` can only be set on PAN-OS version 8.1.0.',
       xpath:           'local-name(network/*)',
       default:         'layer3',
     },
@@ -47,7 +47,7 @@ Puppet::ResourceApi.register_type(
     },
     enable_packet_buffer_protection: {
       type:            'Optional[Boolean]',
-      desc:            'Specify if the zone should have packet buffer protection. Note: can only be set on PAN-OS version 8.1.2.',
+      desc:            'Specify if the zone should have packet buffer protection. Note: can only be set on PAN-OS version 8.1.0.',
       xpath:           'network/enable-packet-buffer-protection/text()',
     },
     nsx_service_profile: {
