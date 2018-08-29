@@ -30,9 +30,9 @@ Puppet::ResourceApi.register_type(
       xpath:     'local-name(static|dynamic)',
     },
     static_members: {
-      type:      'Optional[Array[String]]',
-      desc:      'An array of `panos_address`, or `panos_address_group` that form this group. Used only when type is static.',
-      xpath_array:     'static/member/text()',
+      type:         'Optional[Array[String]]',
+      desc:         'An array of `panos_address`, or `panos_address_group` that form this group. Used only when type is static.',
+      xpath_array:  'static/member/text()',
     },
     dynamic_filter: {
       type:      'Optional[String]',
@@ -45,10 +45,10 @@ DESC
       xpath:      'dynamic/filter/text()',
     },
     tags: {
-      type:      'Array[String]',
-      desc:      'The Palo Alto tags to apply to this address-group. Do not confuse this with the `tag` metaparameter used to filter resource application.',
-      default:   [],
-      xpath_array:     'tag/member/text()',
+      type:         'Array[String]',
+      desc:         'The Palo Alto tags to apply to this address-group. Do not confuse this with the `tag` metaparameter used to filter resource application.',
+      default:      [],
+      xpath_array:  'tag/member/text()',
     },
   },
   autobefore: {

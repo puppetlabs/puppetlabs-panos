@@ -22,14 +22,14 @@ panos_address {
 
 panos_address_group {
   'full':
-    description    => 'address group with static contents',
+    description    => 'address group with static contents, and an existing address group',
     type           => 'static',
-    static_members => ['source_address'];
+    static_members => ['source_address', 'minimal address group'];
     # tags           => ['tests'];
-  'empty':
+  'dynamic group':
     description    => 'address group with dynamic contents',
     type           => 'dynamic',
-    dynamic_filter => "'tag1' or 'tag2'";
+    dynamic_filter => "'tag1' or 'tag2' and 'tag3'";
     # tags           => ['tests'],
 }
 
