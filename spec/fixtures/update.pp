@@ -91,10 +91,13 @@ panos_service {
 }
 
 panos_service_group {
+  'minimal service group':
+    ensure   => 'present',
+    services => ['source port'];
   'test group 1':
     ensure   => 'present',
-    services => ['udp_range ports', 'csv ports'],
-    tags     => [],
+    services => ['udp_range ports', 'csv ports', 'minimal service group'],
+    tags     => [];
 }
 
 panos_arbitrary_commands {
