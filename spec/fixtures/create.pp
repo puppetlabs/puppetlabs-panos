@@ -55,35 +55,35 @@ panos_admin {
 }
 
 panos_service {
-  # namespace overlap with panos_address: '<![CDATA[ minimal 'minimal' is already in use]]>'
-  'minimal service group':
+  # namespace overlap with panos_service_group: '<![CDATA[ minimal 'minimal' is already in use]]>'
+  'minimal':
     ensure   => 'present',
     protocol => 'tcp',
-    src_port => '21';
+    port     => '21';
   'Application':
     ensure      => 'present',
     description => 'Demo App',
     protocol    => 'tcp',
-    dest_port   => '3478-3479',
+    port        => '3478-3479',
     src_port    => '12345',
     tags        => [];
   'Comms':
     ensure      => 'present',
     description => 'Voice Chat',
     protocol    => 'udp',
-    dest_port   => '8888,8881,8882',
+    port        => '8888,8881,8882',
     src_port    => '1234,3214,5432',
     tags        => [];
   'ftp':
     ensure      => 'present',
     description => 'ftp server',
     protocol    => 'tcp',
-    dest_port   => '21',
+    port        => '21',
     tags        => [];
 }
 
 panos_service_group {
-  'minimal':
+  'minimal service group':
     ensure   => 'present',
     services => ['ftp'];
   'test group 1':
@@ -284,7 +284,7 @@ panos_security_policy_rule  {
   'actions':
     ensure      => 'present',
     description => 'This is managed by Puppet.',
-    action      => 'deny',  
+    action      => 'deny',
     rule_type   => 'universal';
   'log-settings':
     ensure      => 'present',

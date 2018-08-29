@@ -37,7 +37,13 @@ panos_admin {
 }
 
 panos_service {
+  'minimal':
+    ensure => absent;
   'Application':
+    ensure => absent;
+  'Comms':
+    ensure => absent;
+  'ftp':
     ensure => absent;
 }
 
