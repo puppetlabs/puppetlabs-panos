@@ -4,9 +4,11 @@ require 'support/matchers/have_xml'
 
 RSpec.describe Puppet::Util::NetworkDevice::Panos do
   describe Puppet::Util::NetworkDevice::Panos::Device do
-    let(:device) { described_class.new('file:///') }
-    let(:xml_doc) { REXML::Document.new(device_hash) }
-    let(:device_hash) do
+    let(:device) { described_class.new(device_config) }
+    let(:device_config) { { 'host' => 'www.example.com', 'user' => 'admin', 'password' => 'password' } }
+    let(:api) { instance_double('Puppet::Util::NetworkDevice::Panos::API', 'api') }
+    let(:xml_doc) { REXML::Document.new(device_response) }
+    let(:device_response) do
       '<response status="success">
         <result>
           <sw-version>7.1.0</sw-version>
@@ -15,13 +17,153 @@ RSpec.describe Puppet::Util::NetworkDevice::Panos do
         </result>
       </response>'
     end
-
-    it 'parses facts correctly' do
-      expect(device.parse_device_facts(xml_doc)).to eq('operatingsystem' => 'PA-VM', 'operatingsystemrelease' => '7.1.0', 'multi-vsys' => 'off')
+    let(:fact_hash) do
+      {
+        'operatingsystem' => 'PA-VM',
+        'operatingsystemrelease' => '7.1.0',
+        'multi-vsys' => 'off',
+      }
     end
 
-    describe '#facts' do
-      it 'parses device facts' do
+    it 'parses facts correctly' do
+      expect(device.parse_device_facts(xml_doc)).to eq(fact_hash)
+    end
+
+    context 'with the internal api mocked' do
+      before(:each) do
+        allow(device).to receive(:api).with(no_args).and_return(api)
+      end
+
+      describe '#facts' do
+        context 'when the response returns valid data' do
+          it 'parses device facts' do
+            expect(api).to receive(:request).with('version').and_return(REXML::Document.new(device_response))
+            expect(device.facts).to eq(fact_hash)
+          end
+        end
+      end
+
+      describe '#config' do
+        context 'when host is not provided' do
+          let(:device_config) { { 'user' => 'admin', 'password' => 'password' } }
+
+          it { expect { device.config }.to raise_error Puppet::ResourceError, 'Could not find host in the configuration' }
+        end
+        context 'when port is provided but not valid' do
+          let(:device_config) { { 'host' => 'www.example.com', 'port' => 'foo', 'user' => 'admin', 'password' => 'password' } }
+
+          it { expect { device.config }.to raise_error Puppet::ResourceError, 'The port attribute in the configuration is not an integer' }
+        end
+        context 'when valid user credentials are not provided' do
+          [
+            { 'host' => 'www.example.com', 'user' => 'admin' },
+            { 'host' => 'www.example.com', 'password' => 'password' },
+            { 'host' => 'www.example.com' },
+          ].each do |config|
+            let(:device_config) { config }
+
+            it { expect { device.config }.to raise_error Puppet::ResourceError, 'Could not find user/password or apikey in the configuration' }
+          end
+        end
+        context 'when apikey is provided' do
+          let(:device_config) { { 'host' => 'www.example.com', 'apikey' => 'foo' } }
+
+          it { expect { device.config }.not_to raise_error Puppet::ResourceError }
+        end
+        context 'when username and password is provided' do
+          let(:device_config) { { 'host' => 'www.example.com', 'user' => 'foo', 'password' => 'password' } }
+
+          it { expect { device.config }.not_to raise_error Puppet::ResourceError }
+        end
+      end
+
+      describe 'helper functions' do
+        let(:xpath) { '/some/xpath' }
+        let(:document) { '<xml>test</xml>' }
+
+        it '#get_config(xpath)' do
+          expect(api).to receive(:request).with('config', action: 'get', xpath: xpath)
+          device.get_config(xpath)
+        end
+
+        it '#set_config(xpath, document)' do
+          expect(api).to receive(:request).with('config', action: 'set', xpath: xpath, element: document)
+          device.set_config(xpath, document)
+        end
+
+        it '#edit_config(xpath, document)' do
+          expect(api).to receive(:request).with('config', action: 'edit', xpath: xpath, element: document)
+          device.edit_config(xpath, document)
+        end
+
+        it '#delete_config(xpath)' do
+          expect(api).to receive(:request).with('config', action: 'delete', xpath: xpath)
+          device.delete_config(xpath)
+        end
+      end
+
+      describe '#import(file_path, category)' do
+        let(:file_path) { '/some/file/path/file.txt' }
+        let(:category) { 'foo' }
+
+        it 'calls the api correctly' do
+          expect(api).to receive(:upload).with('import', file_path, category: category)
+          device.import(file_path, category)
+        end
+      end
+
+      describe '#load_config(file_name)' do
+        let(:file_name) { 'file.txt' }
+
+        it 'calls the api correctly' do
+          expect(api).to receive(:request).with('op', cmd: %r{#{file_name}})
+          device.load_config(file_name)
+        end
+      end
+
+      describe '#outstanding_changes?' do
+        context 'when there are outstanding changes' do
+          let(:xml_response) { REXML::Document.new('<response><result>yes</result></response>') }
+
+          it {
+            expect(api).to receive(:request).with('op', anything).and_return(xml_response)
+            expect(device).to be_outstanding_changes
+          }
+        end
+        context 'when there are no outstanding changes' do
+          let(:xml_response) { REXML::Document.new('<response><result>no</result></response>') }
+
+          it {
+            expect(api).to receive(:request).with('op', anything).and_return(xml_response)
+            expect(device).not_to be_outstanding_changes
+          }
+        end
+      end
+
+      describe '#validate' do
+        it 'calls the api correctly' do
+          expect(api).to receive(:job_request).with('op', anything)
+          device.validate
+        end
+      end
+
+      describe '#commit' do
+        it 'calls the api correctly' do
+          expect(api).to receive(:job_request).with('commit', anything)
+          device.commit
+        end
+      end
+    end
+
+    context 'without the internal api mocked' do
+      it 'makes a webcall' do
+        stub_request(:get, 'https://www.example.com/api/?password=password&type=keygen&user=admin')
+          .to_return(status: 200, body: "<response status='success'><result><key>SOMEKEY</key></result></response>")
+
+        stub_request(:get, 'https://www.example.com/api/?key=SOMEKEY&type=version')
+          .to_return(status: 200, body: device_response)
+
+        expect(device.facts).to eq(fact_hash)
       end
     end
   end
@@ -39,6 +181,16 @@ RSpec.describe Puppet::Util::NetworkDevice::Panos do
     def stub_api_request(**options)
       stub_request(:get, 'https://www.example.com/api/?type=THETYPE&key=APIKEY&option_a=ANOPTION')
         .to_return(options)
+    end
+
+    def stub_upload_request(**options)
+      stub_request(:post, 'https://www.example.com/api/?key=APIKEY&type=THETYPE&category=CATEGORY')
+        .to_return(options)
+      # Error: "WebMock does not support matching body for multipart/form-data requests yet"
+      # .with(body: /filename=\"#{file_name}\".*#{Regexp.escape(file_content)}/m,
+      #       headers: {
+      #         'Content-Type' => /multipart\/form-data/
+      #       })
     end
 
     describe '#fetch_apikey(user, password)' do
@@ -73,6 +225,52 @@ RSpec.describe Puppet::Util::NetworkDevice::Panos do
         expect(instance.apikey).to eq 'SOMEKEY'
 
         expect(a_request(:get, 'https://www.example.com/api/?password=password&type=keygen&user=user')).to have_been_made.once
+      end
+    end
+
+    describe '#upload(file_name, file_content, **options)' do
+      let(:credentials) { super().merge('apikey' => 'APIKEY') }
+      let(:doc) { instance.upload('THETYPE', '/path/to/file/test.txt', category: 'CATEGORY') }
+      let(:file_content) { '<test>some config info</test>' }
+
+      before(:each) do
+        allow(File).to receive(:exist?).and_return(true)
+        allow(File).to receive(:open).and_return(file_content)
+      end
+
+      context 'when the API returns success' do
+        before(:each) do
+          stub_upload_request(status: 200, body: "<response status='success'><msg><line>test.txt saved</line></msg></response>")
+        end
+
+        it {
+          doc
+          expect(a_request(:post, 'https://www.example.com/api/?key=APIKEY&type=THETYPE&category=CATEGORY')).to have_been_made.once
+        }
+        it { expect(doc).to be_a REXML::Document }
+        it { expect(doc).to have_xml('response[@status="success"]') }
+      end
+
+      context 'when the file provided does not exist' do
+        it do
+          allow(File).to receive(:exist?).and_return(false)
+          expect { doc }.to raise_error Puppet::ResourceError, 'File: `/path/to/file/test.txt` does not exist'
+        end
+      end
+
+      context 'when the API returns an HTTP error' do
+        it do
+          stub_upload_request(status: 400, body: "<response status='error' code='400'><result><msg>TESTMESSAGE.</msg></result></response>")
+
+          expect { doc }.to raise_error RuntimeError, %r{HTTPBadRequest}
+        end
+      end
+      context 'when the API returns a semantic error' do
+        it do
+          stub_upload_request(status: 200, body: "<response status='error' code='18'><msg><line>Malformed Request</line></msg></response>")
+
+          expect { doc }.to raise_error Puppet::ResourceError, %r{Malformed Request}
+        end
       end
     end
 

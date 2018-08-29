@@ -8,8 +8,8 @@ require 'base64'
 class Puppet::Provider::PanosAdmin::PanosAdmin < Puppet::Provider::PanosProvider
   def munge(entry)
     if entry.key?(:ssh_key) && !entry[:ssh_key].nil?
-      # decode and remove trailing newline charater
-      entry[:ssh_key] = Base64.strict_decode64(entry[:ssh_key])
+      # remove newline characters that can mess up the decode
+      entry[:ssh_key] = Base64.strict_decode64(entry[:ssh_key].strip)
     end
     if entry.key? :client_certificate_only
       entry[:client_certificate_only] = string_to_bool(entry[:client_certificate_only])
