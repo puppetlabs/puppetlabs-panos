@@ -1,5 +1,15 @@
 # bundle exec puppet device --modulepath spec/fixtures/modules/ --deviceconfig spec/fixtures/device.conf --target pavm --verbose --trace --apply tests/test_commit.pp
 
+panos_address_group {
+  'full':
+    ensure  =>  absent;
+  # namespace overlap with panos_address: '<![CDATA[ address-group -> minimal 'minimal' is already in use]]>'
+  'minimal address group':
+    ensure  =>  absent;
+  'dynamic group':
+    ensure  =>  absent;
+}
+
 panos_address {
   'minimal':
     ensure => absent;
@@ -18,11 +28,6 @@ panos_address {
   'DAT_address':
     ensure => absent;
   'fqdn':
-    ensure => absent;
-}
-
-panos_address_group {
-  'full':
     ensure => absent;
 }
 
