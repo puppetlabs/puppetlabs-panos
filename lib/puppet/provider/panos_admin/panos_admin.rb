@@ -18,10 +18,14 @@ class Puppet::Provider::PanosAdmin::PanosAdmin < Puppet::Provider::PanosProvider
   end
 
   def validate_should(should)
-    if should[:client_certificate_only] == true && should.key?(:password_hash)
+    if should[:client_certificate_only] == true && should[:password_hash] # rubocop:disable Style/GuardClause
       raise Puppet::ResourceError, 'password_hash should not be configured when client_certificate_only is true'
+    elsif should[:client_certificate_only] == true && should[:authentication_profile]
+      raise Puppet::ResourceError, 'authentication_profile should not be configured when client_certificate_only is true'
+    elsif should[:password_hash] && should[:authentication_profile]
+      raise Puppet::ResourceError, 'authentication_profile should not be configured when password_hash is configured'
     end
-    if should[:role] == 'custom' && !should.key?(:role_profile) # rubocop:disable Style/GuardClause # line too long
+    if should[:role] == 'custom' && !should.key?(:role_profile) # rubocop:disable Style/GuardClause
       raise Puppet::ResourceError, 'Role based administrator type missing role_profile'
     end
   end
@@ -33,12 +37,12 @@ class Puppet::Provider::PanosAdmin::PanosAdmin < Puppet::Provider::PanosProvider
         builder.phash(should[:password_hash])
       elsif should[:client_certificate_only]
         builder.__send__('client-certificate-only', 'yes')
+      elsif should[:authentication_profile]
+        builder.__send__('authentication-profile', should[:authentication_profile])
       end
-
       if should[:ssh_key]
         builder.__send__('public-key', Base64.strict_encode64(should[:ssh_key]))
       end
-
       builder.permissions do
         builder.__send__('role-based') do
           if should[:role] == 'custom'
@@ -46,7 +50,12 @@ class Puppet::Provider::PanosAdmin::PanosAdmin < Puppet::Provider::PanosProvider
               builder.profile(should[:role_profile])
             end
           else
-            builder.__send__(should[:role], 'yes')
+            self_closing_roles = ['devicereader', 'deviceadmin']
+            if self_closing_roles.include? should[:role]
+              builder.__send__(should[:role])
+            else
+              builder.__send__(should[:role], 'yes')
+            end
           end
         end
       end

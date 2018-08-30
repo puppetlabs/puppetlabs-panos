@@ -9,7 +9,7 @@ Puppet::ResourceApi.register_type(
   features: ['remote_resource'],
   attributes: {
     name: {
-      type:      'Pattern[/^[a-zA-z0-9\-_\s\.]*$/]',
+      type:      'Pattern[/^[a-zA-z0-9\-_\.]{1,31}$/]',
       desc:      'The username.',
       behaviour: :namevar,
       xpath:      'string(@name)',
@@ -24,6 +24,11 @@ Puppet::ResourceApi.register_type(
       desc:      'Provide a password hash.',
       xpath:     'phash/text()',
     },
+    authentication_profile: {
+      type:   'Optional[String]',
+      desc:   'Provide an authentication profile.',
+      xpath:  'authentication-profile/text()',
+    },
     client_certificate_only: {
       type:     'Boolean',
       desc:     'When set to true uses client certificate profile for web UI access.',
@@ -36,7 +41,7 @@ Puppet::ResourceApi.register_type(
       xpath:     'public-key/text()',
     },
     role: {
-      type:     'Enum["superuser", "superreader", "devicereader", "custom"]',
+      type:     'Enum["superuser", "superreader", "devicereader", "deviceadmin", "custom"]',
       desc:     'Specify the access level for the administrator',
       xpath:    'local-name(permissions/role-based/*[1])',
     },

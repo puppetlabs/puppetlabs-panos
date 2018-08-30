@@ -45,8 +45,27 @@ panos_address {
 }
 
 panos_admin {
-  'tester':
-    ensure => absent;
+  'minimal':
+    ensure  =>  absent;
+  'superreader':
+    ensure  =>  absent;
+  'deviceadmin':
+    ensure  =>  absent;
+  'devicereader':
+    ensure  =>  absent;
+  'password_hash':
+    ensure  =>  absent;
+  'authentication_profile':
+    ensure  =>  absent;
+  'client_certificate_only':
+    ensure  =>  absent;
+  'custom_profile':
+    ensure  =>  absent;
+}
+
+panos_arbitrary_commands  {
+  'shared/authentication-profile':
+    xml => '<authentication-profile/>';
 }
 
 panos_service_group {
