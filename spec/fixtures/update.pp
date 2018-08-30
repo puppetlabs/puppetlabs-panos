@@ -101,7 +101,7 @@ panos_service_group {
 }
 
 panos_arbitrary_commands {
-  'network/interface/ethernet':
+  'devices/entry/network/interface/ethernet':
     ensure  => 'present',
     xml     => '<ethernet>
                   <entry name="ethernet1/1">
@@ -347,7 +347,7 @@ panos_security_policy_rule  {
 }
 
 panos_arbitrary_commands  {
-  'vsys/entry/application-group':
+  'devices/entry/vsys/entry/application-group':
     ensure    => 'present',
     xml       => '<application-group>
                     <entry name="Application Group">

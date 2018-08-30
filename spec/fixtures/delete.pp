@@ -78,7 +78,7 @@ panos_service {
 }
 
 panos_arbitrary_commands {
-  'network/interface/ethernet':
+  'devices/entry/network/interface/ethernet':
     ensure  => 'present',
     xml     => '<ethernet/>';
 }
