@@ -386,6 +386,40 @@ panos_arbitrary_commands  {
     # xml       => file('MODULENAME/file.xml');
 }
 
+panos_virtual_router { 'example VR':
+  ensure => 'present',
+  ad_ibgp => '50',
+  ad_ebgp => '40',
+  ad_rip => '30';
+  'default VR':
+  ensure => 'present',
+  ad_ibgp => '90',
+  ad_ebgp => '80',
+  ad_rip => '35';
+}
+panos_static_route { 'example SR-example VR':
+  name => 'example SR-example VR',
+  ensure => 'present',
+  bfd_profile => 'None',
+  metric => '25',
+  admin_distance => '50',
+  destination => '10.8.0.0/32',
+  nexthop_type => 'discard',
+  vr_name => 'example VR',
+  no_install => false,
+}
+panos_ipv6_static_route {'example ipv6-example VR':
+  name => "new ipv6-new example VR",
+  ensure=>"present",
+  nexthop_type=>"discard",
+  bfd_profile=>"None",
+  metric=>"100",
+  admin_distance=>"16",
+  destination=>"21::/16",
+  vr_name=>"example VR",
+  no_install=>false,
+}
+
 panos_commit {
   'commit':
     commit => true

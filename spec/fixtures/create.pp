@@ -383,6 +383,52 @@ panos_security_policy_rule  {
     disable_server_response_inspection  =>  true;
 }
 
+panos_virtual_router { 'example VR':
+  ensure => 'present',
+  ad_static => '20',
+  ad_static_ipv6 => '30',
+  ad_ospf_int => '20',
+  ad_ospf_ext => '20',
+  ad_ospfv3_int => '20',
+  ad_ospfv3_ext => '20',
+  ad_ibgp => '20',
+  ad_ebgp => '20',
+  ad_rip => '20';
+  'default VR':
+  ensure => 'present',
+  ad_static => '10',
+  ad_static_ipv6 => '10',
+  ad_ospf_int => '30',
+  ad_ospf_ext => '110',
+  ad_ospfv3_int => '30',
+  ad_ospfv3_ext => '110',
+  ad_ibgp => '200',
+  ad_ebgp => '20',
+  ad_rip => '120';
+}
+panos_static_route { 'example SR-example VR':
+  name => 'example SR-example VR',
+  ensure => 'present',
+  bfd_profile => 'None',
+  metric => '25',
+  admin_distance => '15',
+  destination => '10.9.0.1/32',
+  nexthop_type => 'discard',
+  vr_name => 'example VR',
+  no_install => false,
+}
+panos_ipv6_static_route {'example ipv6-example VR':
+  name => "new ipv6-new example VR",
+  ensure=>"present",
+  nexthop_type=>"discard",
+  bfd_profile=>"None",
+  metric=>"10",
+  admin_distance=>"10",
+  destination=>"2001::/16",
+  vr_name=>"example VR",
+  no_install=>false,
+}
+
 panos_commit {
   'commit':
     commit => true
