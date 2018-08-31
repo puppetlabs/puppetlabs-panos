@@ -166,7 +166,7 @@ panos_arbitrary_commands {
                   <entry name="ethernet1/5">
                     <layer3/>
                   </entry>
-                  <entry name="ethernet1/10">
+                  <entry name="ethernet1/8">
                     <tap/>
                   </entry>
                 </ethernet>';
@@ -178,7 +178,7 @@ panos_zone {
   'tap':
     ensure                     => 'present',
     network                    => 'tap',
-    interfaces                 => ['ethernet1/10'];
+    interfaces                 => ['ethernet1/8'];
   'virtual-wire':
     ensure                     => 'present',
     network                    => 'virtual-wire',
