@@ -20,6 +20,9 @@ Gemfile:
   paths:
     - spec/fixtures/acceptance-credentials.conf
     - spec/fixtures/acceptance-device.conf
+Rakefile:
+  requires:
+    - 'puppet-strings/tasks'
 spec/spec_helper.rb:
   mock_with: ':rspec'
   spec_overrides:
