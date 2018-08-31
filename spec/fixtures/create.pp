@@ -195,51 +195,52 @@ panos_tag {
 
 panos_nat_policy {
   'minimal':
-    ensure => 'present';
+    ensure => 'present',
+    to => ['excluded lists'];
   'FullTestNATPolicy':
-      ensure                         => 'present',
-      source_translation_type        => 'dynamic-ip',
-      source_translated_address      => ['SAT_address'],
-      description                    => 'something interesting',
-      destination_translated_address => 'DAT_address',
-      destination_translated_port    => '5',
-      fallback_address_type          => 'translated-address',
-      fallback_address               => ['fallback_address'],
-      source_zones                   => ['source_zone'],
-      destination_zones              => ['destination_zone'],
-      source_address                 => ['source_address'],
-      destination_address            => ['destination_address'],
-      service                        => 'ftp',
-      # destination_interface          => 'vlan.2',
-      tags                           => ['Test Tag'];
+    ensure                         => 'present',
+    source_translation_type        => 'dynamic-ip',
+    source_translated_address      => ['SAT_address'],
+    description                    => 'something interesting',
+    destination_translated_address => 'DAT_address',
+    destination_translated_port    => '5',
+    fallback_address_type          => 'translated-address',
+    fallback_address               => ['fallback_address'],
+    from                           => ['included lists'],
+    to                             => ['excluded lists'],
+    source                         => ['source_address'],
+    destination                    => ['destination_address'],
+    service                        => 'minimal',
+    # destination_interface        => 'vlan.2',
+    tags                           => ['Test Tag'];
   'StaticIPSATPolicy':
-      ensure                           => 'present',
-      source_translation_type          => 'static-ip',
-      source_translated_static_address => 'SAT_static_address',
-      bi_directional                   => true,
-      source_zones                     => ['source_zone'],
-      destination_zones                => ['destination_zone'],
-      source_address                   => ['source_address'],
-      destination_address              => ['destination_address'],
-      service                          => 'any',
-      destination_interface            => 'any';
+    ensure                           => 'present',
+    source_translation_type          => 'static-ip',
+    source_translated_static_address => 'SAT_static_address',
+    bi_directional                   => true,
+    from                             => ['included lists'],
+    to                               => ['excluded lists'],
+    source                           => ['source_address'],
+    destination                      => ['destination_address'],
+    service                          => 'any',
+    destination_interface            => 'any';
   'DynamicIPandPortPolicy':
-      ensure                    => 'present',
-      source_zones              => ['source_zone'],
-      destination_zones         => ['destination_zone'],
-      service                   => 'any',
-      source_address            => ['source_address'],
-      destination_address       => ['destination_address'],
-      source_translation_type   => 'dynamic-ip-and-port',
-      source_translated_address => ['SAT_address'];
+    ensure                    => 'present',
+    from                      => ['included lists'],
+    to                        => ['excluded lists'],
+    service                   => 'any',
+    source                    => ['source_address'],
+    destination               => ['destination_address'],
+    source_translation_type   => 'dynamic-ip-and-port',
+    source_translated_address => ['SAT_address'];
   'UnsetSourceTranslationType':
-      ensure                  => 'present',
-      source_zones            => ['source_zone'],
-      destination_zones       => ['destination_zone'],
-      service                 => 'any',
-      source_address          => ['source_address'],
-      destination_address     => ['destination_address'],
-      source_translation_type => 'none';
+    ensure                  => 'present',
+    from                    => ['included lists'],
+    to                      => ['excluded lists'],
+    service                 => 'any',
+    source                  => ['source_address'],
+    destination             => ['destination_address'],
+    source_translation_type => 'none';
 }
 
 panos_security_policy_rule  {
@@ -304,7 +305,7 @@ panos_security_policy_rule  {
   'actions':
     ensure      => 'present',
     description => 'This is managed by Puppet.',
-    action      => 'deny',  
+    action      => 'deny',
     rule_type   => 'universal';
   'log-settings':
     ensure      => 'present',

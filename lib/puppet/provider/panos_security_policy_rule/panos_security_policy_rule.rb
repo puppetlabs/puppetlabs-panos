@@ -5,7 +5,10 @@ require 'builder'
 # Implementation for the panos_security_policy_rule type using the Resource API.
 class Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRule < Puppet::Provider::PanosProvider
   def munge(entry)
-    none_attrs = [:qos_type, :anti_virus_profile, :url_filtering_profile, :data_filtering_profile, :file_blocking_profile, :spyware_profile, :vulnerability_profile, :wildfire_analysis_profile]
+    none_attrs = [:profile_type, :qos_type, :anti_virus_profile,
+                  :url_filtering_profile, :data_filtering_profile,
+                  :file_blocking_profile, :spyware_profile, :vulnerability_profile,
+                  :wildfire_analysis_profile]
     none_attrs.each do |attr|
       if entry.key?(attr) && entry[attr].nil?
         entry[attr] = 'none'

@@ -1,5 +1,18 @@
 # bundle exec puppet device --modulepath spec/fixtures/modules/ --deviceconfig spec/fixtures/device.conf --target pavm --verbose --trace --apply tests/test_commit.pp
 
+panos_nat_policy {
+  'minimal':
+    ensure => absent;
+  'FullTestNATPolicy':
+    ensure => absent;
+  'StaticIPSATPolicy':
+    ensure => absent;
+  'DynamicIPandPortPolicy':
+    ensure => absent;
+  'UnsetSourceTranslationType':
+    ensure => absent;
+}
+
 panos_address_group {
   'full':
     ensure  =>  absent;
@@ -59,9 +72,9 @@ panos_service {
   'udp_csv ports':
     ensure  => 'absent';
   'range ports':
-    ensure  => 'absent'; 
+    ensure  => 'absent';
   'udp_range ports':
-    ensure  => 'absent';  
+    ensure  => 'absent';
 }
 
 panos_arbitrary_commands {
@@ -105,11 +118,6 @@ if $::facts['operatingsystemrelease'] == '7.1.0' {
 
 panos_tag {
   'Test Tag':
-    ensure => absent;
-}
-
-panos_nat_policy {
-  'FullTestNATPolicy':
     ensure => absent;
 }
 
