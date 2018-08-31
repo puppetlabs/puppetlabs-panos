@@ -95,6 +95,74 @@ RSpec.describe Puppet::Provider::PanosAdmin::PanosAdmin do
 
       it { expect { provider.validate_should(should_hash) }.not_to raise_error }
     end
+    context 'when client_certificate_only is true' do
+      let(:should_hash) do
+        {
+          name: 'bob',
+          ensure: 'present',
+          client_certificate_only: true,
+          ssh_key: 'fake_key',
+          role: 'superuser',
+        }
+      end
+
+      it { expect { provider.validate_should(should_hash) }.not_to raise_error }
+    end
+    context 'when should contains authentication_profile' do
+      let(:should_hash) do
+        {
+          name: 'bob',
+          ensure: 'present',
+          authentication_profile: 'profile',
+          ssh_key: 'fake_key',
+          role: 'superuser',
+        }
+      end
+
+      it { expect { provider.validate_should(should_hash) }.not_to raise_error }
+    end
+    context 'when client_certificate_only is true and should contains authentication_profile' do
+      let(:should_hash) do
+        {
+          name: 'bob',
+          ensure: 'present',
+          authentication_profile: 'profile',
+          client_certificate_only: true,
+          ssh_key: 'fake_key',
+          role: 'superuser',
+        }
+      end
+
+      it { expect { provider.validate_should(should_hash) }.to raise_error Puppet::ResourceError, %r{authentication_profile should not be configured when client_certificate_only is true} }
+    end
+    context 'when client_certificate_only is false and should contains authentication_profile' do
+      let(:should_hash) do
+        {
+          name: 'bob',
+          ensure: 'present',
+          authentication_profile: 'profile',
+          client_certificate_only: false,
+          ssh_key: 'fake_key',
+          role: 'superuser',
+        }
+      end
+
+      it { expect { provider.validate_should(should_hash) }.not_to raise_error }
+    end
+    context 'when should contains both authentication_profile and password_hash' do
+      let(:should_hash) do
+        {
+          name: 'bob',
+          ensure: 'present',
+          authentication_profile: 'profile',
+          password_hash: '$1$pswmwlep$XonrJ7e5001tIROyO9N3Y0',
+          ssh_key: 'fake_key',
+          role: 'superuser',
+        }
+      end
+
+      it { expect { provider.validate_should(should_hash) }.to raise_error Puppet::ResourceError, %r{authentication_profile should not be configured when password_hash is configured} }
+    end
     context 'when should contains both custom role and role_profile' do
       let(:should_hash) do
         {
@@ -262,7 +330,24 @@ RSpec.describe Puppet::Provider::PanosAdmin::PanosAdmin do
               <phash>$1$ftyywknf$WkqGxvEBfJkZLgY30FiGT.</phash>
               <permissions>
                 <role-based>
-                  <devicereader>yes</devicereader>
+                  <devicereader/>
+                </role-based>
+              </permissions>
+            </entry>',
+    },
+    {
+      desc: 'an authentication_profile set',
+      attrs: {
+        name:                    'user_DeviceRO',
+        ensure:                  'present',
+        authentication_profile:  'profile',
+        role:                    'devicereader',
+      },
+      xml: '<entry name="user_DeviceRO">
+              <authentication-profile>profile</authentication-profile>
+              <permissions>
+                <role-based>
+                  <devicereader/>
                 </role-based>
               </permissions>
             </entry>',

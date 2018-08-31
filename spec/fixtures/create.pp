@@ -41,17 +41,51 @@ panos_address_group {
     # tags           => ['tests'],
 }
 
+panos_arbitrary_commands  {
+  'shared/authentication-profile':
+    xml => '<authentication-profile>
+              <entry name="basic">
+                <method>
+                  <local-database/>
+                </method>
+                <allow-list>
+                  <member>all</member>
+                </allow-list>
+              </entry>
+            </authentication-profile>';
+}
+
 panos_admin {
   'minimal':
-    ensure => 'present',
-    role   => 'superuser';
-  'tester':
-    # password_hash => pw_hash('thepassword', 'MD5', 'ulcyeqla'),
-    password_hash           => '$1$ulcyeqla$aRLxytbonTjxFMNW96UOL0',
-    client_certificate_only => false,
-    ssh_key                 => 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/qU86rQHw+iwX1714ZrntMz0BAsxgrsxHjQF2SHZhJ1MP541y0tSId8ZnVxATIfI3JADv9cw5wFq09fWzi7BQBd4p2UO7mMx0wxzSrONWb62lzpspCAe27kZfrtedc7x5GVGtns4bQxloTDFHXcvtQrC8j3avBb1ZdAs6TMvYAX8eSZ8UOcMIGHY6Go2QbhDnnh1+oDBqqQZNjAJas5PS5bvX9C6/dWYlfjJkPpsoG7tTKkAq2otFCcqq70kAEOlQ6VDyZsOzJjKZ/C6o9mosg+v5CXrp2cdo2Gc6p9ezEAcZb+vzQDwXJeGcp4ewIyX0x03kiMr8BUE/cpJwsg6D david@davids',
-    role                    => 'superuser';
-    # role_profile          => 'custom_profile',
+    ensure  =>  'present',
+    role    =>  'superuser';
+  'superreader':
+    ensure  =>  'present',
+    role    =>  'superreader';
+  'deviceadmin':
+    ensure  =>  'present',
+    role    =>  'deviceadmin';
+  'devicereader':
+    ensure  =>  'present',
+    role    =>  'devicereader';
+  'password_hash':
+    ensure        =>  'present',
+    password_hash =>  '$1$ulcyeqla$aRLxytbonTjxFMNW96UOL0',
+    ssh_key       =>  'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/qU86rQHw+iwX1714ZrntMz0BAsxgrsxHjQF2SHZhJ1MP541y0tSId8ZnVxATIfI3JADv9cw5wFq09fWzi7BQBd4p2UO7mMx0wxzSrONWb62lzpspCAe27kZfrtedc7x5GVGtns4bQxloTDFHXcvtQrC8j3avBb1ZdAs6TMvYAX8eSZ8UOcMIGHY6Go2QbhDnnh1+oDBqqQZNjAJas5PS5bvX9C6/dWYlfjJkPpsoG7tTKkAq2otFCcqq70kAEOlQ6VDyZsOzJjKZ/C6o9mosg+v5CXrp2cdo2Gc6p9ezEAcZb+vzQDwXJeGcp4ewIyX0x03kiMr8BUE/cpJwsg6D david@davids',
+    role          =>  'superuser';
+  'authentication_profile':
+    ensure                 =>  'present',
+    authentication_profile =>  'basic',
+    role                   =>  'superuser';
+  'client_certificate_only':
+    ensure                  =>  'present',
+    client_certificate_only =>  true,
+    role                    =>  'superuser';
+  'custom_profile':
+    ensure                  =>  'present',
+    client_certificate_only =>  true,
+    role                    =>  'custom',
+    role_profile            =>  'auditadmin';
 }
 
 panos_service {
@@ -113,7 +147,7 @@ panos_service_group {
 }
 
 panos_arbitrary_commands {
-  'network/interface/ethernet':
+  'devices/entry/network/interface/ethernet':
     ensure  => 'present',
     xml     => '<ethernet>
                   <entry name="ethernet1/1">
