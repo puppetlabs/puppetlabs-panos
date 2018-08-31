@@ -3,6 +3,11 @@
 
 ## Table of Contents
 
+**Classes**
+
+* [`panos::agent`](#panosagent): This resource will manage the resource_api::agent and the builder gem on an agent
+* [`panos::server`](#panosserver): This resource manages the resource_api::server on the server
+
 **Resource types**
 
 * [`panos_address`](#panos_address): This type provides Puppet with the capabilities to manage "address" objects on Palo Alto devices.
@@ -22,6 +27,32 @@
 * [`apikey`](#apikey): Retrieve a PAN-OS apikey using PAN-OS host, username and password.
 * [`commit`](#commit): Commit a candidate configuration to a firewall.
 * [`config`](#config): upload and/or apply a configuration to a firewall.
+
+## Classes
+
+### panos::agent
+
+This resource will manage the resource_api::agent and the builder gem on an agent
+
+#### Examples
+
+##### 
+
+```puppet
+include panos::agent
+```
+
+### panos::server
+
+This resource manages the resource_api::server on the server
+
+#### Examples
+
+##### 
+
+```puppet
+include panos::server
+```
 
 ## Resource types
 

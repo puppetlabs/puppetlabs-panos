@@ -27,7 +27,12 @@ This module provides a Puppet task to manually `commit`, `store_config` to a fil
 
 ### Setup Requirements
 
-This module requires a user that can access the device's web management interface.
+This module requires a user that can access the device's web management interface and the dependences will need to be installed.
+
+The PANOS module has a dependency on the `resource_api`, the setup instructions can be found [on the Resource API README](https://github.com/puppetlabs/puppetlabs-resource_api#resource_api).
+
+* on each puppetserver or PE master that needs to manage PANOS devices, classify or apply the `panos::server` class.
+* on each puppet agent that needs to manage PAOS devices, classify or apply the `panos::agent` class.
 
 ### Beginning with PANOS
 
