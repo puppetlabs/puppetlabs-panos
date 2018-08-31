@@ -5,7 +5,7 @@ describe 'Config task' do
   before(:each) do
     params = {
       'credentials_file' => "file://#{Dir.getwd}/spec/fixtures/acceptance-credentials.conf",
-      'config_file' => 'spec/fixtures/config-acceptance.txt',
+      'config_file' => config,
       'apply' => apply,
     }
 
@@ -20,6 +20,7 @@ describe 'Config task' do
   let(:status) { result[1] }
 
   context 'when apply is false' do
+    let(:config) { 'spec/fixtures/config-acceptance.xml' }
     let(:apply) { false }
 
     it 'will upload the configuration file but not load it' do
@@ -30,6 +31,18 @@ describe 'Config task' do
     end
   end
   context 'when apply is true' do
+    let(:config) { 'spec/fixtures/config-acceptance.xml' }
+    let(:apply) { true }
+
+    it 'will upload the configuration file and load it' do
+      expect(stdout_str).to match %r{Loading Config}
+      expect(stdout_str).to match %r{Importing configuration}
+      puts stdout_str if debug_output?
+      expect(status.exitstatus).to eq 0
+    end
+  end
+  context 'when reset' do
+    let(:config) { 'spec/fixtures/config-reset.xml' }
     let(:apply) { true }
 
     it 'will upload the configuration file and load it' do
