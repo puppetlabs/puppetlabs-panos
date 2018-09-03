@@ -16,10 +16,14 @@ Gemfile:
   paths:
     - spec/fixtures/acceptance-credentials.conf
     - spec/fixtures/acceptance-device.conf
+    - spec/fixtures/config-acceptance.xml
+    - spec/fixtures/config-reset.xml
 .pdkignore:
   paths:
     - spec/fixtures/acceptance-credentials.conf
     - spec/fixtures/acceptance-device.conf
+    - spec/fixtures/config-acceptance.xml
+    - spec/fixtures/config-reset.xml
 Rakefile:
   requires:
     - 'puppet-strings/tasks'

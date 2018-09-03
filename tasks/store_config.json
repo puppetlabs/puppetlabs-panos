@@ -1,0 +1,15 @@
+{
+  "puppet_task_version": 1,
+  "supports_noop": false,
+  "description": "Retrieve the configuration running on the firewall.",
+  "parameters": {
+    "credentials_file": {
+      "description": "The filename of the credentials file (as referenced in device.conf)",
+      "type": "String"
+    },
+    "config_file": {
+      "description": "The filename to save the configuration too",
+      "type": "String"
+    }
+  }
+}
