@@ -75,6 +75,12 @@ module Puppet::Util::NetworkDevice::Panos
       api.request('op', cmd: "<load><config><from>#{file_name}</from></config></load>")
     end
 
+    def show_config
+      Puppet.debug('Retrieving Config')
+      # https://<firewall>/api/?type=op&cmd=<show><config><running></running></config></show>
+      api.request('op', cmd: '<show><config><running></running></config></show>')
+    end
+
     def outstanding_changes?
       # /api/?type=op&cmd=<check><pending-changes></pending-changes></check>
       result = api.request('op', cmd: '<check><pending-changes></pending-changes></check>')

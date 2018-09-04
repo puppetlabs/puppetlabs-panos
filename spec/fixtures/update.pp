@@ -160,7 +160,7 @@ panos_arbitrary_commands {
                   <entry name="ethernet1/7">
                     <layer2/>
                   </entry>
-                  <entry name="ethernet1/10">
+                  <entry name="ethernet1/8">
                     <tap/>
                   </entry>
                 </ethernet>';

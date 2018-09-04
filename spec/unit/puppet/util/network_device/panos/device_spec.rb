@@ -121,6 +121,13 @@ RSpec.describe Puppet::Util::NetworkDevice::Panos do
         end
       end
 
+      describe '#show_config' do
+        it 'calls the api correctly' do
+          expect(api).to receive(:request).with('op', cmd: '<show><config><running></running></config></show>')
+          device.show_config
+        end
+      end
+
       describe '#outstanding_changes?' do
         context 'when there are outstanding changes' do
           let(:xml_response) { REXML::Document.new('<response><result>yes</result></response>') }
