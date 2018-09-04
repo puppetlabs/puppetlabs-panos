@@ -19,6 +19,17 @@ describe 'Config task' do
   let(:stdout_str) { result[0] }
   let(:status) { result[1] }
 
+  after(:all) do
+    params = {
+      'credentials_file' => "file://#{Dir.getwd}/spec/fixtures/acceptance-credentials.conf",
+      'config_file' => 'spec/fixtures/config-reset.xml',
+      'apply' => true,
+    }
+    ENV['PARAMS'] = JSON.generate(params)
+    Open3.capture2e('bundle exec ruby -Ilib tasks/set_config.rb')
+    Open3.capture2e('bundle exec ruby -Ilib tasks/commit.rb')
+  end
+
   context 'when apply is false' do
     let(:config) { 'spec/fixtures/config-acceptance.xml' }
     let(:apply) { false }
