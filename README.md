@@ -1,74 +1,179 @@
 
+
 # panos [![Build Status](https://travis-ci.com/puppetlabs/puppetlabs-panos.svg?token=EgyaCjCqJtXUWAZqypZQ&branch=master)](https://travis-ci.com/puppetlabs/puppetlabs-panos)
-
-Welcome to your new module. A short overview of the generated parts can be found in the PDK documentation at https://puppet.com/pdk/latest/pdk_generating_modules.html .
-
-The README template below provides a starting point with details about what information to include in your README.
-
-
-
-
-
 
 
 #### Table of Contents
 
-1. [Description](#description)
-2. [Setup - The basics of getting started with panos](#setup)
-    * [What panos affects](#what-panos-affects)
+1. [Module Description - What the module does and why it is useful](#module-description)
+2. [Setup - The basics of getting started with PANOS](#setup)
     * [Setup requirements](#setup-requirements)
-    * [Beginning with panos](#beginning-with-panos)
+    * [Beginning with PANOS](#beginning-with-panos)
 3. [Usage - Configuration options and additional functionality](#usage)
 4. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
 5. [Limitations - OS compatibility, etc.](#limitations)
 6. [Development - Guide for contributing to the module](#development)
 
-## Description
 
-Start with a one- or two-sentence summary of what the module does and/or what problem it solves. This is your 30-second elevator pitch for your module. Consider including OS/Puppet version it works with.
+## Module Description
 
-You can give more descriptive information in a second paragraph. This paragraph should answer the questions: "What does this module *do*?" and "Why would I use it?" If your module has a range of functionality (installation, configuration, management, etc.), this is the time to mention it.
+The PANOS module allows for the configuration of Palo Alto firewalls running PANOS 7.1.0 or PANOS 8.1.0.
+
+Any changes made by this module to the various resources must be committed before they are made available to the running configuration. This can be done by including `panos_commit` within your manifest, or alternatively executing the `commit` task.
+
+This module provides a Puppet task to manually `commit`, `store_config` to a file and `set_config` from a file.
 
 ## Setup
 
-### What panos affects **OPTIONAL**
+### Setup Requirements
 
-If it's obvious what your module touches, you can skip this section. For example, folks can probably figure out that your mysql_instance module affects their MySQL instances.
+This module requires a user that can access the device's web management interface.
 
-If there's more that they should know about, though, this is the place to mention:
+### Beginning with PANOS
 
-* Files, packages, services, or operations that the module will alter, impact, or execute.
-* Dependencies that your module automatically installs.
-* Warnings or other important notices.
+To get started, create or edit `/etc/puppetlabs/puppet/device.conf`, add a section for the device (this will become the device's `certname`), specify a type of `panos`, and specify a `url` to a credentials file. For example:
 
-### Setup Requirements **OPTIONAL**
+```INI
+[firewall.example.com]
+type panos
+url file:////etc/puppetlabs/puppet/devices/firewall.example.com.conf`
+```
 
-If your module requires anything extra before setting up (pluginsync enabled, another module, etc.), mention it here.
+Next, create a credentials file, following the [HOCON documentation](https://github.com/lightbend/config/blob/master/HOCON.md) regarding quoted/unquoted strings, with connection information for the device.
 
-If your most recent release breaks compatibility or requires particular steps for upgrading, you might want to include an additional "Upgrading" section here.
+There are two valid type of creditial file.
 
-### Beginning with panos
+* (a) A file containing the host, username and password in plain text:
+  ```
+  host: 10.0.10.20
+  user: admin
+  password: admin
+  ```
+* (b) A file containing the host and an API key obtained from the device:
+  ```
+  host: 10.0.10.20
+  apikey: LUFRPT10cHhRNXMyR2wrYW1MSzg5cldhNElodmVkL1U9OEV1cGY5ZjJyc2xGL1Z4Qk9TNFM2dz09
+  ```
 
-The very basic steps needed for a user to get the module up and running. This can include setup steps, if necessary, or it can be an example of the most basic use of the module.
+To obtain an API key for the device, use the `panos::apikey` task. The required creditials file should be in the format of (a) above. After which it can be discarded.
+
+```
+bolt task run panos::apikey credentials_file=spec/fixtures/test-password.conf
+```
+
+
+Test your setup. For example:
+
+`puppet device --verbose --target firewall.example.com`
+
+More information on the usage of `puppet device` is available in the [Puppet Documentation](https://puppet.com/docs/puppet/5.5/puppet_device.html)
 
 ## Usage
+Create a manifest with the changes you want to apply. For example:
 
-This section is where you describe how to customize, configure, and do the fancy stuff with your module here. It's especially helpful if you include usage examples and code samples for doing things with your module.
+```Puppet
+panos_admin {
+  'frank':
+    ensure        =>  'present',
+    password_hash =>  pw_hash('password', 'MD5'),
+    ssh_key       =>  'ssh-rsa AAAA... frank@firewall.example.com',
+    role          =>  'superuser';
+}
+```
+
+The repo's acceptance tests examples contain a [useful reference](https://github.com/puppetlabs/puppetlabs-panos/blob/master/spec/fixtures/create.pp) on the use of the module's Types.
+
+__NOTE:__ pw_hash function in the above example requires [puppetlabs-stdlib](https://forge.puppet.com/puppetlabs/stdlib)
+
+
+### Puppet Device
+
+Run Puppet device apply to apply the changes:
+
+`puppet device  --target firewall.example.com --apply manifest.pp `
+
+Run Puppet device resource to obtain the current values:
+
+`puppet device --resource --target firewall.example.com panos_admin`
 
 ## Reference
 
-See [REFERENCE.md](https://github.com/puppetlabs/puppetlabs-panos/blob/master/REFERENCE.md)
+Full Type reference documentation availble. See [REFERENCE.md](https://github.com/puppetlabs/puppetlabs-panos/blob/master/REFERENCE.md)
 
 ## Limitations
 
-This is where you list OS compatibility, version compatibility, etc. If there are Known Issues, you might want to include them under their own heading here.
+This module has been tested using PANOS 7.1.0 and 8.1.0
 
 ## Development
 
+Contributions are welcome, especially if they can be of use to other users.
+
+Checkout the [repo](https://github.com/puppetlabs/puppetlabs-panos) by forking and creating your feature branch.
+
+### Type
+
+Add new types to the type directory.
+We use the [Resource API format](https://github.com/puppetlabs/puppet-resource_api/blob/master/README.md).
+
+
+These PANOS types extend the Resource API by adding in `xpath` values, which are used by their respective providers when retireving data from the PANOS API. If the atrribute expects multiple values to be returned, `xpath_array` will be declared.
+
+
+Here is a simple example:
+
+```Ruby
+  require 'puppet/resource_api'
+
+  Puppet::ResourceApi.register_type(
+    name: 'new_thing',
+    docs: 'Configure the new thing of the device',
+    features: ['remote_resource'],
+    base_xpath: 'some/xapth/to/the/type',
+    attributes: {
+      ensure:       {
+        type:       'Enum[present, absent]',
+        desc:       'Whether the new thing should be present or absent on the target system.',
+        default:    'present',
+      },
+      name:         {
+        type:      'String',
+        desc:      'The name of the new thing',
+        xpath:     'some/xapth/to/the/type',
+        behaviour: :namevar,
+      },
+      # Other fields in resource API format
+    },
+  )
+
+```
+
+### Provider
+
+Add a provider — see existing examples. Parsing logic is contained each types respective provider directory with a common [base provider](https://github.com/puppetlabs/puppetlabs-panos/blob/master/lib/puppet/provider/panos_provider.rb) available.
+
+### Testing
+
+There are 2 levels of testing found under `spec`.
+
 To test this module you will need to have a Palo Alto machine available. The virtual machine images from their support area work fine in virtualbox and vmware. Alternatively you can use the PAYG offering on AWS. Note that the VMs do not have to have a license deployed to be usable for development.
 
-* [xml api docs](https://www.paloaltonetworks.com/documentation/81/pan-os/xml-api)
+* [XML API docs](https://www.paloaltonetworks.com/documentation/81/pan-os/xml-api)
 * [Palo Alto on AWS](https://aws.amazon.com/marketplace/search/results?x=0&y=0&searchTerms=palo+alto&page=1&ref_=nav_search_box)
+
+
+#### Unit Testing
+
+Unit tests test the parsing and command generation logic executed locally.
+
+First execute `bundle exec rake spec_prep` to ensure that the local types are made available to the spec tests.
+
+Then execute with `bundle exec rake spec`.
+
+#### Acceptance Testing
+
+Acceptance tests are executed on actual devices.
+
+Use test values and make sure that these are non-destructive.
 
 The acceptance tests locate the Palo Alto box used for testing through environment variables. The current test setup allows for three different scenarios:
 
@@ -91,19 +196,13 @@ or using the legacy rake task
 bundle exec rake beaker
 ```
 
-## Release Notes/Contributors/Etc. **Optional**
-
-If you aren't using changelog, put your release notes here (though you should consider using changelog). You can also add any additional sections you feel are necessary or important to include here. Please use the `## ` header.
-
 ### Cutting a release
 
 To cut a new release, from a current `master` checkout:
 
 * Start the release branch with `git checkout -b release-prep`
-* Execute the Puppet Strings task to generate the latest [REFERENCE.md](https://github.com/puppetlabs/puppetlabs-panos/blob/master/REFERENCE.md)
+* Execute the [Puppet Strings](https://puppet.com/docs/puppet/5.5/puppet_strings.html) rake task to update [REFERENCE.md](https://github.com/puppetlabs/puppetlabs-panos/blob/master/REFERENCE.md)
 
-    ```
-      bundle exec rake strings:generate\[,,,markdown,,true,\]
-    ```
-
-    **WORK IN PROGRESS**: To be completed closer to release
+```
+bundle exec rake strings:generate[,,,,,REFERENCE.md,true]
+```
