@@ -1,6 +1,7 @@
 require 'json'
 require 'net/http'
 require 'open3'
+require 'fileutils'
 
 module Helpers
   def debug_output?
@@ -41,6 +42,14 @@ RSpec.configure do |c|
       @destroy = true
     else
       raise 'Could not locate or create a test host'
+    end
+
+    # workaround for https://tickets.puppetlabs.com/browse/PUP-9104
+    c.before :each do
+      cache = File.expand_path('~/.puppetlabs/opt/puppet/cache/devices/sut/')
+      if File.directory?(cache)
+        FileUtils.rm_rf(cache)
+      end
     end
 
     puts "Detected #{@platform} config for #{@hostname}"
