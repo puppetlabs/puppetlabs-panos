@@ -67,7 +67,7 @@ There are two valid type of credential file, examples below.
 To obtain an API key for the device, it is possible to use the `panos::apikey` task. The required creditials file should be in the format of (a) above. After which it can be discarded. To run this task the module must first be installed on your machine, along with [Puppet Bolt](https://puppet.com/docs/bolt/0.x/bolt_installing.html). When complete execute the following command:
 
 ```
-bolt task run panos::apikey --nodes <IP_address_of_PAN_device> --modulepath <module_installation_dir> --params @credentials.json
+bolt task run panos::apikey --nodes localhost --transport local --modulepath <module_installation_dir> --params @credentials.json
 ```
 
 The `--modulepath` param can be retrieved by typing `puppet config print modulepath`. The credentials file needs to be valid JSON containing host, username and password for the Palo Alto firewall. Note that for the above command to work the Palo Alto device must firstly have its host key verified.
