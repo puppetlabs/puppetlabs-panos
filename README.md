@@ -70,7 +70,7 @@ To obtain an API key for the device, it is possible to use the `panos::apikey` t
 bolt task run panos::apikey --nodes localhost --transport local --modulepath <module_installation_dir> --params @credentials.json
 ```
 
-The `--modulepath` param can be retrieved by typing `puppet config print modulepath`. The credentials file needs to be valid JSON containing host, username and password for the Palo Alto firewall. Note that for the above command to work the Palo Alto device must firstly have its host key verified.
+The `--modulepath` param can be retrieved by typing `puppet config print modulepath`. The credentials file needs to be valid JSON containing host, username and password for the Palo Alto firewall.
 
 Test your setup and get the certificate signed. Run the following command:
 
