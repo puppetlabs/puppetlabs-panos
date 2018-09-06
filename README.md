@@ -81,7 +81,7 @@ This will sign the certificate and set up the device ready for use with Puppet.
 More information on the usage of `puppet device` is available in the [Puppet Documentation](https://puppet.com/docs/puppet/5.5/puppet_device.html)
 
 ## Usage
-Once the above is done you can manage resources on the Palo Alto device. The module gives access to various resources on the Palo Device as defined by the [types](https://github.com/puppetlabs/puppetlabs-panos/tree/master/lib/puppet/type).
+Once the above is done you can manage resources on the Palo Alto device. The module gives access to various resources on the Palo Device as listed in [REFERENCE.md](https://github.com/puppetlabs/puppetlabs-panos/blob/master/REFERENCE.md).
 
 The repo's acceptance tests examples contain a [useful reference](https://github.com/puppetlabs/puppetlabs-panos/blob/master/spec/fixtures/create.pp) on the use of the module's Types.
 
