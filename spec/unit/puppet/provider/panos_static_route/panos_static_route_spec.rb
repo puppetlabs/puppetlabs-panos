@@ -39,7 +39,7 @@ RSpec.describe Puppet::Provider::PanosStaticRoute::PanosStaticRoute do
           vr_name: 'test vr',
         }
       end
-      let(:result) { { nexthop_type: 'None' } }
+      let(:result) { { nexthop_type: 'none' } }
 
       it { expect(provider.munge(entry)[:nexthop_type]).to eq(result[:nexthop_type]) }
     end
@@ -195,7 +195,7 @@ RSpec.describe Puppet::Provider::PanosStaticRoute::PanosStaticRoute do
       desc: 'a route configured with no next hop.',
       attrs: {
         route: 'test route 4',
-        nexthop_type: 'None',
+        nexthop_type: 'none',
         bfd_profile: 'None',
         interface: 'vlan.1',
         metric: '10',

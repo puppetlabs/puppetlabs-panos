@@ -36,7 +36,7 @@ class Puppet::Provider::PanosStaticRouteBase < Puppet::Provider::PanosProvider
   def xml_from_should(_name, should)
     builder = Builder::XmlMarkup.new
     builder.entry('name' => should[:route]) do
-      unless should[:nexthop_type] == 'None'
+      unless should[:nexthop_type] == 'none'
         builder.nexthop do
           builder.__send__(should[:nexthop_type], should[:nexthop]) unless should[:nexthop_type] == 'discard'
           builder.discard if should[:nexthop_type] == 'discard'

@@ -6,7 +6,7 @@ require 'builder'
 class Puppet::Provider::PanosIpv6StaticRoute::PanosIpv6StaticRoute < Puppet::Provider::PanosStaticRouteBase
   def munge(entry)
     entry[:no_install] = entry[:no_install].nil? ? false : true
-    entry[:nexthop_type] = 'None' if entry[:nexthop_type].nil?
+    entry[:nexthop_type] = 'none' if entry[:nexthop_type].nil?
     entry
   end
 end

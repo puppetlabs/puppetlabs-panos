@@ -181,18 +181,21 @@ panos_security_policy_rule  {
     ensure =>  'absent';
 }
 
-panos_virtual_router { 'example VR':
-  ensure => 'absent',
-  'default VR':
-  ensure => 'absent',
+panos_virtual_router {
+  'full example VR':
+    ensure => 'absent';
 }
-panos_static_route { 'example SR-example VR':
-  name => 'example SR-example VR',
-  ensure => 'absent',
+panos_static_route {
+  'full example VR/route one':
+    ensure => 'absent';
+  'full example VR/route two':
+    ensure => 'absent';
 }
-panos_ipv6_static_route {'example ipv6-example VR':
-  name => "new ipv6-new example VR",
-  ensure=>"absent",
+panos_ipv6_static_route {
+  'full example VR/ipv6 route one':
+    ensure => 'absent';
+  'full example VR/ipv6 route two':
+    ensure => 'absent';
 }
 
 panos_commit {

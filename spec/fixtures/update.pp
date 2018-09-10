@@ -161,7 +161,11 @@ panos_arbitrary_commands {
                     <layer2/>
                   </entry>
                   <entry name="ethernet1/8">
-                    <tap/>
+                    <layer3>
+                      <ipv6>
+                        <enabled>yes</enabled>
+                      </ipv6>
+                    </layer3>
                   </entry>
                 </ethernet>';
 }
@@ -386,38 +390,59 @@ panos_arbitrary_commands  {
     # xml       => file('MODULENAME/file.xml');
 }
 
-panos_virtual_router { 'example VR':
-  ensure => 'present',
-  ad_ibgp => '50',
-  ad_ebgp => '40',
-  ad_rip => '30';
-  'default VR':
-  ensure => 'present',
-  ad_ibgp => '90',
-  ad_ebgp => '80',
-  ad_rip => '35';
+panos_virtual_router {
+  'full example VR':
+    ensure         => 'present',
+    interfaces     => ['ethernet1/3', 'ethernet1/8'],
+    ad_static      => '10',
+    ad_static_ipv6 => '10',
+    ad_ospf_int    => '10',
+    ad_ospf_ext    => '10',
+    ad_ospfv3_int  => '10',
+    ad_ospfv3_ext  => '10',
+    ad_ibgp        => '10',
+    ad_ebgp        => '10',
+    ad_rip         => '10';
 }
-panos_static_route { 'example SR-example VR':
-  name => 'example SR-example VR',
-  ensure => 'present',
-  bfd_profile => 'None',
-  metric => '25',
-  admin_distance => '50',
-  destination => '10.8.0.0/32',
-  nexthop_type => 'discard',
-  vr_name => 'example VR',
-  no_install => false,
+
+panos_static_route {
+  'full example VR/route one':
+    ensure         => 'present',
+    bfd_profile    => 'None',
+    metric         => '500',
+    admin_distance => '50',
+    destination    => '10.9.0.0/32',
+    nexthop_type   => 'discard',
+    no_install     => true;
+  'full example VR/route two':
+    ensure         => 'present',
+    bfd_profile    => 'None',
+    metric         => '600',
+    admin_distance => '10',
+    destination    => '10.9.0.0/16',
+    nexthop_type   => 'none',
+    interface      => 'ethernet1/3',
+    no_install     => true;
 }
-panos_ipv6_static_route {'example ipv6-example VR':
-  name => "new ipv6-new example VR",
-  ensure=>"present",
-  nexthop_type=>"discard",
-  bfd_profile=>"None",
-  metric=>"100",
-  admin_distance=>"16",
-  destination=>"21::/16",
-  vr_name=>"example VR",
-  no_install=>false,
+
+panos_ipv6_static_route {
+  'full example VR/ipv6 route one':
+    ensure         => 'present',
+    nexthop_type   => 'ipv6-address',
+    nexthop        => '2001:0dc8::/128',
+    interface      => 'ethernet1/8',
+    bfd_profile    => 'default',
+    metric         => '700',
+    admin_distance => '123',
+    destination    => '2001::/16',
+    no_install     => true;
+  'full example VR/ipv6 route two':
+    ensure         => 'present',
+    nexthop_type   => 'discard',
+    metric         => '800',
+    admin_distance => '10',
+    destination    => '2000::/8',
+    no_install     => false;
 }
 
 panos_commit {

@@ -36,27 +36,32 @@ Puppet::ResourceApi.register_type(
       xpath:     'string(nexthop/*)',
     },
     nexthop_type: {
-      type:      'Optional[Enum["ip-address", "next-vr", "discard", "None"]]',
-      desc:      'The type of address used for the next hop.
-                    ip-address: Select to enter the IP address of the next hop router.
-                    next-vr: Select to select a virtual router in the firewall as the next hop. This allows you to route internally between virtual routers within a single firewall.
-                    discard: Select if you want to drop traffic that is addressed to this destination.
-                    none: Select if there is no next hop for the route.',
+      type:      'Optional[Enum["ip-address", "next-vr", "discard", "none"]]',
+      desc:      <<DESC,
+The type of address used for the next hop.
+
+  * ip-address: Select to enter the IP address of the next hop router.
+  * next-vr: Select to select a virtual router in the firewall as the next hop. This allows you to route internally between virtual routers within a single firewall.
+  * discard: Select if you want to drop traffic that is addressed to this destination.
+  * none: Select if there is no next hop for the route.
+DESC
       xpath:     'local-name(nexthop/*)',
     },
     bfd_profile: {
       type:      'String',
-      desc:      'To enable Bidirectional Forwarding Detection (BFD) for a static route on a PA-3000 Series, PA-3200 Series, PA-5000 Series, PA-5200 Series,
-                  PA-7000 Series, or VM-Series firewall, select one of the following:
-                  default
-                  a BFD profile that you have created on the firewall
-                  None to disable BFD for the static route.
+      desc:      <<DESC,
+To enable Bidirectional Forwarding Detection (BFD) for a static route on a PA-3000 Series, PA-3200 Series, PA-5000 Series, PA-5200 Series,
+PA-7000 Series, or VM-Series firewall, specify one of the following:
 
-                  To use BFD on a static route:
-                  Both the firewall and the peer at the opposite end of the static route must support BFD sessions.
-                  The static route Next Hop type must be ip-address and you must enter a valid IP address.
-                  The Interface attribute cannot be None; you must select an interface (even if you are using a DHCP address).`',
+  * `default`: a BFD profile that you have created on the firewall
+  * `none`: to disable BFD for the static route.
 
+To use BFD on a static route:
+
+  * Both the firewall and the peer at the opposite end of the static route must support BFD sessions.
+  * The static route nexthop_type must be `ip-address` and you must enter a valid IP address in `nexthop`.
+  * The `interface` attribute cannot be `none`; you must specify an interface (even if you are using a DHCP address).
+DESC
       xpath:     'bfd/profile/text()',
       default:   'None',
     },

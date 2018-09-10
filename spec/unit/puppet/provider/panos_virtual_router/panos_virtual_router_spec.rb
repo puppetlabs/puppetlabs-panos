@@ -43,20 +43,6 @@ RSpec.describe Puppet::Provider::PanosVirtualRouter::PanosVirtualRouter do
             </entry>',
     },
     {
-      desc: 'A virtual router with interfaces.',
-      attrs: {
-        name: 'Test router 2',
-        interfaces: ['vlan.1', 'vlan.2', 'vlan.3'],
-      },
-      xml: '<entry name="Test router 2">
-              <interface>
-                <member>vlan.1</member>
-                <member>vlan.2</member>
-                <member>vlan.3</member>
-              </interface>
-            </entry>',
-    },
-    {
       desc: 'A router with no interfaces.',
       attrs: {
         name: 'Test router 3',
@@ -82,14 +68,6 @@ RSpec.describe Puppet::Provider::PanosVirtualRouter::PanosVirtualRouter do
                 <ebgp>20</ebgp>
                 <rip>20</rip>
               </admin-dists>
-            </entry>',
-    },
-    {
-      desc: 'A router with no attributes.',
-      attrs: {
-        name: 'Test router 4',
-      },
-      xml: '<entry name="Test router 4">
             </entry>',
     },
   ]
