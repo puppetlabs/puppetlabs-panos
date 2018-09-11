@@ -9,8 +9,8 @@ Puppet::ResourceApi.register_type(
   features: ['remote_resource'],
   attributes: {
     name: {
-      type:       'String',
-      desc:       'The display-name of the zone.',
+      type:       'Pattern[/^[a-zA-z0-9\-_\s\.]{1,63}$/]',
+      desc:       'The display-name of the zone. Restricted to 31 characters on PAN-OS version 7.1.0.',
       xpath:      'string(@name)',
       behaviour:  :namevar,
     },
