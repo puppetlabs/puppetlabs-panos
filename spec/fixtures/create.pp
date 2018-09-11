@@ -438,6 +438,14 @@ panos_static_route {
     nexthop        => '10.10.10.10',
     interface      => 'ethernet1/3',
     no_install     => false;
+  'full example VR/route three':
+    ensure         => 'present',
+    bfd_profile    => 'default',
+    metric         => '200',
+    admin_distance => '15',
+    destination    => '10.9.0.0/16',
+    nexthop_type   => 'discard',
+    no_install     => false;
 }
 
 panos_ipv6_static_route {
@@ -456,6 +464,14 @@ panos_ipv6_static_route {
     nexthop_type   => 'ipv6-address',
     nexthop        => '2001:0dc8::/128',
     interface      => 'ethernet1/8',
+    bfd_profile    => 'default',
+    metric         => '400',
+    admin_distance => '10',
+    destination    => '2000::/8',
+    no_install     => false;
+  'full example VR/ipv6 route three':
+    ensure         => 'present',
+    nexthop_type   => 'discard',
     bfd_profile    => 'default',
     metric         => '400',
     admin_distance => '10',

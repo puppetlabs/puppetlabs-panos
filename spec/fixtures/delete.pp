@@ -190,11 +190,15 @@ panos_static_route {
     ensure => 'absent';
   'full example VR/route two':
     ensure => 'absent';
+  'full example VR/route three':
+    ensure => 'absent';
 }
 panos_ipv6_static_route {
   'full example VR/ipv6 route one':
     ensure => 'absent';
   'full example VR/ipv6 route two':
+    ensure => 'absent';
+  'full example VR/ipv6 route three':
     ensure => 'absent';
 }
 
