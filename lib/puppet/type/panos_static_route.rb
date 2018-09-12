@@ -10,7 +10,7 @@ Puppet::ResourceApi.register_type(
   title_patterns: [
     {
       pattern: %r{^(?<vr_name>[^/]*)/(?<route>.*)$},
-      desc: 'Where the name and the virtual router are provided with a hyphen seperator',
+      desc: 'Where the name and the virtual router are provided with a forward slash seperator',
     },
   ],
   attributes: {
