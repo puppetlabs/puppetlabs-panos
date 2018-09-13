@@ -413,7 +413,10 @@ panos_static_route {
     admin_distance => '50',
     destination    => '10.9.0.0/32',
     nexthop_type   => 'discard',
-    no_install     => true;
+    no_install     => $::facts['operatingsystemrelease'] ? {
+      '7.1.0' => true,
+      '8.1.0' => false,
+    };
   'full example VR/route two':
     ensure         => 'present',
     bfd_profile    => 'None',
@@ -422,7 +425,10 @@ panos_static_route {
     destination    => '10.9.0.0/16',
     nexthop_type   => 'none',
     interface      => 'ethernet1/3',
-    no_install     => true;
+    no_install     => $::facts['operatingsystemrelease'] ? {
+      '7.1.0' => true,
+      '8.1.0' => false,
+    };
   'full example VR/route three':
     ensure         => 'present',
     nexthop_type   => 'next-vr',
@@ -432,7 +438,10 @@ panos_static_route {
     admin_distance => '10',
     destination    => '10.9.0.0/16',
     interface      => 'ethernet1/3',
-    no_install     => false;
+    no_install     => $::facts['operatingsystemrelease'] ? {
+      '7.1.0' => false,
+      '8.1.0' => false,
+    };
 }
 
 panos_ipv6_static_route {
@@ -445,14 +454,20 @@ panos_ipv6_static_route {
     metric         => '700',
     admin_distance => '123',
     destination    => '2001::/16',
-    no_install     => true;
+    no_install     => $::facts['operatingsystemrelease'] ? {
+      '7.1.0' => true,
+      '8.1.0' => false,
+    };
   'full example VR/ipv6 route two':
     ensure         => 'present',
     nexthop_type   => 'discard',
     metric         => '800',
     admin_distance => '10',
     destination    => '2000::/8',
-    no_install     => false;
+    no_install     => $::facts['operatingsystemrelease'] ? {
+      '7.1.0' => false,
+      '8.1.0' => false,
+    };
   'full example VR/ipv6 route three':
     ensure         => 'present',
     interface      => 'ethernet1/8',
@@ -462,7 +477,10 @@ panos_ipv6_static_route {
     metric         => '400',
     admin_distance => '10',
     destination    => '2000::/8',
-    no_install     => false;
+    no_install     => $::facts['operatingsystemrelease'] ? {
+      '7.1.0' => false,
+      '8.1.0' => false,
+    };
 }
 
 panos_commit {
