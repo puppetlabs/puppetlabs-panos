@@ -224,7 +224,6 @@ EOF
         expect(doc).to have_xml('entry/tag/member', 'two')
         expect(doc).to have_xml('entry/tag/member', 'three')
       end
-
       provider.create(context, resource_data[0][:name], resource_data[0])
     end
   end

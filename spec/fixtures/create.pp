@@ -166,8 +166,15 @@ panos_arbitrary_commands {
                   <entry name="ethernet1/5">
                     <layer3/>
                   </entry>
-                  <entry name="ethernet1/8">
+                  <entry name="ethernet1/6">
                     <tap/>
+                  </entry>
+                  <entry name="ethernet1/8">
+                    <layer3>
+                      <ipv6>
+                        <enabled>yes</enabled>
+                      </ipv6>
+                    </layer3>
                   </entry>
                 </ethernet>';
 }
@@ -178,7 +185,7 @@ panos_zone {
   'tap':
     ensure                     => 'present',
     network                    => 'tap',
-    interfaces                 => ['ethernet1/8'];
+    interfaces                 => ['ethernet1/6'];
   'virtual-wire':
     ensure                     => 'present',
     network                    => 'virtual-wire',
@@ -381,6 +388,99 @@ panos_security_policy_rule  {
     qos_type                            =>  'ip-precedence',
     ip_precedence                       =>  'cs0',
     disable_server_response_inspection  =>  true;
+}
+
+panos_virtual_router {
+  'full example VR':
+    ensure         => 'present',
+    interfaces     => ['ethernet1/3', 'ethernet1/5', 'ethernet1/8'],
+    ad_static      => '20',
+    ad_static_ipv6 => '30',
+    ad_ospf_int    => '20',
+    ad_ospf_ext    => '20',
+    ad_ospfv3_int  => '20',
+    ad_ospfv3_ext  => '20',
+    ad_ibgp        => '20',
+    ad_ebgp        => '20',
+    ad_rip         => '20';
+  # Maximum of 2 Virtual Routers possible on VM, vm already contains default
+  # 'VR with interfaces':
+  #   ensure     => 'present',
+  #   interfaces => ['ethernet1/1', 'ethernet1/2'];
+  # 'VR without interfaces':
+  #   ensure         => 'present',
+  #   ad_static      => '20',
+  #   ad_static_ipv6 => '30',
+  #   ad_ospf_int    => '20',
+  #   ad_ospf_ext    => '20',
+  #   ad_ospfv3_int  => '20',
+  #   ad_ospfv3_ext  => '20',
+  #   ad_ibgp        => '20',
+  #   ad_ebgp        => '20',
+  #   ad_rip         => '20';
+}
+panos_static_route {
+  'full example VR/route one':
+    ensure         => 'present',
+    bfd_profile    => 'None',
+    metric         => '100',
+    admin_distance => '15',
+    destination    => '10.9.0.0/32',
+    nexthop_type   => 'discard',
+    no_install     => false;
+  'full example VR/route two':
+    ensure         => 'present',
+    bfd_profile    => 'default',
+    metric         => '200',
+    admin_distance => '15',
+    destination    => '10.9.0.0/16',
+    nexthop_type   => 'ip-address',
+    nexthop        => '10.10.10.10',
+    interface      => 'ethernet1/3',
+    no_install     => false;
+  'full example VR/route three':
+    ensure         => 'present',
+    bfd_profile    => 'None',
+    metric         => '300',
+    admin_distance => '15',
+    destination    => '10.9.0.0/16',
+    nexthop_type   => 'next-vr',
+    nexthop        => 'default',
+    interface      => 'ethernet1/3',
+    no_install     => false;
+}
+
+panos_ipv6_static_route {
+  'full example VR/ipv6 route one':
+    ensure         => 'present',
+    nexthop_type   => 'ipv6-address',
+    nexthop        => '2001:0dc8::/128',
+    interface      => 'ethernet1/8',
+    bfd_profile    => 'default',
+    metric         => '400',
+    admin_distance => '10',
+    destination    => '2001::/16',
+    no_install     => false;
+  'full example VR/ipv6 route two':
+    ensure         => 'present',
+    nexthop_type   => 'ipv6-address',
+    nexthop        => '2001:0dc8::/128',
+    interface      => 'ethernet1/8',
+    bfd_profile    => 'default',
+    metric         => '500',
+    admin_distance => '10',
+    destination    => '2000::/8',
+    no_install     => true;
+  'full example VR/ipv6 route three':
+    ensure         => 'present',
+    interface      => 'ethernet1/8',
+    nexthop_type   => 'next-vr',
+    nexthop        => 'default',
+    bfd_profile    => 'None',
+    metric         => '600',
+    admin_distance => '10',
+    destination    => '2000::/8',
+    no_install     => true;
 }
 
 panos_commit {

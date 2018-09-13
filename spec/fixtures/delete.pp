@@ -181,6 +181,27 @@ panos_security_policy_rule  {
     ensure =>  'absent';
 }
 
+panos_virtual_router {
+  'full example VR':
+    ensure => 'absent';
+}
+panos_static_route {
+  'full example VR/route one':
+    ensure => 'absent';
+  'full example VR/route two':
+    ensure => 'absent';
+  'full example VR/route three':
+    ensure => 'absent';
+}
+panos_ipv6_static_route {
+  'full example VR/ipv6 route one':
+    ensure => 'absent';
+  'full example VR/ipv6 route two':
+    ensure => 'absent';
+  'full example VR/ipv6 route three':
+    ensure => 'absent';
+}
+
 panos_commit {
   'commit':
     commit => true
