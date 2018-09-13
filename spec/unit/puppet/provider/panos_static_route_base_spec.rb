@@ -436,6 +436,7 @@ EOF
           destination: '10.9.0.1/32',
           no_install: false,
           vr_name: 'example VR',
+          title: "example VR/example SR-example VR",
         },
       ]
     end

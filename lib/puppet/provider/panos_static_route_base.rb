@@ -87,6 +87,7 @@ class Puppet::Provider::PanosStaticRouteBase < Puppet::Provider::PanosProvider
           result[attr_name] = match(static_route_entry, attr, attr_name) unless attr_name == :vr_name
         end
         result[:vr_name] = vr_name
+        result[:title] = vr_name + '/' + result[:route]
         results.push(result)
         defined?(munge) ? munge(result) : result
       end
