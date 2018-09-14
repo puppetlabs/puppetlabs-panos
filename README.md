@@ -47,7 +47,7 @@ To get started, create or edit `/etc/puppetlabs/puppet/device.conf`, add a secti
 ```INI
 [firewall.example.com]
 type panos
-url file:////etc/puppetlabs/puppet/devices/firewall.example.com.conf`
+url file:////etc/puppetlabs/puppet/devices/firewall.example.com.conf
 ```
 
 Next, create a credentials file. See the [HOCON documentation](https://github.com/lightbend/config/blob/master/HOCON.md) for information on quoted/unquoted strings and connecting the device.
