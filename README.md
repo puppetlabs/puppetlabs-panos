@@ -8,7 +8,7 @@
 1. [Module Description - What the module does and why it is useful](#module-description)
 2. [Setup - The basics of getting started with PANOS](#setup)
     * [Setup requirements](#setup-requirements)
-    * [Beginning with PANOS](#beginning-with-panos)
+    * [Getting started with PANOS](#getting-started-with-panos)
 3. [Usage - Configuration options and additional functionality](#usage)
 4. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
 5. [Limitations - OS compatibility, etc.](#limitations)
@@ -17,24 +17,24 @@
 
 ## Module Description
 
-The PANOS module allows for the configuration of Palo Alto firewalls running PANOS 7.1.0 or PANOS 8.1.0.
+The PANOS module configures Palo Alto firewalls running PANOS 7.1.0 or PANOS 8.1.0.
 
-Any changes made by this module to the various resources must be committed before they are made available to the running configuration. This can be done by including `panos_commit` within your manifest, or alternatively executing the `commit` task.
+When committing changes to resources, include `panos_commit` in your manifest, or execute the `commit` task. You must do this before they can be made available to the running configuration. 
 
-This module provides a Puppet task to manually `commit`, `store_config` to a file and `set_config` from a file.
+The module provides a Puppet task to manually `commit`, `store_config` to a file, and `set_config` from a file.
 
 ## Setup
 
 ### Setup Requirements
 
-This module requires a user that can access the device's web management interface and the dependences will need to be installed.
+The PANOS module requires access to the device's web management interface. You will also need to install the dependences.
 
-The PANOS module has a dependency on the `resource_api`, the setup instructions can be found [on the Resource API README](https://github.com/puppetlabs/puppetlabs-resource_api#resource_api).
+The module has a dependency on the `resource_api`. See the [Resource API README](https://github.com/puppetlabs/puppetlabs-resource_api#resource_api) for setup instructions.
 
-* on each puppetserver or PE master that needs to manage PANOS devices, classify or apply the `panos::server` class.
-* on each puppet agent that needs to manage PAOS devices, classify or apply the `panos::agent` class.
+* On each Puppet Server or PE master that needs to manage PANOS devices, classify or apply the `panos::server` class.
+* On each Puppet agent that needs to manage PANOS devices, classify or apply the `panos::agent` class.
 
-### Beginning with PANOS
+### Getting started with PANOS
 
 To get started, create or edit `/etc/puppetlabs/puppet/device.conf`, add a section for the device (this will become the device's `certname`), specify a type of `panos`, and specify a `url` to a credentials file. For example:
 
@@ -44,36 +44,37 @@ type panos
 url file:////etc/puppetlabs/puppet/devices/firewall.example.com.conf`
 ```
 
-Next, create a credentials file, following the [HOCON documentation](https://github.com/lightbend/config/blob/master/HOCON.md) regarding quoted/unquoted strings, with connection information for the device.
+Next, create a credentials file. See the [HOCON documentation](https://github.com/lightbend/config/blob/master/HOCON.md) for information on quoted/unquoted strings and connecting the device.
 
-There are two valid type of creditial file.
+There are two valid types of creditial files:
 
-* (a) A file containing the host, username and password in plain text:
+* A file containing the host, username and password in plain text:
   ```
   host: 10.0.10.20
   user: admin
   password: admin
   ```
-* (b) A file containing the host and an API key obtained from the device:
+* A file containing the host and an API key obtained from the device:
   ```
   host: 10.0.10.20
   apikey: LUFRPT10cHhRNXMyR2wrYW1MSzg5cldhNElodmVkL1U9OEV1cGY5ZjJyc2xGL1Z4Qk9TNFM2dz09
   ```
 
-To obtain an API key for the device, use the `panos::apikey` task. The required creditials file should be in the format of (a) above. After which it can be discarded.
+To obtain an API key for the device, use the `panos::apikey` task. The required creditials file should be in the format of the former. After which you can discard it:
 
 ```
 bolt task run panos::apikey credentials_file=spec/fixtures/test-password.conf
 ```
 
 
-Test your setup. For example:
+Test your setup:
 
 `puppet device --verbose --target firewall.example.com`
 
-More information on the usage of `puppet device` is available in the [Puppet Documentation](https://puppet.com/docs/puppet/5.5/puppet_device.html)
+See the [Puppet device documentation](https://puppet.com/docs/puppet/5.5/puppet_device.html) for more information.
 
 ## Usage
+
 Create a manifest with the changes you want to apply. For example:
 
 ```Puppet
@@ -86,9 +87,9 @@ panos_admin {
 }
 ```
 
-The repo's acceptance tests examples contain a [useful reference](https://github.com/puppetlabs/puppetlabs-panos/blob/master/spec/fixtures/create.pp) on the use of the module's Types.
+The repo's acceptance tests examples contain a [useful reference](https://github.com/puppetlabs/puppetlabs-panos/blob/master/spec/fixtures/create.pp) on using the module's Types.
 
-__NOTE:__ pw_hash function in the above example requires [puppetlabs-stdlib](https://forge.puppet.com/puppetlabs/stdlib)
+__Note:__ The pw_hash function requires [puppetlabs-stdlib](https://forge.puppet.com/puppetlabs/stdlib)
 
 
 ### Puppet Device
@@ -107,7 +108,7 @@ Full Type reference documentation availble. See [REFERENCE.md](https://github.co
 
 ## Limitations
 
-This module has been tested using PANOS 7.1.0 and 8.1.0
+This module has only been tested using PANOS 7.1.0 and 8.1.0.
 
 ## Development
 
@@ -117,14 +118,12 @@ Checkout the [repo](https://github.com/puppetlabs/puppetlabs-panos) by forking a
 
 ### Type
 
-Add new types to the type directory.
-We use the [Resource API format](https://github.com/puppetlabs/puppet-resource_api/blob/master/README.md).
+Add new types to the type directory. We use the [Resource API format](https://github.com/puppetlabs/puppet-resource_api/blob/master/README.md).
+
+These PANOS types extend the Resource API by adding in `xpath` values, which are used by their respective providers when retireving data from the PANOS API. If the atrribute expects multiple values to be returned, it will declare `xpath_array`.
 
 
-These PANOS types extend the Resource API by adding in `xpath` values, which are used by their respective providers when retireving data from the PANOS API. If the atrribute expects multiple values to be returned, `xpath_array` will be declared.
-
-
-Here is a simple example:
+For example:
 
 ```Ruby
   require 'puppet/resource_api'
@@ -154,13 +153,13 @@ Here is a simple example:
 
 ### Provider
 
-Add a provider — see existing examples. Parsing logic is contained each types respective provider directory with a common [base provider](https://github.com/puppetlabs/puppetlabs-panos/blob/master/lib/puppet/provider/panos_provider.rb) available.
+Add a provider — see existing examples. Parsing logic is contained in each types respective provider directory with a common [base provider](https://github.com/puppetlabs/puppetlabs-panos/blob/master/lib/puppet/provider/panos_provider.rb) available.
 
 ### Testing
 
-There are 2 levels of testing found under `spec`.
+There are two levels of testing found under `spec`.
 
-To test this module you will need to have a Palo Alto machine available. The virtual machine images from their support area work fine in virtualbox and vmware. Alternatively you can use the PAYG offering on AWS. Note that the VMs do not have to have a license deployed to be usable for development.
+To test this module you need a Palo Alto machine. The virtual machine images from their support area work in VirtualBox and VMware. Alternatively you can use the PAYG offering on AWS. Note that the VMs do not have to have a license deployed that is usable for development.
 
 * [XML API docs](https://www.paloaltonetworks.com/documentation/81/pan-os/xml-api)
 * [Palo Alto on AWS](https://aws.amazon.com/marketplace/search/results?x=0&y=0&searchTerms=palo+alto&page=1&ref_=nav_search_box)
@@ -168,11 +167,9 @@ To test this module you will need to have a Palo Alto machine available. The vir
 
 #### Unit Testing
 
-Unit tests test the parsing and command generation logic executed locally.
+Unit tests test the parsing and command generation logic that is executed locally.
 
-First execute `bundle exec rake spec_prep` to ensure that the local types are made available to the spec tests.
-
-Then execute with `bundle exec rake spec`.
+First execute `bundle exec rake spec_prep` to ensure that the local types are made available to the spec tests. Then execute with `bundle exec rake spec`.
 
 #### Acceptance Testing
 
@@ -180,22 +177,22 @@ Acceptance tests are executed on actual devices.
 
 Use test values and make sure that these are non-destructive.
 
-The acceptance tests locate the Palo Alto box used for testing through environment variables. The current test setup allows for three different scenarios:
+The acceptance tests locate the Palo Alto box that used for testing through environment variables. The current test setup allows for three different scenarios:
 
 * Static configuration: the VM or physical box is already running somewhere.
   Set `PANOS_TEST_HOST` to the FQDN/IP of the box and `PANOS_TEST_PLATFORM` to a platform string in the form of `palo-alto-VERSION-x86_64`.
 * VMPooler: if you have a VMPooler instance available, set `VMPOOLER_HOST` to the hostname of your VMPooler instance (it defaults to Puppet's internal service), and `PANOS_TEST_PLATFORM` to the platform string of VMPooler you want to use.
-* ABS: When running on Puppet's internal infrastructure, reserved instances are passed into the job through `ABS_RESOURCE_HOSTS`.
+* ABS: when running on Puppet's internal infrastructure, it passes reserved instances into the job through `ABS_RESOURCE_HOSTS`.
 
 To specify the username and password used to connect to the box, set `PANOS_TEST_USER` and `PANOS_TEST_PASSWORD` respectively. Palo Alto's VMs default to `admin`/`admin`, which is also used as a default, if you don't specify anything.
 
-After you have configured the system under test, you can run the acceptance tests directly using
+After you have configured the system under test, you can run the acceptance tests directly using:
 
 ```
 bundle exec rspec spec/acceptance
 ```
 
-or using the legacy rake task
+Or using the legacy rake task:
 
 ```
 bundle exec rake beaker
@@ -203,10 +200,10 @@ bundle exec rake beaker
 
 ### Cutting a release
 
-To cut a new release, from a current `master` checkout:
+To cut a new release from a current `master`:
 
 * Start the release branch with `git checkout -b release-prep`
-* Execute the [Puppet Strings](https://puppet.com/docs/puppet/5.5/puppet_strings.html) rake task to update [REFERENCE.md](https://github.com/puppetlabs/puppetlabs-panos/blob/master/REFERENCE.md)
+* Execute the [Puppet Strings](https://puppet.com/docs/puppet/5.5/puppet_strings.html) rake task to update the [REFERENCE.md](https://github.com/puppetlabs/puppetlabs-panos/blob/master/REFERENCE.md):
 
 ```
 bundle exec rake strings:generate[,,,,,REFERENCE.md,true]
