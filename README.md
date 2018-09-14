@@ -33,7 +33,9 @@ This module requires a user that can access the device's web management interfac
 
 The PANOS module has a dependency on the `resource_api` - it will be installed when the module is installed. Alternatively, it can be manually installed by running `puppet module install puppetlabs-resource_api` or following the setup instructions [on the Resource API README](https://github.com/puppetlabs/puppetlabs-resource_api#resource_api).
 
-Once the module has been installed it is necessary to classify the appropriate class, by following the instructions below:
+### Manual Test Setup
+
+Once the module has been installed it is necessary to classify the appropriate class, by following the instructions below. This is a manual set up step:
 
 * on each puppetserver or PE master that needs to manage PANOS devices, classify or apply the `panos::server` class; run this command: `puppet apply -e 'include panos::server'`.
 * on each puppet agent that needs to manage PAOS devices, classify or apply the `panos::agent` class; run this command: `puppet apply -e 'include panos::agent'`.
