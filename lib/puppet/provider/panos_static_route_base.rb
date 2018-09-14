@@ -102,10 +102,10 @@ class Puppet::Provider::PanosStaticRouteBase < Puppet::Provider::PanosProvider
     context.device.set_config(context.type.definition[:base_xpath], xml_from_should(should[:name], should))
   end
 
-  def update(context, name, should)
+  def update(context, _name, should)
     context.type.definition[:base_xpath] = "/config/devices/entry/network/virtual-router/entry[@name='#{should[:vr_name]}']/routing-table/#{@version_label}/static-route"
     validate_should(should)
-    context.device.edit_config(context.type.definition[:base_xpath] + "/entry[@name='#{name}']", xml_from_should(should[:name], should))
+    context.device.set_config(context.type.definition[:base_xpath], xml_from_should(should[:name], should))
   end
 
   def delete(context, name, vr_name)
