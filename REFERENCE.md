@@ -26,7 +26,8 @@
 
 * [`apikey`](#apikey): Retrieve a PAN-OS apikey using PAN-OS host, username and password.
 * [`commit`](#commit): Commit a candidate configuration to a firewall.
-* [`config`](#config): upload and/or apply a configuration to a firewall.
+* [`set_config`](#set_config): upload and/or apply a configuration to a firewall.
+* [`store_config`](#store_config): Retrieve the configuration running on the firewall.
 
 ## Classes
 
@@ -82,23 +83,25 @@ Provide a description of this address.
 
 Data type: `Optional[String]`
 
-        Provide an IP address or a network using the slash notation (Ex. 192.168.80.150 or 192.168.80.0/24).
-        You can also provide an IPv6 address or an IPv6 address with its prefix (Ex. 2001:db8:123:1::1 or 2001:db8:123:1::/64).
-        You need to provide exactly one of ip_netmask, ip_range, or fqdn.
+Provide an IP address or a network using the slash notation (Ex. 192.168.80.150 or 192.168.80.0/24).
+You can also provide an IPv6 address or an IPv6 address with its prefix (Ex. 2001:db8:123:1::1 or 2001:db8:123:1::/64).
+You need to provide exactly one of ip_netmask, ip_range, or fqdn.
 
 ##### `ip_range`
 
 Data type: `Optional[String]`
 
-        Provide an IP address range (Ex. 10.0.0.1-10.0.0.4).
-        Each of the IP addresses in the range can also be in an IPv6 form (Ex. 2001:db8:123:1::1-2001:db8:123:1::11).
-        You need to provide exactly one of ip_netmask, ip_range, or fqdn.
+Provide an IP address range (Ex. 10.0.0.1-10.0.0.4).
+Each of the IP addresses in the range can also be in an IPv6 form (Ex. 2001:db8:123:1::1-2001:db8:123:1::11).
+You need to provide exactly one of ip_netmask, ip_range, or fqdn.
 
 ##### `fqdn`
 
 Data type: `Optional[String]`
 
 Provide a fully qualified domain name. You need to provide exactly one of ip_netmask, ip_range, or fqdn.
+The FQDN initially resolves at commit time. Entries are subsequently refreshed when the firewall performs a check every 30 minutes; all changes in the IP address for the entries are picked up at the refresh cycle
+The FQDN is resolved by the system DNS server or a DNS proxy object, if a proxy is configured.
 
 ##### `tags`
 
@@ -153,16 +156,16 @@ A `static` or `dynamic` address-group.
 
 Data type: `Optional[Array[String]]`
 
-An array of `panos_address`, or `panos_address_group` that form this group. Used only when type is static.
+One or more `panos_address` or `panos_address_group` that form this group. Used only when type is static.
 
 ##### `dynamic_filter`
 
 Data type: `Optional[String]`
 
-      To create a dynamic address group, use the match criteria to assemble the members to be included in the group.
-      Define the Match criteria using the AND or OR operators.
-        example: 'tag1' and 'tag2' or 'tag3'
-      Used only when type is dynamic.
+To create a dynamic address group, use the match criteria to assemble the members to be included in the group.
+Define the Match criteria using the AND or OR operators.
+  example: 'tag1' and 'tag2' or 'tag3'
+Used only when type is dynamic.
 
 ##### `tags`
 
@@ -211,13 +214,14 @@ Provide a password hash.
 
 Data type: `Optional[String]`
 
-Provide an authentication profile.
+Provide an authentication profile. You can use this setting for RADIUS, TACACS+, LDAP, Kerberos, or local database authentication.
 
 ##### `client_certificate_only`
 
 Data type: `Boolean`
 
-When set to true uses client certificate profile for web UI access.
+Select this option to use client certificate authentication for web access.
+If you select this option, a username and password are not required; the certificate is sufficient to authenticate access to the firewall.
 
 ##### `ssh_key`
 
@@ -229,13 +233,28 @@ Provide the users public key in plain text
 
 Data type: `Enum["superuser", "superreader", "devicereader", "deviceadmin", "custom"]`
 
-Specify the access level for the administrator
+Specify the access level for the administrator.
+
+* superuser: Has full access to the firewall and can define new administrator accounts and virtual systems. You must have superuser privileges to create an administrative user with superuser privileges.
+
+* superreader: Has read-only access to the firewall.
+
+* deviceadmin: Has full access to all firewall settings except for defining new accounts or virtual systems.
+
+* devicereader: Has read-only access to all firewall settings except password profiles (no access) and administrator accounts (only the logged in account is visible).
 
 ##### `role_profile`
 
 Data type: `Optional[String]`
 
 Specify the role profile for the user
+The following built in roles are available:
+
+* auditadmin: The Audit Administrator is responsible for the regular review of the firewall’s audit data.
+
+* cryptoadmin: The Cryptographic Administrator is responsible for the configuration and maintenance of cryptographic elements related to the establishment of secure connections to the firewall.
+
+* securityadmin: The Security Administrator is responsible for all other administrative tasks (e.g. creating the firewall’s security policy) not addressed by the other two administrative roles.
 
 #### Parameters
 
@@ -270,7 +289,7 @@ Default value: present
 
 Data type: `String`
 
-The XML to be set. Use: file(path/to/file.xml).
+The XML to be set on the device. If working with large XML structures it us recommended to use the file() function e.g.: file(path/to/file.xml).
 
 #### Parameters
 
@@ -282,7 +301,7 @@ namevar
 
 Data type: `String`
 
-The PANOS API XPath on which to set the :xml.
+The PANOS API XPath on which to set the `xml`.
 
 ### panos_commit
 
@@ -344,7 +363,8 @@ Default value: ipv4
 
 Data type: `Array[String]`
 
-The source zone.
+Specify one or more source zones for the original (non-NAT) packet. Zones must be of the same type (Layer 2, Layer 3, or virtual wire).
+You can specify multiple zones to simplify management. For example, you can configure settings so that multiple internal NAT addresses are directed to the same external IP address.
 
 Default value: ["any"]
 
@@ -352,19 +372,21 @@ Default value: ["any"]
 
 Data type: `Array[String]`
 
-One or more destination zones for the source packet.
+Specify one or more destinations zones for the original (non-NAT) packet. Zones must be of the same type (Layer 2, Layer 3, or virtual wire).
+You can specify multiple zones to simplify management. For example, you can configure settings so that multiple internal NAT addresses are directed to the same external IP address.
 
 ##### `destination_interface`
 
 Data type: `Optional[String]`
 
-The destination interface for which the firewall transates.
+Specify the destination interface of packets the firewall translates.
+You can use the destination interface to translate IP addresses differently in the case where the network is connected to two ISPs with different IP address pools
 
 ##### `service`
 
 Data type: `String`
 
-The service the firewall is translating for.
+Specify the service for which the firewall translates the source or destination address.
 
 Default value: any
 
@@ -372,7 +394,9 @@ Default value: any
 
 Data type: `Array[String]`
 
-The source address of the translated packets.
+Specify a combination of source addresses for the firewall to translate.
+For NPTv6, the prefixes configured for Source Address and Destination Address must be in the format xxxx:xxxx::/yy.
+The address cannot have an interface identifier (host) portion defined. The range of supported prefix lengths is /32 to /64.
 
 Default value: ["any"]
 
@@ -380,7 +404,9 @@ Default value: ["any"]
 
 Data type: `Array[String]`
 
-The destination of the translated packet.
+Specify a combination of destination addresses for the firewall to translate.
+For NPTv6, the prefixes configured for Source Address and Destination Address must be in the format xxxx:xxxx::/yy.
+The address cannot have an interface identifier (host) portion defined. The range of supported prefix lengths is /32 to /64.
 
 Default value: ["any"]
 
@@ -388,7 +414,28 @@ Default value: ["any"]
 
 Data type: `Optional[Enum["dynamic-ip", "static-ip", "dynamic-ip-and-port", "none"]]`
 
-The translation applied to the source IP.
+The size of the address range is limited by the type of address pool:
+
+* dynamic-ip-and-port: Address selection is based on a hash of the source IP address.
+  For a given source IP address, the firewall will use the same translated source address for all sessions.
+  Dynamic IP and Port source NAT supports approximately 64k concurrent sessions on each IP address in the NAT pool.
+  On some platforms, over-subscription is supported, which will allow a single IP to host more than 64k concurrent sessions.
+  Palo Alto Networks Dynamic IP/port NAT supports more NAT sessions than are supported by the number of available IP addresses and ports.
+  The firewall can use IP address and port combinations up to two times (simultaneously) on the PA-200, PA-500, PA-2000 Series and PA-3000 Series firewalls,
+  four times on the PA-4020 and PA-5020 firewalls, and eight times on the PA‑4050, PA-4060, PA-5050, and PA-5060 firewalls when destination IP addresses are unique.
+
+* dynamic-ip: The next available address in the specified range is used, but the port number is unchanged. Up to 32k consecutive IP addresses are supported.
+  A dynamic IP pool can contain multiple subnets, so you can translate your internal network addresses to two or more separate public subnets.
+    * Advanced (Fall back Dynamic IP Translation)—Use this option to create a fall back pool that will perform IP and port translation and will be used if the primary pool runs out of addresses.
+      You can define addresses for the pool by using the Translated Address option or the Interface Address option, which is for interfaces that receive an IP address dynamically.
+      When creating a fall back pool, make sure addresses do not overlap with addresses in the primary pool.
+
+* static-ip: The same address is always used for the translation and the port is unchanged.
+  For example, if the source range is 192.168.0.1-192.168.0.10 and the translation range is 10.0.0.1-10.0.0.10, address 192.168.0.2 is always translated to 10.0.0.2. The address range is virtually unlimited.
+    * NPTv6 must use Static IP translation for Source Address Translation. For NPTv6, the prefixes configured for Translated Address must be in the format xxxx:xxxx::/yy.
+      The address cannot have an interface identifier (host) portion defined. The range of supported prefix lengths is /32 to /64.
+
+* None: Translation is not performed.
 
 ##### `SAT_interface`
 
@@ -424,31 +471,33 @@ Whether the NAT policy used translated-address or interface-address as a fallbac
 
 Data type: `Optional[Array[String]]`
 
-The translated addresses used as a fallback.
+The translated addresses used as a fallback. Required if `fallback_address_type` is set to `translated-address`
 
 ##### `fallback_interface`
 
 Data type: `Optional[String]`
 
-The interface used as fallback
+The interface used as fallback. Required if `fallback_address_type` is set to `interface-address`
 
 ##### `fallback_interface_ip`
 
 Data type: `Optional[String]`
 
-The ip of the interface used as fallback
+The ip of the interface used as fallback. Required if `fallback_address_type` is set to `interface-address`
 
 ##### `fallback_interface_ip_type`
 
 Data type: `Optional[Enum["floating-ip", "ip"]]`
 
-The type of ip for the interface used as fallback
+The type of ip for the interface used as fallback. Required if `fallback_address_type` is set to `interface-address`
 
 ##### `bi_directional`
 
 Data type: `Optional[Boolean]`
 
-Determines whether the static-ip supplied is bi-directional.
+Enable bidirectional translation if you want the firewall to create a corresponding translation (NAT or NPTv6) in the opposite direction of the translation you configure.
+Note: If you enable bidirectional translation, you must ensure that you have security policies in place to control the traffic in both directions. Without such policies,
+the bidirectional feature allows packets to be translated automatically in both directions.
 
 ##### `destination_translated_address`
 
@@ -456,11 +505,17 @@ Data type: `Optional[String]`
 
 The address to which the packets are translated.
 
-##### `destination_translated_port`
-
-Data type: `Optional[String]`
-
+For NPTv6, the prefixes configured for Destination prefix Translated Address must be in the format xxxx:xxxx::/yy.
+The address cannot have an interface identifier (host) portion defined. The range of supported prefix lengths is /32 to /64.
+      DESC
+      xpath: 'destination-translation/translated-address/text()',
+    },
+    destination_translated_port: {
+      type:  'Optional[String]',
+      desc:  <<DESC,
 The port of the translated address
+
+Note that Translated Port is not supported for NPTv6 because NPTv6 is strictly prefix translation. The Port and Host address section is simply forwarded unchanged.
 
 ##### `disable`
 
@@ -472,7 +527,8 @@ A boolean control to disable the NAT policy.
 
 Data type: `Optional[Array[String]]`
 
-The Palo Alto tags to apply to this NAT Policy. Do not confuse this with the `tag` metaparameter used to filter resource application.
+A policy tag is a keyword or phrase that allows you to sort or filter policies.
+This is useful when you have defined many policies and want to view those that are tagged with a particular keyword.
 
 #### Parameters
 
@@ -506,7 +562,19 @@ Default value: present
 
 Data type: `Enum["universal", "interzone", "intrazone"]`
 
-Specifiy the type of rule.
+Specifies whether the rule applies to traffic within a zone, between zones, or both:
+
+* universal: Applies the rule to all matching interzone and intrazone traffic in the specified source and destination zones.
+For example, if you create a universal role with source zones A and B and destination zones A and B, the rule would apply to
+all traffic within zone A, all traffic within zone B, and all traffic from zone A to zone B and all traffic from zone B to zone A.
+
+* intrazone: Applies the rule to all matching traffic within the specified source zones (you cannot specify a destination zone for
+intrazone rules). For example, if you set the source zone to A and B, the rule would apply to all traffic within zone A and all
+traffic within zone B, but not to traffic between zones A and B.
+
+* interzone: Applies the rule to all matching traffic between the specified source and destination zones. For example, if you set
+the source zone to A, B, and C and the destination zone to A and B, the rule would apply to traffic from zone A to zone B, from zone B
+to zone A, from zone C to zone A, and from zone C to zone B, but not traffic within zones A, B, or C.
 
 Default value: universal
 
@@ -520,13 +588,18 @@ Provide a description of the service.
 
 Data type: `Optional[Array[String]]`
 
-The Palo Alto tags to apply to this security_policy_rule. Do not confuse this with the `tag` metaparameter used to filter resource application.
+A policy tag is a keyword or phrase that allows you to sort or filter policies. This is useful when you have defined many policies and want to
+view those that are tagged with a particular keyword.For example, you may want to tag certain rules with specific words like Decrypt and No-decrypt,
+or use the name of a specific data center for policies associated with that location.
 
 ##### `source_zones`
 
 Data type: `Array[String]`
 
-The source zone profile list.
+Zones must be of the same type (Layer 2, Layer 3, or virtual wire).
+
+Multiple zones can be used to simplify management. For example, if you have three different internal zones (Marketing, Sales, and Public Relations)
+that are all directed to the untrusted destination zone, you can create one rule that covers all cases.
 
 Default value: ["any"]
 
@@ -534,7 +607,7 @@ Default value: ["any"]
 
 Data type: `Array[String]`
 
-The list of source addresses.
+The list of source addresses, address groups, or regions
 
 Default value: ["any"]
 
@@ -548,7 +621,24 @@ Matches on the reverse of the `source_address` value.
 
 Data type: `Array[String]`
 
-The source users list
+The following source values are supported:
+
+* ['any']: Include any traffic regardless of user data.
+
+* ['pre-logon']: Include remote users that are connected to the network using GlobalProtect, but are not logged into their system.
+When the Pre-logon option is configured on the Portal for GlobalProtect clients, any user who is not currently logged into their machine
+will be identified with the username pre-logon. You can then create policies for pre-logon users and although the user is not logged in directly,
+their machines are authenticated on the domain as if they were fully logged in.
+
+* ['known-user']: Includes all authenticated users, which means any IP with user data mapped. This option is equivalent to the domain users group on a domain.
+
+* ['unknown']: Includes all unauthenticated users, which means IP addresses that are not mapped to a user. For example, you could use unknown for guest
+level access to something because they will have an IP on your network but will not be authenticated to the domain and will not have IP
+to user mapping information on the firewall.
+
+* Or provide a list of specific users. E.g. ['admin','john.doe','jane.doe']
+
+Note: If you are using a RADIUS server and not the User-ID agent, the list of users does not display; you must enter user information manually.
 
 Default value: ["any"]
 
@@ -556,7 +646,10 @@ Default value: ["any"]
 
 Data type: `Array[String]`
 
-Specifiy the HIP profiles list.
+Specifiy one or more HIP profiles. A HIP enables you to collect information about the security status of your end hosts, such as whether they have the latest
+security patches and antivirus definitions installed. Using host information profiles for policy enforcement enables granular security that ensures that the
+remote hosts accessing your critical resources are adequately maintained and in adherence with your security standards before they are allowed access to your
+network resources.
 
 Default value: ["any"]
 
@@ -564,7 +657,12 @@ Default value: ["any"]
 
 Data type: `Array[String]`
 
-The destination zone profile list.
+Specify one or more destination zones. Zones must be of the same type (Layer 2, Layer 3, or virtual wire). To define new zones, refer to “Defining Security Zones”.
+Multiple zones can be used to simplify management. For example, if you have three different internal zones (Marketing, Sales, and Public Relations) that are all
+directed to the untrusted destination zone, you can create one rule that covers all cases.
+
+Note: On intrazone rules, you cannot define a Destination Zone because these types of rules only match traffic with a source and a destination within the same zone.
+To specify the zones that match an intrazone rule you only need to set the Source Zone.
 
 Default value: ["any"]
 
@@ -572,7 +670,7 @@ Default value: ["any"]
 
 Data type: `Array[String]`
 
-The list of destination addresses.
+Specify one or more destination addresses, address groups or regions
 
 Default value: ["any"]
 
@@ -586,7 +684,8 @@ Matches on the reverse of the `destination_address` value.
 
 Data type: `Array[String]`
 
-The allowed applications list.
+Select specific applications for the security rule. If an application has multiple functions, you can select the overall application or individual functions.
+If you select the overall application, all functions are included and the application definition is automatically updated as future functions are added.
 
 Default value: ["any"]
 
@@ -594,7 +693,17 @@ Default value: ["any"]
 
 Data type: `Array[String]`
 
-The destination services.
+Select services to limit to specific TCP and/or UDP port numbers. The following values are valid:
+
+* ['any']: The selected applications are allowed or denied on any protocol or port.
+
+* ['application-default']: The selected applications are allowed or denied only on their default ports defined by Palo Alto Networks®.
+This option is recommended for allow policies because it prevents applications from running on unusual ports and protocol which, if not
+intentional, can be a sign of undesired application behavior and usage.
+
+Note that when you use this option, the firewall still checks for all applications on all ports but, with this configuration, applications are only allowed on their default ports and protocols.
+
+* A list of services. E.g. ['service-http', 'service-https', 'my_custom_service']
 
 Default value: ["application-default"]
 
@@ -602,7 +711,11 @@ Default value: ["application-default"]
 
 Data type: `Array[String]`
 
-The destination URL categories.
+The destination URL categories. The following values are valid:
+
+* ['any']: Allow or deny all sessions regardless of the URL category.
+
+* A list of specific categories or custom categories. E.g ['gambling','malware','my_custom_category']
 
 Default value: ["any"]
 
@@ -610,7 +723,21 @@ Default value: ["any"]
 
 Data type: `Enum["deny", "allow", "drop", "reset-client", "reset-server", "reset-both"]`
 
-Specifiy which action would be taken when the rule matches.
+To specify the action for traffic that matches the attributes defined in a rule, select from the following actions:
+
+* allow: Allows the traffic.
+
+* deny: Blocks traffic, and enforces the default Deny Action defined for the application that is being denied. To view the deny action defined by default for an application,
+view the application details in Objects > Applications. Because the default deny action varies by application, the firewall could block the session and send a reset for one
+application, while it could drop the session silently for another application.
+
+* drop: Silently drops the application. A TCP reset is not sent to the host/application, unless `ICMP Unreachable` is set to true.
+
+* reset-client: Sends a TCP reset to the client-side device.
+
+* reset-server: Sends a TCP reset to the server-side device.
+
+* reset-both: Sends a TCP reset to both the client-side and server-side devices.
 
 Default value: allow
 
@@ -618,19 +745,21 @@ Default value: allow
 
 Data type: `Optional[Boolean]`
 
-Specifiy the ICMP reachable status.
+Only available for Layer 3 interfaces. When you configure security policy to drop traffic or to reset the connection, the traffic does not reach the destination host.
+In such cases, for all UDP traffic and for TCP traffic that is dropped, you can enable the firewall to send an ICMP Unreachable response to the source IP address from
+where the traffic originated. Enabling this setting allows the source to gracefully close or clear the session and prevents applications from breaking.
 
 ##### `log_start`
 
 Data type: `Optional[Boolean]`
 
-Enable logging for start of session.
+Generates a traffic log entry for the start of a session 
 
 ##### `log_end`
 
 Data type: `Optional[Boolean]`
 
-Enable logging for end of session.
+Generates a traffic log entry for the end of a session
 
 Default value: true
 
@@ -638,7 +767,8 @@ Default value: true
 
 Data type: `Optional[String]`
 
-Specifiy which log forwarding profile should be used.
+To forward the local traffic log and threat log entries to remote destinations, such as Panorama and syslog servers, specifiy which log forwarding profile should be used.
+Note that the generation of threat log entries is determined by the security profiles.
 
 ##### `profile_type`
 
@@ -698,13 +828,13 @@ Specify the wildfire analysis profile, can only be set when `profile_type` is `p
 
 Data type: `Optional[String]`
 
-Specify the schedule profile.
+Specify the schedule profile to limit the days and times when the rule is in effect
 
 ##### `qos_type`
 
 Data type: `Optional[Enum["follow-c2s-flow", "ip-precedence", "ip-dscp", "none"]]`
 
-Specify which QoS profile should be used.
+Specify which QoS profile should be used to change the Quality of Service setting on packets matching the rule.
 
 ##### `ip_dscp`
 
@@ -722,7 +852,7 @@ Specify the IP Precedence QoS marking setting, only if `qos_type` is `ip-precede
 
 Data type: `Optional[Boolean]`
 
-Specify if server response inspection should be enabled.
+To disable packet inspection from the server to the client, select this option. This option may be useful under heavy server load conditions.
 
 ##### `disable`
 
@@ -769,7 +899,7 @@ Provide a description of this service.
 
 Data type: `Enum["tcp", "udp"]`
 
-The network protocol ther service runs on.
+Select the protocol used by the service
 
 Default value: tcp
 
@@ -875,7 +1005,7 @@ The color of the tag
 
 Data type: `Optional[String]`
 
-Provide a comment for this tag.
+Add a label or description to remind you what the tag is used for.
 
 #### Parameters
 
@@ -909,7 +1039,7 @@ Default value: present
 
 Data type: `Enum["tap", "virtual-wire", "layer2", "layer3", "tunnel"]`
 
-The network type of this zone. Note: `tunnel` can only be set on PAN-OS version 8.1.0.
+The network type of this zone. An interface can belong to only one zone in one virtual system. Note: `tunnel` can only be set on PAN-OS version 8.1.0.
 
 Default value: layer3
 
@@ -917,31 +1047,40 @@ Default value: layer3
 
 Data type: `Optional[Array[String]]`
 
-The interfaces used by this zone.
+One or more interfaces used by this zone.
 
 ##### `zone_protection_profile`
 
 Data type: `Optional[String]`
 
-The protection profile of the zone.
+Specify a profile that specifies how the security gateway responds to attacks from this zone
 
 ##### `log_setting`
 
 Data type: `Optional[String]`
 
-The log setting of the zone.
+Select a log forwarding profile for forwarding zone protection logs to an external system
 
 ##### `enable_user_identification`
 
 Data type: `Optional[Boolean]`
 
-Specify if the zone should enable user identification.
+If you configured User-ID™ to perform IP address-to-username mapping (discovery), select this option to apply the mapping information to traffic in this zone.
+If you disable this option, firewall logs, reports, and policies will exclude user mapping information for traffic within the zone.
+
+By default, if you select this option, the firewall applies user mapping information to the traffic of all subnetworks in the zone.
+To limit the information to specific subnetworks within the zone, use the `include_list` and `exclude_list`.
+
+Note: User-ID performs discovery for the zone only if it falls within the network range that User-ID monitors.
+If the zone is outside that range, the firewall does not apply user mapping information to the zone traffic even if  `enable_user_identification` is seelcted.
 
 ##### `enable_packet_buffer_protection`
 
 Data type: `Optional[Boolean]`
 
-Specify if the zone should have packet buffer protection. Note: can only be set on PAN-OS version 8.1.0.
+If you have configured Packet Buffer Protection, select to apply the packet buffer protection settings to this zone. Packet buffer protection is applied to the ingress zone only.
+
+Note: can only be set on PAN-OS version 8.1.0.
 
 ##### `nsx_service_profile`
 
@@ -953,13 +1092,22 @@ Specify if the zone should have a nsx service profile. Note: can only be set on 
 
 Data type: `Optional[Array[String]]`
 
-Array of included IP addresses or address groups.
+By default, if you do not specify subnetworks in this list, the firewall applies the user mapping information it discovers to all the traffic of this zone for use in logs, reports, and policies.
+
+To limit the application of user mapping information to specific subnetworks within the zone, then for each subnetwork click Add and select an address (or address group) object or type the IP address range (for example, 10.1.1.1/24).
+The exclusion of all other subnetworks is implicit: you do not need to add them to the `exclude_list`.
+
+Add entries to the `exclude_list` only to exclude user mapping information for a subset of the subnetworks in the `include_list`. For example, if you add 10.0.0.0/8 to the Include List and add 10.2.50.0/22 to the `exclude_list`,
+the firewall includes user mapping information for all the zone subnetworks of 10.0.0.0/8 except 10.2.50.0/22, and excludes information for all zone subnetworks outside of 10.0.0.0/8.
+Note that you can only include subnetworks that fall within the network range that User-ID monitors.
 
 ##### `exclude_list`
 
 Data type: `Optional[Array[String]]`
 
-Array of excluded IP addresses or address groups.
+To exclude user mapping information for a subset of the subnetworks in the `include_list`, for each subnetwork to exclude, specify an address (or address group) or type the IP address range.
+
+Note: If you add entries to the Exclude List but not the Include List, the firewall excludes user mapping information for all subnetworks within the zone, not just the subnetworks you added.
 
 #### Parameters
 
@@ -1015,7 +1163,7 @@ Data type: `String`
 
 The filename of the credentials file (as referenced in device.conf)
 
-### config
+### set_config
 
 upload and/or apply a configuration to a firewall.
 
@@ -1040,4 +1188,24 @@ The filename of the configuration file to upload
 Data type: `Boolean`
 
 true: upload and immediately apply the config. false: upload the config, without applying
+
+### store_config
+
+Retrieve the configuration running on the firewall.
+
+**Supports noop?** false
+
+#### Parameters
+
+##### `credentials_file`
+
+Data type: `String`
+
+The filename of the credentials file (as referenced in device.conf)
+
+##### `config_file`
+
+Data type: `String`
+
+The filename to save the configuration too
 

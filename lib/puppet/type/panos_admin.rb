@@ -12,7 +12,7 @@ Puppet::ResourceApi.register_type(
       type:      'Pattern[/^[a-zA-z0-9\-_\.]{1,31}$/]',
       desc:      'The username.',
       behaviour: :namevar,
-      xpath:      'string(@name)',
+      xpath:     'string(@name)',
     },
     ensure: {
       type:    'Enum[present, absent]',
@@ -20,35 +20,57 @@ Puppet::ResourceApi.register_type(
       default: 'present',
     },
     password_hash: {
-      type:      'Optional[String]',
-      desc:      'Provide a password hash.',
-      xpath:     'phash/text()',
+      type:  'Optional[String]',
+      desc:  'Provide a password hash.',
+      xpath: 'phash/text()',
     },
     authentication_profile: {
-      type:   'Optional[String]',
-      desc:   'Provide an authentication profile.',
-      xpath:  'authentication-profile/text()',
+      type:  'Optional[String]',
+      desc:  'Provide an authentication profile. You can use this setting for RADIUS, TACACS+, LDAP, Kerberos, or local database authentication.',
+      xpath: 'authentication-profile/text()',
     },
     client_certificate_only: {
-      type:     'Boolean',
-      desc:     'When set to true uses client certificate profile for web UI access.',
-      default:  false,
-      xpath:    'client-certificate-only/text()',
+      type:    'Boolean',
+      desc:    <<DESC,
+Enable this option to use client certificate authentication for web access.
+If you select this option, a username and password are not required; the certificate is sufficient to authenticate access to the firewall.
+DESC
+      default: false,
+      xpath:   'client-certificate-only/text()',
     },
     ssh_key: {
-      type:      'Optional[String]',
-      desc:      'Provide the users public key in plain text',
-      xpath:     'public-key/text()',
+      type:  'Optional[String]',
+      desc:  'Provide the users public key in plain text',
+      xpath: 'public-key/text()',
     },
     role: {
-      type:     'Enum["superuser", "superreader", "devicereader", "deviceadmin", "custom"]',
-      desc:     'Specify the access level for the administrator',
-      xpath:    'local-name(permissions/role-based/*[1])',
+      type:  'Enum["superuser", "superreader", "devicereader", "deviceadmin", "custom"]',
+      desc:  <<DESC,
+Specify the access level for the administrator.
+
+* superuser: Has full access to the firewall and can define new administrator accounts and virtual systems. You must have superuser privileges to create an administrative user with superuser privileges.
+
+* superreader: Has read-only access to the firewall.
+
+* deviceadmin: Has full access to all firewall settings except for defining new accounts or virtual systems.
+
+* devicereader: Has read-only access to all firewall settings except password profiles (no access) and administrator accounts (only the logged in account is visible).
+DESC
+      xpath: 'local-name(permissions/role-based/*[1])',
     },
     role_profile: {
-      type:     'Optional[String]',
-      desc:     'Specify the role profile for the user',
-      xpath:    'permissions/role-based/custom/profile/text()',
+      type:  'Optional[String]',
+      desc:  <<DESC,
+Specify the role profile for the user
+The following built in roles are available:
+
+* auditadmin: The Audit Administrator is responsible for the regular review of the firewall’s audit data.
+
+* cryptoadmin: The Cryptographic Administrator is responsible for the configuration and maintenance of cryptographic elements related to the establishment of secure connections to the firewall.
+
+* securityadmin: The Security Administrator is responsible for all other administrative tasks (e.g. creating the firewall’s security policy) not addressed by the other two administrative roles.
+DESC
+      xpath: 'permissions/role-based/custom/profile/text()',
     },
   },
   autobefore: {

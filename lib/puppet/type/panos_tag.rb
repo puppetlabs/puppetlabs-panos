@@ -15,19 +15,19 @@ Puppet::ResourceApi.register_type(
       behaviour:  :namevar,
     },
     ensure: {
-      type:       'Enum[present, absent]',
-      desc:       'Whether this resource should be present or absent on the target system.',
-      default:    'present',
+      type:    'Enum[present, absent]',
+      desc:    'Whether this resource should be present or absent on the target system.',
+      default: 'present',
     },
     color: {
-      type:       'Optional[String]',
-      desc:       'The color of the tag',
-      xpath:      'color/text()',
+      type:  'Optional[String]',
+      desc:  'The color of the tag',
+      xpath: 'color/text()',
     },
     comments: {
-      type:      'Optional[String]',
-      desc:      'Provide a comment for this tag.',
-      xpath:     'comments/text()',
+      type:  'Optional[String]',
+      desc:  'Add a label or description to remind you what the tag is used for.',
+      xpath: 'comments/text()',
     },
   },
   autobefore: {

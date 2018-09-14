@@ -14,12 +14,12 @@ Puppet::ResourceApi.register_type(
     },
     xpath: {
       type:      'String',
-      desc:      'The PANOS API XPath on which to set the :xml.',
+      desc:      'The PANOS API XPath on which to set the `xml`.',
       behaviour: :namevar,
     },
     xml:  {
-      type:      'String',
-      desc:      'The XML to be set. Use: file(path/to/file.xml).',
+      type: 'String',
+      desc: 'The XML to be set on the device. If working with large XML structures it is recommended to use the file() function e.g.: file(path/to/file.xml).',
     },
   },
   autobefore: {

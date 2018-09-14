@@ -31,16 +31,16 @@ Puppet::ResourceApi.register_type(
     },
     static_members: {
       type:         'Optional[Array[String]]',
-      desc:         'An array of `panos_address`, or `panos_address_group` that form this group. Used only when type is static.',
+      desc:         'One or more `panos_address` or `panos_address_group` that form this group. Used only when type is static.',
       xpath_array:  'static/member/text()',
     },
     dynamic_filter: {
       type:      'Optional[String]',
       desc:      <<DESC,
-      To create a dynamic address group, use the match criteria to assemble the members to be included in the group.
-      Define the Match criteria using the AND or OR operators.
-        example: 'tag1' and 'tag2' or 'tag3'
-      Used only when type is dynamic.
+To create a dynamic address group, use the match criteria to assemble the members to be included in the group.
+Define the Match criteria using the AND or OR operators.
+  example: 'tag1' and 'tag2' or 'tag3'
+Used only when type is dynamic.
 DESC
       xpath:      'dynamic/filter/text()',
     },
