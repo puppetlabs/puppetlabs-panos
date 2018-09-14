@@ -536,7 +536,7 @@ EOF
   describe '#update(context, name, should)' do
     context 'when called' do
       let(:expected_path) do
-        '/config/devices/entry/network/virtual-router/entry[@name=\'bar\']/routing-table/ip/static-route/entry[@name=\'name\']'
+        '/config/devices/entry/network/virtual-router/entry[@name=\'bar\']/routing-table/ip/static-route'
       end
       let(:should_values) do
         {
@@ -550,7 +550,7 @@ EOF
         expect(typedef).to receive(:definition).and_return(mystruct).twice
         expect(provider).to receive(:validate_should).with(should_values)
         expect(provider).to receive(:xml_from_should).with('foo', should_values)
-        expect(device).to receive(:edit_config).with(expected_path, anything)
+        expect(device).to receive(:set_config).with(expected_path, anything)
         provider.update(context, 'name', should_values)
       end
     end
