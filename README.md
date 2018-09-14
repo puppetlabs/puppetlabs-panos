@@ -25,14 +25,20 @@ This module provides a Puppet task to manually `commit`, `store_config` to a fil
 
 ## Setup
 
+Install the module on either a Puppet Master or Puppet Agent machine, by running `puppet module install puppetlabs-panos`. To install from source download the tar file from GitHub and run `puppet module install <file_name>.tar.gz --force`.
+
 ### Setup Requirements
 
 This module requires a user that can access the device's web management interface and the dependences will need to be installed.
 
-The PANOS module has a dependency on the `resource_api`, the setup instructions can be found [on the Resource API README](https://github.com/puppetlabs/puppetlabs-resource_api#resource_api).
+The PANOS module has a dependency on the `resource_api` - it will be installed when the module is installed. Alternatively, it can be manually installed by running `puppet module install puppetlabs-resource_api` or following the setup instructions [on the Resource API README](https://github.com/puppetlabs/puppetlabs-resource_api#resource_api).
 
-* on each puppetserver or PE master that needs to manage PANOS devices, classify or apply the `panos::server` class.
-* on each puppet agent that needs to manage PAOS devices, classify or apply the `panos::agent` class.
+### Manual Test Setup
+
+Once the module has been installed it is necessary to classify the appropriate class, by following the instructions below. This is a manual set up step:
+
+* on each puppetserver or PE master that needs to manage PANOS devices, classify or apply the `panos::server` class; run this command: `puppet apply -e 'include panos::server'`.
+* on each puppet agent that needs to manage PAOS devices, classify or apply the `panos::agent` class; run this command: `puppet apply -e 'include panos::agent'`.
 
 ### Beginning with PANOS
 
@@ -46,60 +52,68 @@ url file:////etc/puppetlabs/puppet/devices/firewall.example.com.conf`
 
 Next, create a credentials file, following the [HOCON documentation](https://github.com/lightbend/config/blob/master/HOCON.md) regarding quoted/unquoted strings, with connection information for the device.
 
-There are two valid type of creditial file.
+There are two valid type of credential file, examples below.
 
-* (a) A file containing the host, username and password in plain text:
+* (a) A file containing the host, username and password in plain text, for example:
   ```
   host: 10.0.10.20
   user: admin
   password: admin
   ```
-* (b) A file containing the host and an API key obtained from the device:
+* (b) A file containing the host and an API key obtained from the device, for example:
   ```
   host: 10.0.10.20
   apikey: LUFRPT10cHhRNXMyR2wrYW1MSzg5cldhNElodmVkL1U9OEV1cGY5ZjJyc2xGL1Z4Qk9TNFM2dz09
   ```
 
-To obtain an API key for the device, use the `panos::apikey` task. The required creditials file should be in the format of (a) above. After which it can be discarded.
+To obtain an API key for the device, it is possible to use the `panos::apikey` task. The required creditials file should be in the format of (a) above. After which it can be discarded. To run this task the module must first be installed on your machine, along with [Puppet Bolt](https://puppet.com/docs/bolt/0.x/bolt_installing.html). When complete execute the following command:
 
 ```
-bolt task run panos::apikey credentials_file=spec/fixtures/test-password.conf
+bolt task run panos::apikey --nodes localhost --transport local --modulepath <module_installation_dir> --params @credentials.json
 ```
 
+The `--modulepath` param can be retrieved by typing `puppet config print modulepath`. The credentials file needs to be valid JSON containing host, username and password for the Palo Alto firewall.
 
-Test your setup. For example:
+Test your setup and get the certificate signed. Run the following command:
 
 `puppet device --verbose --target firewall.example.com`
+
+This will sign the certificate and set up the device ready for use with Puppet.
 
 More information on the usage of `puppet device` is available in the [Puppet Documentation](https://puppet.com/docs/puppet/5.5/puppet_device.html)
 
 ## Usage
-Create a manifest with the changes you want to apply. For example:
-
-```Puppet
-panos_admin {
-  'frank':
-    ensure        =>  'present',
-    password_hash =>  pw_hash('password', 'MD5'),
-    ssh_key       =>  'ssh-rsa AAAA... frank@firewall.example.com',
-    role          =>  'superuser';
-}
-```
+Once the above is done you can manage resources on the Palo Alto device. The module gives access to various resources on the Palo Device as listed in [REFERENCE.md](https://github.com/puppetlabs/puppetlabs-panos/blob/master/REFERENCE.md).
 
 The repo's acceptance tests examples contain a [useful reference](https://github.com/puppetlabs/puppetlabs-panos/blob/master/spec/fixtures/create.pp) on the use of the module's Types.
 
 __NOTE:__ pw_hash function in the above example requires [puppetlabs-stdlib](https://forge.puppet.com/puppetlabs/stdlib)
 
-
 ### Puppet Device
 
-Run Puppet device apply to apply the changes:
+To get information from the device you can use the `puppet device --resource` command. For example, to retrieve addresses on the device type the following:
 
-`puppet device  --target firewall.example.com --apply manifest.pp `
+`puppet device --resource --target firewall.example.com panos_address`
 
-Run Puppet device resource to obtain the current values:
+To create a new address, you will need to create a manifest. Below is a very basic manifest, create a file named `manifest.pp` containing the following:
 
-`puppet device --resource --target firewall.example.com panos_admin`
+```
+panos_address { 'somenewaddress':
+  ensure => 'present',
+  ip_range => '10.0.0.1-10.0.0.5',
+  tags => [],
+}
+```
+
+Now, execute the following command:
+
+`puppet device  --target firewall.example.com --apply manifest.pp`
+
+This will apply the manifest. Puppet will firstly check if the address already exists and if it is absent it will create it (idempotency check). now that is done, when you query for addresses you will see that the new address is available. To do this run the following command again:
+
+`puppet device --resource --target firewall.example.com panos_address`
+
+Note that if you get errors try running the above commands with `--verbose` to get the errors messages output.
 
 ## Reference
 
