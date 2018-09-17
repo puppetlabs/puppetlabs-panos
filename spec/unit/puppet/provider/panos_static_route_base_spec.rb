@@ -335,6 +335,104 @@ RSpec.describe Puppet::Provider::PanosStaticRouteBase do
                 <destination>10.7.4.0/32</destination>
               </entry>',
       },
+      {
+        desc: 'a route configured with path monitoring.',
+        attrs: {
+          route: 'test route 4',
+          nexthop_type: 'none',
+          bfd_profile: 'None',
+          interface: 'vlan.1',
+          metric: '10',
+          admin_distance: '15',
+          destination: '10.7.4.0/32',
+          no_install: false,
+          path_monitoring: true,
+          enable: true,
+          failure_condition: 'any',
+          hold_time: '2',
+          vr_name: 'new router',
+        },
+        xml: '<entry name="test route 4">
+                <bfd>
+                  <profile>None</profile>
+                </bfd>
+                <path-monitor>
+                  <enable>yes</enable>
+                  <failure-condition>any</failure-condition>
+                  <hold-time>2</hold-time>
+                </path-monitor>
+                <interface>vlan.1</interface>
+                <metric>10</metric>
+                <admin-dist>15</admin-dist>
+                <destination>10.7.4.0/32</destination>
+              </entry>',
+      },
+      {
+        desc: 'a route configured with path monitoring enabled set to false.',
+        attrs: {
+          route: 'test route 4',
+          nexthop_type: 'none',
+          bfd_profile: 'None',
+          interface: 'vlan.1',
+          metric: '10',
+          admin_distance: '15',
+          destination: '10.7.4.0/32',
+          no_install: false,
+          path_monitoring: true,
+          enable: false,
+          failure_condition: 'any',
+          hold_time: '2',
+          vr_name: 'new router',
+        },
+        xml: '<entry name="test route 4">
+                <bfd>
+                  <profile>None</profile>
+                </bfd>
+                <path-monitor>
+                  <failure-condition>any</failure-condition>
+                  <hold-time>2</hold-time>
+                </path-monitor>
+                <interface>vlan.1</interface>
+                <metric>10</metric>
+                <admin-dist>15</admin-dist>
+                <destination>10.7.4.0/32</destination>
+              </entry>',
+      },
+      {
+        desc: 'a route configured with path monitoring enabled set to false.',
+        attrs: {
+          route: 'test route 4',
+          nexthop_type: 'none',
+          bfd_profile: 'None',
+          interface: 'vlan.1',
+          metric: '10',
+          admin_distance: '15',
+          destination: '10.7.4.0/32',
+          no_install: false,
+          path_monitoring: true,
+          enable: false,
+          failure_condition: 'any',
+          hold_time: '2',
+          route_type: 'unicast',
+          vr_name: 'new router',
+        },
+        xml: '<entry name="test route 4">
+                <bfd>
+                  <profile>None</profile>
+                </bfd>
+                <path-monitor>
+                  <failure-condition>any</failure-condition>
+                  <hold-time>2</hold-time>
+                </path-monitor>
+                <interface>vlan.1</interface>
+                <metric>10</metric>
+                <admin-dist>15</admin-dist>
+                <destination>10.7.4.0/32</destination>
+                <route-table>
+                  <unicast/>
+                </route-table>
+              </entry>',
+      },
     ]
 
     include_examples 'xml_from_should(name, should)', test_data, described_class.new('ip')
@@ -436,7 +534,12 @@ EOF
           destination: '10.9.0.1/32',
           no_install: false,
           vr_name: 'example VR',
-          title: "example VR/example SR-example VR",
+          enable: false,
+          failure_condition: nil,
+          hold_time: nil,
+          path_monitoring: false,
+          route_type: nil,
+          title: 'example VR/example SR-example VR',
         },
       ]
     end

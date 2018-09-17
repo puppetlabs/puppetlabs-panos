@@ -88,15 +88,75 @@ DESC
     },
     no_install: {
       type:       'Boolean',
-      desc:       'Select if you do not want to install the route in the forwarding table. The route is retained in the configuration for future reference.',
+      desc:       <<DESC,
+Select if you do not want to install the route in the forwarding table. The route is retained in the configuration for future reference. Note: can only be set on PAN-OS version 7.1.0.
+DESC
       xpath:      'local-name(option/no-install)',
       default:    false,
+    },
+    route_type: {
+      type:   'Optional[Enum["unicast", "multicast", "both", "no-install"]]',
+      desc:   <<DESC,
+Specify the route table into which the firewall installs the static route:
+
+  * `unicast`: Installs the route into the unicast route table.
+  * `multicast`: Installs the route into the multicast route table.
+  * `both`: Installs the route into the unicast and multicast route tables.
+  * `no-install`: Does not install the route in the route table (RIB); the firewall retains the static route for future reference until you delete the route.
+
+Note: can only be set on PAN-OS version 8.1.0.
+DESC
+      xpath:  'local-name(route-table/*)',
+    },
+    path_monitoring: {
+      type:    'Optional[Boolean]',
+      desc:    <<DESC,
+Specify true to enable path monitoring for the static route.
+
+Note: can only be set on PAN-OS version 8.1.0.
+Note: must be enabled if using `panos_monitor_destinations` for the static route.
+DESC
+      xpath:   'local-name(path-monitor)',
+    },
+    failure_condition: {
+      type:    'Optional[Enum["any", "all"]]',
+      desc:    <<DESC,
+Specify the condition under which the firewall considers the monitored path down and thus the static route down:
+
+  * `any`: If any one of the monitored destinations for the static route is unreachable by ICMP, the firewall removes the static route from the RIB and FIB and adds the dynamic or static route that has the next lowest metric going to the same destination to the FIB.
+  * `all`: If all of the monitored destinations for the static route are unreachable by ICMP, the firewall removes the static route from the RIB and FIB and adds the dynamic or static route that has the next lowest metric going to the same destination to the FIB.
+
+Specify `all` to avoid the possibility of a single monitored destination signaling a static route failure when that monitored destination is simply offline for maintenance, for example.
+
+Note: can only be set on PAN-OS version 8.1.0.
+DESC
+      xpath:   'path-monitor/failure-condition/text()',
+    },
+    enable: {
+      type:    'Optional[Boolean]',
+      desc:    <<DESC,
+Specify true to enable path monitoring of this specific destination for the static route; the firewall sends ICMP pings to this destination.
+
+Note: can only be set on PAN-OS version 8.1.0.
+DESC
+      xpath:   'path-monitor/enable/text()',
+    },
+    hold_time: {
+      type:    'Optional[String]',
+      desc:    <<DESC,
+Specify the number of minutes a downed path monitor must remain in Up stat:the path monitor evaluates all of its member monitored destinations and must remain Up before the firewall reinstalls the static route into the RIB. If the timer expires without the link going down or flapping, the link is deemed stable, path monitor can remain Up, and the firewall can add the static route back into the RIB.
+
+If the link goes down or flaps during the hold time, path monitor fails and the timer restarts when the downed monitor returns to Up state. A Preemptive Hold Time of zero causes the firewall to reinstall the static route into the RIB immediately upon the path monitor coming up. Range is 0-1,440; default is 2.
+
+Note: can only be set on PAN-OS version 8.1.0.
+DESC
+      xpath:   'path-monitor/hold-time/text()',
     },
   },
   autobefore: {
     panos_commit: 'commit',
   },
   autorequire: {
-    panos_virtual_router:    '$vr_name',
+    panos_virtual_router: '$vr_name',
   },
 )

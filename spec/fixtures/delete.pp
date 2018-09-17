@@ -1,5 +1,37 @@
 # bundle exec puppet device --modulepath spec/fixtures/modules/ --deviceconfig spec/fixtures/device.conf --target pavm --verbose --trace --apply tests/test_commit.pp
 
+if $operatingsystemrelease == '8.1.0' {
+  panos_path_monitor {
+    'full example VR/route four/path monitor one':
+      ensure => absent;
+    'full example VR/route one/path monitor two':
+      ensure => absent;
+  }
+}
+
+panos_virtual_router {
+  'full example VR':
+    ensure => 'absent';
+}
+panos_static_route {
+  'full example VR/route one':
+    ensure => 'absent';
+  'full example VR/route two':
+    ensure => 'absent';
+  'full example VR/route three':
+    ensure => 'absent';
+  'full example VR/route four':
+    ensure => 'absent';
+}
+panos_ipv6_static_route {
+  'full example VR/ipv6 route one':
+    ensure => 'absent';
+  'full example VR/ipv6 route two':
+    ensure => 'absent';
+  'full example VR/ipv6 route three':
+    ensure => 'absent';
+}
+
 panos_nat_policy {
   'minimal':
     ensure => absent;
@@ -131,7 +163,7 @@ if $::facts['operatingsystemrelease'] == '8.1.0' {
 if $::facts['operatingsystemrelease'] == '7.1.0' {
   panos_zone {
     'nsx_service_profile':
-      ensure              => absent;
+      ensure => absent;
   }
 }
 
@@ -179,27 +211,6 @@ panos_security_policy_rule  {
     ensure =>  'absent';
   'ip-precedence-settings':
     ensure =>  'absent';
-}
-
-panos_virtual_router {
-  'full example VR':
-    ensure => 'absent';
-}
-panos_static_route {
-  'full example VR/route one':
-    ensure => 'absent';
-  'full example VR/route two':
-    ensure => 'absent';
-  'full example VR/route three':
-    ensure => 'absent';
-}
-panos_ipv6_static_route {
-  'full example VR/ipv6 route one':
-    ensure => 'absent';
-  'full example VR/ipv6 route two':
-    ensure => 'absent';
-  'full example VR/ipv6 route three':
-    ensure => 'absent';
 }
 
 panos_commit {

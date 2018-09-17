@@ -161,7 +161,9 @@ panos_arbitrary_commands {
                     </virtual-wire>
                   </entry>
                   <entry name="ethernet1/3">
-                    <layer3/>
+                    <layer3>
+                      <dhcp-client/>
+                    </layer3>
                   </entry>
                   <entry name="ethernet1/5">
                     <layer3/>
@@ -421,84 +423,151 @@ panos_virtual_router {
 }
 panos_static_route {
   'full example VR/route one':
-    ensure         => 'present',
-    bfd_profile    => 'None',
-    metric         => '100',
-    admin_distance => '15',
-    destination    => '10.9.0.0/32',
-    nexthop_type   => 'discard',
-    no_install     => $::facts['operatingsystemrelease'] ? {
+    ensure          => 'present',
+    bfd_profile     => 'None',
+    metric          => '100',
+    admin_distance  => '15',
+    destination     => '10.9.0.0/32',
+    nexthop_type    => 'discard',
+    path_monitoring => $::facts['operatingsystemrelease'] ? {
+      '7.1.0' => false,
+      '8.1.0' => true,
+    },
+    no_install      => $::facts['operatingsystemrelease'] ? {
       '7.1.0' => false,
       '8.1.0' => false,
     };
   'full example VR/route two':
-    ensure         => 'present',
-    bfd_profile    => 'default',
-    metric         => '200',
-    admin_distance => '15',
-    destination    => '10.9.0.0/16',
-    nexthop_type   => 'ip-address',
-    nexthop        => '10.10.10.10',
-    interface      => 'ethernet1/3',
-    no_install     => $::facts['operatingsystemrelease'] ? {
+    ensure          => 'present',
+    bfd_profile     => 'default',
+    metric          => '200',
+    admin_distance  => '15',
+    destination     => '10.9.0.0/16',
+    nexthop_type    => 'ip-address',
+    nexthop         => '10.10.10.10',
+    interface       => 'ethernet1/3',
+    path_monitoring => $::facts['operatingsystemrelease'] ? {
+      '7.1.0' => false,
+      '8.1.0' => true,
+    },
+    no_install      => $::facts['operatingsystemrelease'] ? {
       '7.1.0' => false,
       '8.1.0' => false,
     };  
   'full example VR/route three':
-    ensure         => 'present',
-    bfd_profile    => 'None',
-    metric         => '300',
-    admin_distance => '15',
-    destination    => '10.9.0.0/16',
-    nexthop_type   => 'next-vr',
-    nexthop        => 'default',
-    interface      => 'ethernet1/3',
-    no_install     => $::facts['operatingsystemrelease'] ? {
+    ensure          => 'present',
+    bfd_profile     => 'None',
+    metric          => '300',
+    admin_distance  => '15',
+    destination     => '10.9.0.0/16',
+    nexthop_type    => 'next-vr',
+    nexthop         => 'default',
+    interface       => 'ethernet1/3',
+    path_monitoring => $::facts['operatingsystemrelease'] ? {
+      '7.1.0' => false,
+      '8.1.0' => true,
+    },
+    no_install      => $::facts['operatingsystemrelease'] ? {
+      '7.1.0' => false,
+      '8.1.0' => false,
+    };
+  'full example VR/route four':
+    ensure          => 'present',
+    bfd_profile     => 'None',
+    metric          => '300',
+    admin_distance  => '15',
+    destination     => '10.11.0.0/16',
+    nexthop_type    => 'next-vr',
+    nexthop         => 'default',
+    interface       => 'ethernet1/3',
+    path_monitoring => $::facts['operatingsystemrelease'] ? {
+      '7.1.0' => false,
+      '8.1.0' => true,
+    },
+    no_install      => $::facts['operatingsystemrelease'] ? {
       '7.1.0' => false,
       '8.1.0' => false,
     };
 }
 
+if $::facts['operatingsystemrelease'] == '8.1.0' {
+  Panos_static_route['full example VR/route four'] {
+    failure_condition => 'all',
+    enable            => true,
+    hold_time         => '7',
+  }
+
+  panos_path_monitor {
+    'full example VR/route four/path monitor one':
+      ensure      => present,
+      source      => 'DHCP',
+      destination => 'source_address',
+      interval    => '4',
+      count       => '7',
+      enable      => true;
+  }
+}
+
 panos_ipv6_static_route {
   'full example VR/ipv6 route one':
-    ensure         => 'present',
-    nexthop_type   => 'ipv6-address',
-    nexthop        => '2001:0dc8::/128',
-    interface      => 'ethernet1/8',
-    bfd_profile    => 'default',
-    metric         => '400',
-    admin_distance => '10',
-    destination    => '2001::/16',
-    no_install     => $::facts['operatingsystemrelease'] ? {
+    ensure          => 'present',
+    nexthop_type    => 'ipv6-address',
+    nexthop         => '2001:0dc8::/128',
+    interface       => 'ethernet1/8',
+    bfd_profile     => 'default',
+    metric          => '400',
+    admin_distance  => '10',
+    destination     => '2001::/16',
+    path_monitoring => $::facts['operatingsystemrelease'] ? {
+      '7.1.0' => false,
+      '8.1.0' => true,
+    },
+    no_install      => $::facts['operatingsystemrelease'] ? {
       '7.1.0' => false,
       '8.1.0' => false,
     };
   'full example VR/ipv6 route two':
-    ensure         => 'present',
-    nexthop_type   => 'ipv6-address',
-    nexthop        => '2001:0dc8::/128',
-    interface      => 'ethernet1/8',
-    bfd_profile    => 'default',
-    metric         => '500',
-    admin_distance => '10',
-    destination    => '2000::/8',
-    no_install     => $::facts['operatingsystemrelease'] ? {
+    ensure          => 'present',
+    nexthop_type    => 'ipv6-address',
+    nexthop         => '2001:0dc8::/128',
+    interface       => 'ethernet1/8',
+    bfd_profile     => 'default',
+    metric          => '500',
+    admin_distance  => '10',
+    destination     => '2000::/8',
+    path_monitoring => $::facts['operatingsystemrelease'] ? {
+      '7.1.0' => false,
+      '8.1.0' => true,
+    },
+    no_install      => $::facts['operatingsystemrelease'] ? {
       '7.1.0' => true,
       '8.1.0' => false,
     };
   'full example VR/ipv6 route three':
-    ensure         => 'present',
-    interface      => 'ethernet1/8',
-    nexthop_type   => 'next-vr',
-    nexthop        => 'default',
-    bfd_profile    => 'None',
-    metric         => '600',
-    admin_distance => '10',
-    destination    => '2000::/8',
-    no_install     => $::facts['operatingsystemrelease'] ? {
+    ensure          => 'present',
+    interface       => 'ethernet1/8',
+    nexthop_type    => 'next-vr',
+    nexthop         => 'default',
+    bfd_profile     => 'None',
+    metric          => '600',
+    admin_distance  => '10',
+    destination     => '2000::/8',
+    path_monitoring => $::facts['operatingsystemrelease'] ? {
+      '7.1.0' => false,
+      '8.1.0' => true,
+    },
+    no_install      => $::facts['operatingsystemrelease'] ? {
       '7.1.0' => true,
       '8.1.0' => false,
     };
+}
+
+if $::facts['operatingsystemrelease'] == '8.1.0' {
+  Panos_ipv6_static_route['full example VR/ipv6 route one'] {
+    failure_condition => 'any',
+    enable            => true,
+    hold_time         => '7',
+  }
 }
 
 panos_commit {
