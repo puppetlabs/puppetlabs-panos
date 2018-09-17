@@ -170,7 +170,7 @@ The address to which the packets are translated.
 
 For NPTv6, the prefixes configured for Destination prefix Translated Address must be in the format xxxx:xxxx::/yy.
 The address cannot have an interface identifier (host) portion defined. The range of supported prefix lengths is /32 to /64.
-      DESC
+DESC
       xpath: 'destination-translation/translated-address/text()',
     },
     destination_translated_port: {
