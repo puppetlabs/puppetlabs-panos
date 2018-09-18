@@ -3,10 +3,10 @@ require 'puppet/resource_api'
 Puppet::ResourceApi.register_type(
   name: 'panos_ipv6_path_monitor',
   docs: <<-EOS,
-      This type provides Puppet with the capabilities to manage IPv6 Path Monitors on Palo Alto devices.
+@summary This type provides Puppet with the capabilities to manage IPv6 Path Monitors on Palo Alto devices.
 
-      Note: Can only be configured on PAN-OS 8.1.0 devices.
-    EOS
+@note  Can only be configured on PAN-OS 8.1.0 devices.
+EOS
   base_xpath: '/config/devices/entry/network/virtual-router',
   features: ['remote_resource'],
   title_patterns: [

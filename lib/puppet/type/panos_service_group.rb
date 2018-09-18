@@ -3,8 +3,8 @@ require 'puppet/resource_api'
 Puppet::ResourceApi.register_type(
   name: 'panos_service_group',
   docs: <<-EOS,
-      This type provides Puppet with the capabilities to manage "Service Group" objects on Palo Alto devices.
-    EOS
+This type provides Puppet with the capabilities to manage "Service Group" objects on Palo Alto devices.
+EOS
   base_xpath: '/config/devices/entry/vsys/entry/service-group',
   features: ['remote_resource'],
   attributes: {

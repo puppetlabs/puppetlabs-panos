@@ -3,8 +3,8 @@ require 'puppet/resource_api'
 Puppet::ResourceApi.register_type(
   name: 'panos_address',
   docs: <<-EOS,
-      This type provides Puppet with the capabilities to manage "address" objects on Palo Alto devices.
-    EOS
+This type provides Puppet with the capabilities to manage "address" objects on Palo Alto devices.
+EOS
   base_xpath: '/config/devices/entry/vsys/entry/address',
   features: ['remote_resource'],
   attributes: {

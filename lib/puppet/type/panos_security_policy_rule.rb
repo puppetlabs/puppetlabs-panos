@@ -3,8 +3,8 @@ require 'puppet/resource_api'
 Puppet::ResourceApi.register_type(
   name: 'panos_security_policy_rule',
   docs: <<-EOS,
-      This type provides Puppet with the capilities to manage "Security Policy Rules" on Palo Alto devices.
-    EOS
+This type provides Puppet with the capilities to manage "Security Policy Rules" on Palo Alto devices.
+EOS
   base_xpath: '/config/devices/entry/vsys/entry/rulebase/security/rules',
   features: ['remote_resource'],
   attributes: {

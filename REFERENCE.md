@@ -14,11 +14,11 @@
 * [`panos_address_group`](#panos_address_group): This type provides Puppet with the capabilities to manage "address_groups" objects on Palo Alto devices.
 * [`panos_admin`](#panos_admin): This type provides Puppet with the capabilities to manage "administrator" user accounts on Palo Alto devices.
 * [`panos_arbitrary_commands`](#panos_arbitrary_commands): This type provides Puppet with the capabilities to execute arbitrary configuration commands on Palo Alto devices.
-* [`panos_commit`](#panos_commit): When evaluated, this resource commits all outstanding changes in the target device's configuration to the active configuration. It is automat
-* [`panos_ipv6_path_monitor`](#panos_ipv6_path_monitor): This type provides Puppet with the capabilities to manage IPv6 Path Monitors on Palo Alto devices.  Note: Can only be configured on PAN-OS 8.
+* [`panos_commit`](#panos_commit): When evaluated, this resource commits all outstanding changes in the target device's configuration to the active configuration.
+* [`panos_ipv6_path_monitor`](#panos_ipv6_path_monitor): This type provides Puppet with the capabilities to manage IPv6 Path Monitors on Palo Alto devices.
 * [`panos_ipv6_static_route`](#panos_ipv6_static_route): This type provides Puppet with the capabilities to manage IPv6 Static Routes on Palo Alto devices.
 * [`panos_nat_policy`](#panos_nat_policy): This type provides Puppet with the capabilities to manage "NAT Policy Rule" objects on Palo Alto devices.
-* [`panos_path_monitor`](#panos_path_monitor): This type provides Puppet with the capabilities to manage IPv4 Path Monitors on Palo Alto devices.  Note: Can only be configured on PAN-OS 8.
+* [`panos_path_monitor`](#panos_path_monitor): This type provides Puppet with the capabilities to manage IPv4 Path Monitors on Palo Alto devices.
 * [`panos_security_policy_rule`](#panos_security_policy_rule): This type provides Puppet with the capilities to manage "Security Policy Rules" on Palo Alto devices.
 * [`panos_service`](#panos_service): This type provides Puppet with the capabilities to manage "service" objects on Palo Alto devices.
 * [`panos_service_group`](#panos_service_group): This type provides Puppet with the capabilities to manage "Service Group" objects on Palo Alto devices.
@@ -310,7 +310,9 @@ The PANOS API XPath on which to set the `xml`.
 
 ### panos_commit
 
-When evaluated, this resource commits all outstanding changes in the target device's configuration to the active configuration. It is automatically scheduled after all other PANOS resources.
+When evaluated, this resource commits all outstanding changes in the target device's configuration to the active configuration.
+
+* **Note** It is automatically scheduled after all other PANOS resources.
 
 #### Properties
 
@@ -338,7 +340,7 @@ The name of the resource you want to manage. Can only be "commit".
 
 This type provides Puppet with the capabilities to manage IPv6 Path Monitors on Palo Alto devices.
 
-Note: Can only be configured on PAN-OS 8.1.0 devices.
+* **Note** Can only be configured on PAN-OS 8.1.0 devices.
 
 #### Properties
 
@@ -370,21 +372,21 @@ Specify a robust, stable IP address or address object for which the firewall wil
 
 ##### `interval`
 
-Data type: `Optional[String]`
+Data type: `String`
 
 Specify the ICMP ping interval in seconds to determine how frequently the firewall monitors the path (pings the monitored destination; range is 1-60; default is 3).
 
-Default value: 5
+Default value: 3
 
 ##### `count`
 
-Data type: `Optional[String]`
+Data type: `String`
 
 Specify the number of consecutive ICMP ping packets that do not return from the monitored destination before the firewall considers the link down. Based on the Any or All failure condition, if path monitoring is in failed state, the firewall removes the static route from the RIB (range is 3-10; default is 5).
 
 For example, a Ping Interval of 3 seconds and Ping Count of 5 missed pings (the firewall receives no ping in the last 15 seconds) means path monitoring detects a link failure. If path monitoring is in failed state and the firewall receives a ping after 15 seconds, the link is deemed up; based on the Any or All failure condition, path monitoring to Any or All monitored destinations can be deemed up, and the Preemptive Hold Time starts.
 
-Default value: 3
+Default value: 5
 
 ##### `enable`
 
@@ -747,12 +749,11 @@ The address to which the packets are translated.
 
 For NPTv6, the prefixes configured for Destination prefix Translated Address must be in the format xxxx:xxxx::/yy.
 The address cannot have an interface identifier (host) portion defined. The range of supported prefix lengths is /32 to /64.
-      DESC
-      xpath: 'destination-translation/translated-address/text()',
-    },
-    destination_translated_port: {
-      type:  'Optional[String]',
-      desc:  <<DESC,
+
+##### `destination_translated_port`
+
+Data type: `Optional[String]`
+
 The port of the translated address
 
 Note that Translated Port is not supported for NPTv6 because NPTv6 is strictly prefix translation. The Port and Host address section is simply forwarded unchanged.
@@ -787,7 +788,7 @@ The display-name of the zone. Restricted to 31 characters on PAN-OS version 7.1.
 
 This type provides Puppet with the capabilities to manage IPv4 Path Monitors on Palo Alto devices.
 
-Note: Can only be configured on PAN-OS 8.1.0 devices.
+* **Note** Can only be configured on PAN-OS 8.1.0 devices.
 
 #### Properties
 
@@ -823,7 +824,7 @@ Data type: `Optional[String]`
 
 Specify the ICMP ping interval in seconds to determine how frequently the firewall monitors the path (pings the monitored destination; range is 1-60; default is 3).
 
-Default value: 5
+Default value: 3
 
 ##### `count`
 
@@ -833,7 +834,7 @@ Specify the number of consecutive ICMP ping packets that do not return from the 
 
 For example, a Ping Interval of 3 seconds and Ping Count of 5 missed pings (the firewall receives no ping in the last 15 seconds) means path monitoring detects a link failure. If path monitoring is in failed state and the firewall receives a ping after 15 seconds, the link is deemed up; based on the Any or All failure condition, path monitoring to Any or All monitored destinations can be deemed up, and the Preemptive Hold Time starts.
 
-Default value: 3
+Default value: 5
 
 ##### `enable`
 

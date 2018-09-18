@@ -3,8 +3,8 @@ require 'puppet/resource_api'
 Puppet::ResourceApi.register_type(
   name: 'panos_tag',
   docs: <<-EOS,
-      This type provides Puppet with the capabilities to manage "tags" objects on Palo Alto devices.
-    EOS
+This type provides Puppet with the capabilities to manage "tags" objects on Palo Alto devices.
+EOS
   base_xpath: '/config/devices/entry/vsys/entry/tag',
   features: ['remote_resource'],
   attributes: {
