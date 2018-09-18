@@ -15,11 +15,16 @@
 * [`panos_admin`](#panos_admin): This type provides Puppet with the capabilities to manage "administrator" user accounts on Palo Alto devices.
 * [`panos_arbitrary_commands`](#panos_arbitrary_commands): This type provides Puppet with the capabilities to execute arbitrary configuration commands on Palo Alto devices.
 * [`panos_commit`](#panos_commit): When evaluated, this resource commits all outstanding changes in the target device's configuration to the active configuration. It is automat
+* [`panos_ipv6_path_monitor`](#panos_ipv6_path_monitor): This type provides Puppet with the capabilities to manage IPv6 Path Monitors on Palo Alto devices.  Note: Can only be configured on PAN-OS 8.
+* [`panos_ipv6_static_route`](#panos_ipv6_static_route): This type provides Puppet with the capabilities to manage IPv6 Static Routes on Palo Alto devices.
 * [`panos_nat_policy`](#panos_nat_policy): This type provides Puppet with the capabilities to manage "NAT Policy Rule" objects on Palo Alto devices.
+* [`panos_path_monitor`](#panos_path_monitor): This type provides Puppet with the capabilities to manage IPv4 Path Monitors on Palo Alto devices.  Note: Can only be configured on PAN-OS 8.
 * [`panos_security_policy_rule`](#panos_security_policy_rule): This type provides Puppet with the capilities to manage "Security Policy Rules" on Palo Alto devices.
 * [`panos_service`](#panos_service): This type provides Puppet with the capabilities to manage "service" objects on Palo Alto devices.
 * [`panos_service_group`](#panos_service_group): This type provides Puppet with the capabilities to manage "Service Group" objects on Palo Alto devices.
+* [`panos_static_route`](#panos_static_route): This type provides Puppet with the capabilities to manage IPv4 Static Routes on Palo Alto devices.
 * [`panos_tag`](#panos_tag): This type provides Puppet with the capabilities to manage "tags" objects on Palo Alto devices.
+* [`panos_virtual_router`](#panos_virtual_router): This type provides Puppet with the capabilities to manage "virtual router" objects on Palo Alto devices.
 * [`panos_zone`](#panos_zone): This type provides Puppet with the capabilities to manage "zone" objects on Palo Alto devices.
 
 **Tasks**
@@ -119,7 +124,7 @@ The following parameters are available in the `panos_address` type.
 
 namevar
 
-Data type: `Pattern[/^[a-zA-z0-9\-_\s\.]*$/]`
+Data type: `Pattern[/^[a-zA-z0-9\-_\s\.]{1,63}$/]`
 _*this data type contains a regex that may not be accurately reflected in generated documentation_
 
 The display-name of the address.
@@ -183,7 +188,7 @@ The following parameters are available in the `panos_address_group` type.
 
 namevar
 
-Data type: `Pattern[/^[a-zA-z0-9\-_\s\.]*$/]`
+Data type: `Pattern[/^[a-zA-z0-9\-_\s\.]{1,63}$/]`
 _*this data type contains a regex that may not be accurately reflected in generated documentation_
 
 The display-name of the address-group.
@@ -220,7 +225,7 @@ Provide an authentication profile. You can use this setting for RADIUS, TACACS+,
 
 Data type: `Boolean`
 
-Select this option to use client certificate authentication for web access.
+Enable this option to use client certificate authentication for web access.
 If you select this option, a username and password are not required; the certificate is sufficient to authenticate access to the firewall.
 
 ##### `ssh_key`
@@ -289,7 +294,7 @@ Default value: present
 
 Data type: `String`
 
-The XML to be set on the device. If working with large XML structures it us recommended to use the file() function e.g.: file(path/to/file.xml).
+The XML to be set on the device. If working with large XML structures it is recommended to use the file() function e.g.: file(path/to/file.xml).
 
 #### Parameters
 
@@ -328,6 +333,241 @@ namevar
 Data type: `Enum["commit"]`
 
 The name of the resource you want to manage. Can only be "commit".
+
+### panos_ipv6_path_monitor
+
+This type provides Puppet with the capabilities to manage IPv6 Path Monitors on Palo Alto devices.
+
+Note: Can only be configured on PAN-OS 8.1.0 devices.
+
+#### Properties
+
+The following properties are available in the `panos_ipv6_path_monitor` type.
+
+##### `ensure`
+
+Data type: `Enum[present, absent]`
+
+Whether this resource should be present or absent on the target system.
+
+Default value: present
+
+##### `source`
+
+Data type: `String`
+
+Specify the IP address that the firewall will use as the source in the ICMP ping to the monitored destination:
+
+  * If the interface has multiple IP addresses, select one.
+  * If you specify an interface, the firewall uses the first IP address assigned to the interface by default.
+  * If you specify `DHCP` (Use DHCP Client address), the firewall uses the address that DHCP assigned to the interface. To see the DHCP address, select NetworkInterfacesEthernet and in the row for the Ethernet interface, click on Dynamic DHCP Client. The IP Address appears in the Dynamic IP Interface Status window.
+
+##### `destination`
+
+Data type: `String`
+
+Specify a robust, stable IP address or address object for which the firewall will monitor the path. The monitored destination and the static route destination must use the same address family (IPv4 or IPv6)
+
+##### `interval`
+
+Data type: `Optional[String]`
+
+Specify the ICMP ping interval in seconds to determine how frequently the firewall monitors the path (pings the monitored destination; range is 1-60; default is 3).
+
+Default value: 5
+
+##### `count`
+
+Data type: `Optional[String]`
+
+Specify the number of consecutive ICMP ping packets that do not return from the monitored destination before the firewall considers the link down. Based on the Any or All failure condition, if path monitoring is in failed state, the firewall removes the static route from the RIB (range is 3-10; default is 5).
+
+For example, a Ping Interval of 3 seconds and Ping Count of 5 missed pings (the firewall receives no ping in the last 15 seconds) means path monitoring detects a link failure. If path monitoring is in failed state and the firewall receives a ping after 15 seconds, the link is deemed up; based on the Any or All failure condition, path monitoring to Any or All monitored destinations can be deemed up, and the Preemptive Hold Time starts.
+
+Default value: 3
+
+##### `enable`
+
+Data type: `Optional[Boolean]`
+
+Select to enable path monitoring of this specific destination for the static route; the firewall sends ICMP pings to this destination.
+
+#### Parameters
+
+The following parameters are available in the `panos_ipv6_path_monitor` type.
+
+##### `path`
+
+namevar
+
+Data type: `String`
+
+The name to identify the path monitor with.
+
+##### `route`
+
+namevar
+
+Data type: `String`
+
+A name to identify a static route.
+
+### panos_ipv6_static_route
+
+This type provides Puppet with the capabilities to manage IPv6 Static Routes on Palo Alto devices.
+
+#### Properties
+
+The following properties are available in the `panos_ipv6_static_route` type.
+
+##### `ensure`
+
+Data type: `Enum[present, absent]`
+
+Whether this resource should be present or absent on the target system.
+
+Default value: present
+
+##### `nexthop`
+
+Data type: `Optional[String]`
+
+The address of the next hop location for the route
+
+##### `nexthop_type`
+
+Data type: `Optional[Enum["ipv6-address", "next-vr", "discard", "none"]]`
+
+The type of address used for the next hop.
+
+  * ipv6-address: Select to enter the IP address of the next hop router.
+  * next-vr: Select to select a virtual router in the firewall as the next hop. This allows you to route internally between virtual routers within a single firewall.
+  * discard: Select if you want to drop traffic that is addressed to this destination.
+  * none: Select if there is no next hop for the route.
+
+##### `bfd_profile`
+
+Data type: `String`
+
+To enable Bidirectional Forwarding Detection (BFD) for a static route on a PA-3000 Series, PA-3200 Series, PA-5000 Series, PA-5200 Series,
+PA-7000 Series, or VM-Series firewall, specify one of the following:
+
+  * `default`: a BFD profile that you have created on the firewall
+  * `None`: to disable BFD for the static route.
+
+To use BFD on a static route:
+
+  * Both the firewall and the peer at the opposite end of the static route must support BFD sessions.
+  * The static route nexthop_type must be `ip-address` and you must enter a valid IP address in `nexthop`.
+  * The `interface` attribute cannot be `none`; you must specify an interface (even if you are using a DHCP address).
+
+Default value: None
+
+##### `interface`
+
+Data type: `Optional[String]`
+
+The interface used by the route, interfaces pulled from the virtual router this belongs to.
+
+##### `metric`
+
+Data type: `Optional[String]`
+
+Specify a valid metric for the static route (1 - 65535).
+
+##### `admin_distance`
+
+Data type: `String`
+
+Specify the administrative distance for the static route (10-240; default is 10).
+
+Default value: 10
+
+##### `destination`
+
+Data type: `String`
+
+Enter an IP address and network mask in Classless Inter-domain Routing (CIDR) notation: ip_address/mask (for example, 192.168.2.0/24 for IPv4 or 2001:db8::/32 for IPv6).
+
+##### `no_install`
+
+Data type: `Boolean`
+
+Select if you do not want to install the route in the forwarding table. The route is retained in the configuration for future reference. Note: can only be set on PAN-OS version 7.1.0.
+
+##### `route_type`
+
+Data type: `Optional[Enum["unicast", "multicast", "both", "no-install"]]`
+
+Specify the route table into which the firewall installs the static route:
+
+  * `unicast`: Installs the route into the unicast route table.
+  * `multicast`: Installs the route into the multicast route table.
+  * `both`: Installs the route into the unicast and multicast route tables.
+  * `no-install`: Does not install the route in the route table (RIB); the firewall retains the static route for future reference until you delete the route.
+
+Note: can only be set on PAN-OS version 8.1.0.
+
+##### `path_monitoring`
+
+Data type: `Optional[Boolean]`
+
+Specify true to enable path monitoring for the static route.
+
+Note: can only be set on PAN-OS version 8.1.0.
+Note: must be enabled if using `panos_ipv6_monitor_destinations` for the static route.
+
+##### `failure_condition`
+
+Data type: `Optional[Enum["any", "all"]]`
+
+Specify the condition under which the firewall considers the monitored path down and thus the static route down:
+
+  * `any`: If any one of the monitored destinations for the static route is unreachable by ICMP, the firewall removes the static route from the RIB and FIB and adds the dynamic or static route that has the next lowest metric going to the same destination to the FIB.
+  * `all`: If all of the monitored destinations for the static route are unreachable by ICMP, the firewall removes the static route from the RIB and FIB and adds the dynamic or static route that has the next lowest metric going to the same destination to the FIB.
+
+Specify `all` to avoid the possibility of a single monitored destination signaling a static route failure when that monitored destination is simply offline for maintenance, for example.
+
+Note: can only be set on PAN-OS version 8.1.0.
+
+##### `enable`
+
+Data type: `Optional[Boolean]`
+
+Specify true to enable path monitoring of this specific destination for the static route; the firewall sends ICMP pings to this destination.
+
+Note: can only be set on PAN-OS version 8.1.0.
+
+##### `hold_time`
+
+Data type: `Optional[String]`
+
+Specify the number of minutes a downed path monitor must remain in Up stat:the path monitor evaluates all of its member monitored destinations and must remain Up before the firewall reinstalls the static route into the RIB. If the timer expires without the link going down or flapping, the link is deemed stable, path monitor can remain Up, and the firewall can add the static route back into the RIB.
+
+If the link goes down or flaps during the hold time, path monitor fails and the timer restarts when the downed monitor returns to Up state. A Preemptive Hold Time of zero causes the firewall to reinstall the static route into the RIB immediately upon the path monitor coming up. Range is 0-1,440; default is 2.
+
+Note: can only be set on PAN-OS version 8.1.0.
+
+#### Parameters
+
+The following parameters are available in the `panos_ipv6_static_route` type.
+
+##### `route`
+
+namevar
+
+Data type: `Pattern[/^[a-zA-z0-9\-_\s\.]{1,31}$/]`
+_*this data type contains a regex that may not be accurately reflected in generated documentation_
+
+A name to identify a static route.
+
+##### `vr_name`
+
+namevar
+
+Data type: `String`
+
+The name of the virtual router the static route is associate with.
 
 ### panos_nat_policy
 
@@ -538,9 +778,88 @@ The following parameters are available in the `panos_nat_policy` type.
 
 namevar
 
+Data type: `Pattern[/^[a-zA-z0-9\-_\s\.]{1,63}$/]`
+_*this data type contains a regex that may not be accurately reflected in generated documentation_
+
+The display-name of the zone. Restricted to 31 characters on PAN-OS version 7.1.0.
+
+### panos_path_monitor
+
+This type provides Puppet with the capabilities to manage IPv4 Path Monitors on Palo Alto devices.
+
+Note: Can only be configured on PAN-OS 8.1.0 devices.
+
+#### Properties
+
+The following properties are available in the `panos_path_monitor` type.
+
+##### `ensure`
+
+Data type: `Enum[present, absent]`
+
+Whether this resource should be present or absent on the target system.
+
+Default value: present
+
+##### `source`
+
 Data type: `String`
 
-The display-name of the zone.
+Specify the IP address that the firewall will use as the source in the ICMP ping to the monitored destination:
+
+  * If the interface has multiple IP addresses, select one.
+  * If you specify an interface, the firewall uses the first IP address assigned to the interface by default.
+  * If you specify `DHCP` (Use DHCP Client address), the firewall uses the address that DHCP assigned to the interface. To see the DHCP address, select NetworkInterfacesEthernet and in the row for the Ethernet interface, click on Dynamic DHCP Client. The IP Address appears in the Dynamic IP Interface Status window.
+
+##### `destination`
+
+Data type: `String`
+
+Specify a robust, stable IP address or address object for which the firewall will monitor the path. The monitored destination and the static route destination must use the same address family (IPv4 or IPv6)
+
+##### `interval`
+
+Data type: `Optional[String]`
+
+Specify the ICMP ping interval in seconds to determine how frequently the firewall monitors the path (pings the monitored destination; range is 1-60; default is 3).
+
+Default value: 5
+
+##### `count`
+
+Data type: `Optional[String]`
+
+Specify the number of consecutive ICMP ping packets that do not return from the monitored destination before the firewall considers the link down. Based on the Any or All failure condition, if path monitoring is in failed state, the firewall removes the static route from the RIB (range is 3-10; default is 5).
+
+For example, a Ping Interval of 3 seconds and Ping Count of 5 missed pings (the firewall receives no ping in the last 15 seconds) means path monitoring detects a link failure. If path monitoring is in failed state and the firewall receives a ping after 15 seconds, the link is deemed up; based on the Any or All failure condition, path monitoring to Any or All monitored destinations can be deemed up, and the Preemptive Hold Time starts.
+
+Default value: 3
+
+##### `enable`
+
+Data type: `Optional[Boolean]`
+
+Select to enable path monitoring of this specific destination for the static route; the firewall sends ICMP pings to this destination.
+
+#### Parameters
+
+The following parameters are available in the `panos_path_monitor` type.
+
+##### `path`
+
+namevar
+
+Data type: `String`
+
+The name to identify the path monitor with.
+
+##### `route`
+
+namevar
+
+Data type: `String`
+
+A name to identify the static route which is usually the virtual router name followed by a forward slash.
 
 ### panos_security_policy_rule
 
@@ -852,7 +1171,7 @@ Specify the IP Precedence QoS marking setting, only if `qos_type` is `ip-precede
 
 Data type: `Optional[Boolean]`
 
-To disable packet inspection from the server to the client, select this option. This option may be useful under heavy server load conditions.
+To disable packet inspection from the server to the client, enable this option. This option may be useful under heavy server load conditions.
 
 ##### `disable`
 
@@ -871,7 +1190,7 @@ namevar
 Data type: `Pattern[/^[a-zA-z0-9\-_\s\.]{1,63}$/]`
 _*this data type contains a regex that may not be accurately reflected in generated documentation_
 
-The display-name of the security-policy-rule. Restricted to 31 characters on PAN-OS version < 8.1.0.
+The display-name of the security-policy-rule. Restricted to 31 characters on PAN-OS version 7.1.0.
 
 ### panos_service
 
@@ -899,7 +1218,7 @@ Provide a description of this service.
 
 Data type: `Enum["tcp", "udp"]`
 
-Select the protocol used by the service
+Specify the protocol used by the service
 
 Default value: tcp
 
@@ -979,6 +1298,163 @@ _*this data type contains a regex that may not be accurately reflected in genera
 
 The display-name of the service-group.
 
+### panos_static_route
+
+This type provides Puppet with the capabilities to manage IPv4 Static Routes on Palo Alto devices.
+
+#### Properties
+
+The following properties are available in the `panos_static_route` type.
+
+##### `ensure`
+
+Data type: `Enum[present, absent]`
+
+Whether this resource should be present or absent on the target system.
+
+Default value: present
+
+##### `nexthop`
+
+Data type: `Optional[String]`
+
+The address of the next hop location for the route
+
+##### `nexthop_type`
+
+Data type: `Optional[Enum["ip-address", "next-vr", "discard", "none"]]`
+
+The type of address used for the next hop.
+
+  * ip-address: Select to enter the IP address of the next hop router.
+  * next-vr: Select to select a virtual router in the firewall as the next hop. This allows you to route internally between virtual routers within a single firewall.
+  * discard: Select if you want to drop traffic that is addressed to this destination.
+  * none: Select if there is no next hop for the route.
+
+##### `bfd_profile`
+
+Data type: `String`
+
+To enable Bidirectional Forwarding Detection (BFD) for a static route on a PA-3000 Series, PA-3200 Series, PA-5000 Series, PA-5200 Series,
+PA-7000 Series, or VM-Series firewall, specify one of the following:
+
+  * `default`: a BFD profile that you have created on the firewall
+  * `none`: to disable BFD for the static route.
+
+To use BFD on a static route:
+
+  * Both the firewall and the peer at the opposite end of the static route must support BFD sessions.
+  * The static route nexthop_type must be `ip-address` and you must enter a valid IP address in `nexthop`.
+  * The `interface` attribute cannot be `none`; you must specify an interface (even if you are using a DHCP address).
+
+Default value: None
+
+##### `interface`
+
+Data type: `Optional[String]`
+
+The interface used by the route, interfaces pulled from the virtual router this belongs to.
+
+##### `metric`
+
+Data type: `Optional[String]`
+
+Specify a valid metric for the static route (1 - 65535).
+
+##### `admin_distance`
+
+Data type: `String`
+
+Specify the administrative distance for the static route (10-240; default is 10).
+
+Default value: 10
+
+##### `destination`
+
+Data type: `String`
+
+Enter an IP address and network mask in Classless Inter-domain Routing (CIDR) notation: ip_address/mask (for example, 192.168.2.0/24 for IPv4 or 2001:db8::/32 for IPv6).
+
+##### `no_install`
+
+Data type: `Boolean`
+
+Select if you do not want to install the route in the forwarding table. The route is retained in the configuration for future reference. Note: can only be set on PAN-OS version 7.1.0.
+
+##### `route_type`
+
+Data type: `Optional[Enum["unicast", "multicast", "both", "no-install"]]`
+
+Specify the route table into which the firewall installs the static route:
+
+  * `unicast`: Installs the route into the unicast route table.
+  * `multicast`: Installs the route into the multicast route table.
+  * `both`: Installs the route into the unicast and multicast route tables.
+  * `no-install`: Does not install the route in the route table (RIB); the firewall retains the static route for future reference until you delete the route.
+
+Note: can only be set on PAN-OS version 8.1.0.
+
+##### `path_monitoring`
+
+Data type: `Optional[Boolean]`
+
+Specify true to enable path monitoring for the static route.
+
+Note: can only be set on PAN-OS version 8.1.0.
+Note: must be enabled if using `panos_monitor_destinations` for the static route.
+
+##### `failure_condition`
+
+Data type: `Optional[Enum["any", "all"]]`
+
+Specify the condition under which the firewall considers the monitored path down and thus the static route down:
+
+  * `any`: If any one of the monitored destinations for the static route is unreachable by ICMP, the firewall removes the static route from the RIB and FIB and adds the dynamic or static route that has the next lowest metric going to the same destination to the FIB.
+  * `all`: If all of the monitored destinations for the static route are unreachable by ICMP, the firewall removes the static route from the RIB and FIB and adds the dynamic or static route that has the next lowest metric going to the same destination to the FIB.
+
+Specify `all` to avoid the possibility of a single monitored destination signaling a static route failure when that monitored destination is simply offline for maintenance, for example.
+
+Note: can only be set on PAN-OS version 8.1.0.
+
+##### `enable`
+
+Data type: `Optional[Boolean]`
+
+Specify true to enable path monitoring of this specific destination for the static route; the firewall sends ICMP pings to this destination.
+
+Note: can only be set on PAN-OS version 8.1.0.
+
+##### `hold_time`
+
+Data type: `Optional[String]`
+
+Specify the number of minutes a downed path monitor must remain in Up stat:the path monitor evaluates all of its member monitored destinations and must remain Up before the firewall reinstalls the static route into the RIB. If the timer expires without the link going down or flapping, the link is deemed stable, path monitor can remain Up, and the firewall can add the static route back into the RIB.
+
+If the link goes down or flaps during the hold time, path monitor fails and the timer restarts when the downed monitor returns to Up state. A Preemptive Hold Time of zero causes the firewall to reinstall the static route into the RIB immediately upon the path monitor coming up. Range is 0-1,440; default is 2.
+
+Note: can only be set on PAN-OS version 8.1.0.
+
+#### Parameters
+
+The following parameters are available in the `panos_static_route` type.
+
+##### `route`
+
+namevar
+
+Data type: `Pattern[/^[a-zA-z0-9\-_\s\.]{1,31}$/]`
+_*this data type contains a regex that may not be accurately reflected in generated documentation_
+
+A name to identify a static route.
+
+##### `vr_name`
+
+namevar
+
+Data type: `String`
+
+The name of the virtual router the static route is associate with.
+
 ### panos_tag
 
 This type provides Puppet with the capabilities to manage "tags" objects on Palo Alto devices.
@@ -1015,7 +1491,115 @@ The following parameters are available in the `panos_tag` type.
 
 namevar
 
+Data type: `Pattern[/^[a-zA-z0-9\-_\s\.]{1,127}$/]`
+_*this data type contains a regex that may not be accurately reflected in generated documentation_
+
+The display-name of the tag.
+
+### panos_virtual_router
+
+This type provides Puppet with the capabilities to manage "virtual router" objects on Palo Alto devices.
+
+#### Properties
+
+The following properties are available in the `panos_virtual_router` type.
+
+##### `ensure`
+
+Data type: `Enum[present, absent]`
+
+Whether this resource should be present or absent on the target system.
+
+Default value: present
+
+##### `interfaces`
+
+Data type: `Optional[Array[String]]`
+
+The color of the tag
+
+##### `ad_static`
+
 Data type: `String`
+
+Static IPv4 Administrative distance. Range is 10-240.
+
+Default value: 10
+
+##### `ad_static_ipv6`
+
+Data type: `String`
+
+Static IPv6 Administrative distance. Range is 10-240.
+
+Default value: 10
+
+##### `ad_ospf_int`
+
+Data type: `String`
+
+OSPF Interface Administrative distance. Range is 10-240.
+
+Default value: 30
+
+##### `ad_ospf_ext`
+
+Data type: `String`
+
+OSPF External Administrative distance. Range is 10-240.
+
+Default value: 110
+
+##### `ad_ospfv3_int`
+
+Data type: `String`
+
+OSPFv3 External Administrative distance. Range is 10-240.
+
+Default value: 30
+
+##### `ad_ospfv3_ext`
+
+Data type: `String`
+
+OSPFv3 Interface Administrative distance. Range is 10-240.
+
+Default value: 110
+
+##### `ad_ibgp`
+
+Data type: `String`
+
+IBGP Administrative distance. Range is 10-240.
+
+Default value: 200
+
+##### `ad_ebgp`
+
+Data type: `String`
+
+EBGP administrative distance. Range is 10-240.
+
+Default value: 20
+
+##### `ad_rip`
+
+Data type: `String`
+
+RIP administrative distance. Range is 10-240.
+
+Default value: 120
+
+#### Parameters
+
+The following parameters are available in the `panos_virtual_router` type.
+
+##### `name`
+
+namevar
+
+Data type: `Pattern[/^[a-zA-z0-9\-_\s\.]{1,31}$/]`
+_*this data type contains a regex that may not be accurately reflected in generated documentation_
 
 The display-name of the tag.
 
@@ -1059,7 +1643,7 @@ Specify a profile that specifies how the security gateway responds to attacks fr
 
 Data type: `Optional[String]`
 
-Select a log forwarding profile for forwarding zone protection logs to an external system
+Specify a log forwarding profile for forwarding zone protection logs to an external system
 
 ##### `enable_user_identification`
 
@@ -1068,7 +1652,7 @@ Data type: `Optional[Boolean]`
 If you configured User-ID™ to perform IP address-to-username mapping (discovery), select this option to apply the mapping information to traffic in this zone.
 If you disable this option, firewall logs, reports, and policies will exclude user mapping information for traffic within the zone.
 
-By default, if you select this option, the firewall applies user mapping information to the traffic of all subnetworks in the zone.
+By default, if you enable this option, the firewall applies user mapping information to the traffic of all subnetworks in the zone.
 To limit the information to specific subnetworks within the zone, use the `include_list` and `exclude_list`.
 
 Note: User-ID performs discovery for the zone only if it falls within the network range that User-ID monitors.
@@ -1078,7 +1662,7 @@ If the zone is outside that range, the firewall does not apply user mapping info
 
 Data type: `Optional[Boolean]`
 
-If you have configured Packet Buffer Protection, select to apply the packet buffer protection settings to this zone. Packet buffer protection is applied to the ingress zone only.
+If you have configured Packet Buffer Protection on the device, enable this option to apply the packet buffer protection settings to this zone. Packet buffer protection is applied to the ingress zone only.
 
 Note: can only be set on PAN-OS version 8.1.0.
 
@@ -1117,7 +1701,8 @@ The following parameters are available in the `panos_zone` type.
 
 namevar
 
-Data type: `String`
+Data type: `Pattern[/^[a-zA-z0-9\-\s_\.]{1,31}$/]`
+_*this data type contains a regex that may not be accurately reflected in generated documentation_
 
 The display-name of the zone.
 

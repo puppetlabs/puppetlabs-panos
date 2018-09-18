@@ -10,7 +10,9 @@ class Puppet::Provider::PanosStaticRouteBase < Puppet::Provider::PanosProvider
 
   def munge(entry)
     entry[:no_install] = entry[:no_install].nil? ? false : true
+    entry[:path_monitoring] = entry[:path_monitoring].nil? ? false : true
     entry[:nexthop_type] = 'none' if entry[:nexthop_type].nil?
+    entry[:enable] = string_to_bool(entry[:enable])
     entry
   end
 
@@ -57,10 +59,22 @@ class Puppet::Provider::PanosStaticRouteBase < Puppet::Provider::PanosProvider
           builder.profile(should[:bfd_profile])
         end
       end
+      if should[:path_monitoring]
+        builder.__send__('path-monitor') do
+          builder.enable('yes') if should[:enable]
+          builder.__send__('failure-condition', should[:failure_condition]) if should[:failure_condition]
+          builder.__send__('hold-time', should[:hold_time]) if should[:hold_time]
+        end
+      end
       builder.interface(should[:interface]) if should[:interface]
       builder.metric(should[:metric]) if should[:metric]
       builder.__send__('admin-dist', should[:admin_distance]) if should[:admin_distance]
       builder.destination(should[:destination]) if should[:destination]
+      if should[:route_type]
+        builder.__send__('route-table') do
+          builder.__send__(should[:route_type])
+        end
+      end
       if should[:no_install]
         builder.option do
           builder.__send__('no-install')
@@ -87,6 +101,7 @@ class Puppet::Provider::PanosStaticRouteBase < Puppet::Provider::PanosProvider
           result[attr_name] = match(static_route_entry, attr, attr_name) unless attr_name == :vr_name
         end
         result[:vr_name] = vr_name
+        result[:title] = vr_name + '/' + result[:route]
         results.push(result)
         defined?(munge) ? munge(result) : result
       end
