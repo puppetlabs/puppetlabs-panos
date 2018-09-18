@@ -3,7 +3,9 @@ require 'puppet/resource_api'
 Puppet::ResourceApi.register_type(
   name: 'panos_commit',
   docs: <<-EOS,
-      When evaluated, this resource commits all outstanding changes in the target device's configuration to the active configuration. It is automatically scheduled after all other PANOS resources.
+      @summary When evaluated, this resource commits all outstanding changes in the target device's configuration to the active configuration. 
+
+@note It is automatically scheduled after all other PANOS resources.
     EOS
   features: ['remote_resource'],
   attributes: {
