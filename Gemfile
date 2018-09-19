@@ -37,6 +37,7 @@ group :development do
   gem "builder", '~> 3.2.2',                           require: false
   gem "puppet-resource_api",                           require: false, git: 'https://github.com/puppetlabs/puppet-resource_api.git', ref: 'master'
   gem "beaker-hostgenerator", '~> 1.1.15',             require: false
+  gem "puppet-strings",                                git: 'https://github.com/puppetlabs/puppet-strings.git', ref: 'master'
 end
 
 puppet_version = ENV['PUPPET_GEM_VERSION']

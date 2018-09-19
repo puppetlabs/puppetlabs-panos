@@ -3,8 +3,8 @@ require 'puppet/resource_api'
 Puppet::ResourceApi.register_type(
   name: 'panos_arbitrary_commands',
   docs: <<-EOS,
-      This type provides Puppet with the capabilities to execute arbitrary configuration commands on Palo Alto devices.
-    EOS
+This type provides Puppet with the capabilities to execute arbitrary configuration commands on Palo Alto devices.
+EOS
   features: ['simple_get_filter', 'remote_resource', 'canonicalize'],
   attributes: {
     ensure: {

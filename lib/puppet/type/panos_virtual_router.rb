@@ -3,8 +3,8 @@ require 'puppet/resource_api'
 Puppet::ResourceApi.register_type(
   name: 'panos_virtual_router',
   docs: <<-EOS,
-      This type provides Puppet with the capabilities to manage "virtual router" objects on Palo Alto devices.
-    EOS
+This type provides Puppet with the capabilities to manage "virtual router" objects on Palo Alto devices.
+EOS
   base_xpath: '/config/devices/entry/network/virtual-router',
   features: ['remote_resource'],
   attributes: {

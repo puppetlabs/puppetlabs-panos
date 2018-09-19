@@ -3,8 +3,8 @@ require 'puppet/resource_api'
 Puppet::ResourceApi.register_type(
   name: 'panos_static_route',
   docs: <<-EOS,
-      This type provides Puppet with the capabilities to manage IPv4 Static Routes on Palo Alto devices.
-    EOS
+This type provides Puppet with the capabilities to manage IPv4 Static Routes on Palo Alto devices.
+EOS
   base_xpath: '/config/devices/entry/network/virtual-router',
   features: ['remote_resource'],
   title_patterns: [

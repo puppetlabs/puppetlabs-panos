@@ -3,8 +3,8 @@ require 'puppet/resource_api'
 Puppet::ResourceApi.register_type(
   name: 'panos_admin',
   docs: <<-EOS,
-      This type provides Puppet with the capabilities to manage "administrator" user accounts on Palo Alto devices.
-    EOS
+This type provides Puppet with the capabilities to manage "administrator" user accounts on Palo Alto devices.
+EOS
   base_xpath: '/config/mgt-config/users',
   features: ['remote_resource'],
   attributes: {
