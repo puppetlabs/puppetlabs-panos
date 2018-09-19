@@ -1,5 +1,5 @@
 # @summary
-#   This resource will manage the resource_api::agent and the builder gem on an agent
+#   This resource manages the `resource_api::agent` and the builder gem on an agent.
 #
 # @example
 #   include panos::agent
