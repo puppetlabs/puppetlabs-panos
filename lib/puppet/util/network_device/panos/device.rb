@@ -13,9 +13,11 @@ module Puppet::Util::NetworkDevice::Panos
     end
 
     def config
-      raise Puppet::ResourceError, 'Could not find host in the configuration' unless super.key?('host')
+      raise Puppet::ResourceError, 'Could not find host or address in the configuration' unless super.key?('host') || super.key?('address')
       raise Puppet::ResourceError, 'The port attribute in the configuration is not an integer' if super.key?('port') && super['port'] !~ %r{\A[0-9]+\Z}
-      raise Puppet::ResourceError, 'Could not find user/password or apikey in the configuration' unless (super.key?('user') && super.key?('password')) || super.key?('apikey')
+      raise Puppet::ResourceError, 'Could not find user/password or apikey in the configuration' unless ((super.key?('user') || super.key?('username')) && super.key?('password')) || super.key?('apikey') # rubocop:disable Metrics/LineLength
+      raise Puppet::ResourceError, 'User and username are mutually exclusive' if super.key?('user') && super.key?('username')
+      raise Puppet::ResourceError, 'Host and address are mutually exclusive' if super.key?('host') && super.key?('address')
       super
     end
 
@@ -112,9 +114,9 @@ module Puppet::Util::NetworkDevice::Panos
   # @api private
   class API
     def initialize(credentials)
-      @host = credentials['host']
+      @host = credentials['host'] || credentials['address']
       @port = credentials.key?('port') ? credentials['port'].to_i : 443
-      @user = credentials['user']
+      @user = credentials['user'] || credentials['username']
       @password = credentials['password']
       @apikey = credentials['apikey']
     end

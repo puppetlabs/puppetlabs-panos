@@ -47,7 +47,7 @@ RSpec.describe Puppet::Util::NetworkDevice::Panos do
         context 'when host is not provided' do
           let(:device_config) { { 'user' => 'admin', 'password' => 'password' } }
 
-          it { expect { device.config }.to raise_error Puppet::ResourceError, 'Could not find host in the configuration' }
+          it { expect { device.config }.to raise_error Puppet::ResourceError, 'Could not find host or address in the configuration' }
         end
         context 'when port is provided but not valid' do
           let(:device_config) { { 'host' => 'www.example.com', 'port' => 'foo', 'user' => 'admin', 'password' => 'password' } }
@@ -58,6 +58,7 @@ RSpec.describe Puppet::Util::NetworkDevice::Panos do
           [
             { 'host' => 'www.example.com', 'user' => 'admin' },
             { 'host' => 'www.example.com', 'password' => 'password' },
+            { 'host' => 'www.example.com', 'username' => 'admin' },
             { 'host' => 'www.example.com' },
           ].each do |config|
             let(:device_config) { config }
@@ -70,10 +71,30 @@ RSpec.describe Puppet::Util::NetworkDevice::Panos do
 
           it { expect { device.config }.not_to raise_error Puppet::ResourceError }
         end
-        context 'when username and password is provided' do
+        context 'when `user` and password is provided' do
           let(:device_config) { { 'host' => 'www.example.com', 'user' => 'foo', 'password' => 'password' } }
 
           it { expect { device.config }.not_to raise_error Puppet::ResourceError }
+        end
+        context 'when `username` and password is provided' do
+          let(:device_config) { { 'host' => 'www.example.com', 'username' => 'foo', 'password' => 'password' } }
+
+          it { expect { device.config }.not_to raise_error Puppet::ResourceError }
+        end
+        context 'when `host` and `address` and password is provided' do
+          let(:device_config) { { 'host' => 'www.example.com', 'address' => 'www.example.com', 'username' => 'foo', 'password' => 'password' } }
+
+          it { expect { device.config }.to raise_error Puppet::ResourceError, 'Host and address are mutually exclusive' }
+        end
+        context 'when `address` is provided' do
+          let(:device_config) { { 'address' => 'www.example.com', 'username' => 'foo', 'password' => 'password' } }
+
+          it { expect { device.config }.not_to raise_error }
+        end
+        context 'when `user` and `username` and password is provided' do
+          let(:device_config) { { 'host' => 'www.example.com', 'user' => 'foo', 'username' => 'foo', 'password' => 'password' } }
+
+          it { expect { device.config }.to raise_error Puppet::ResourceError, 'User and username are mutually exclusive' }
         end
       end
 

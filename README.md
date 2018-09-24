@@ -56,15 +56,19 @@ There are two valid types of credential files:
 
 * (a) A file containing the host, username and password in plain text, for example:
   ```
-  host: 10.0.10.20
-  user: admin
+  address: 10.0.10.20
+  username: admin
   password: admin
   ```
-* (b) A file containing the host and an API key obtained from the device, for example:
+* (b) A file containing the address and an API key obtained from the device, for example:
   ```
-  host: 10.0.10.20
+  address: 10.0.10.20
   apikey: LUFRPT10cHhRNXMyR2wrYW1MSzg5cldhNElodmVkL1U9OEV1cGY5ZjJyc2xGL1Z4Qk9TNFM2dz09
   ```
+
+__Note:__ v0.1.0 requires `host` instead of `address`
+
+__Note:__ v0.1.0 requires `user` instead of `username`
 
 To obtain an API key for the device, it is possible to use the `panos::apikey` task. The required creditials file should be in the format of (a) above. After which you can discard it. Before running this task, install the module on your machine, along with [Puppet Bolt](https://puppet.com/docs/bolt/0.x/bolt_installing.html). When complete, execute the following command:
 
