@@ -47,8 +47,8 @@ RSpec.configure do |c|
 
     File.open('spec/fixtures/acceptance-credentials.conf', 'w') do |file|
       file.puts <<CREDENTIALS
-host: #{@hostname}
-user: #{ENV['PANOS_TEST_USER'] || 'admin'}
+address: #{@hostname}
+username: #{ENV['PANOS_TEST_USER'] || 'admin'}
 password: #{ENV['PANOS_TEST_PASSWORD'] || 'admin'}
 CREDENTIALS
     end
