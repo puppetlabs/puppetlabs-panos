@@ -14,9 +14,9 @@ class Puppet::Provider::PanosPathMonitorBase < Puppet::Provider::PanosProvider
     entry
   end
 
-  def xml_from_should(_name, should)
+  def xml_from_should(name, should)
     builder = Builder::XmlMarkup.new
-    builder.entry('name' => should[:path]) do
+    builder.entry('name' => name[:path]) do
       builder.source(should[:source])
       builder.destination(should[:destination])
       builder.interval(should[:interval])
@@ -49,20 +49,20 @@ class Puppet::Provider::PanosPathMonitorBase < Puppet::Provider::PanosProvider
     results
   end
 
-  def create(context, _name, should)
-    paths = should[:route].split('/')
+  def create(context, name, should)
+    paths = name[:route].split('/')
     context.type.definition[:base_xpath] = "/config/devices/entry/network/virtual-router/entry[@name='#{paths[0]}']/routing-table/#{@version_label}/static-route/entry[@name='#{paths[1]}']/path-monitor/monitor-destinations" # rubocop:disable Metrics/LineLength
-    context.device.set_config(context.type.definition[:base_xpath], xml_from_should(should[:name], should))
+    context.device.set_config(context.type.definition[:base_xpath], xml_from_should(name, should))
   end
 
-  def update(context, _name, should)
-    paths = should[:route].split('/')
+  def update(context, name, should)
+    paths = name[:route].split('/')
     context.type.definition[:base_xpath] = "/config/devices/entry/network/virtual-router/entry[@name='#{paths[0]}']/routing-table/#{@version_label}/static-route/entry[@name='#{paths[1]}']/path-monitor/monitor-destinations" # rubocop:disable Metrics/LineLength
-    context.device.set_config(context.type.definition[:base_xpath], xml_from_should(should[:name], should))
+    context.device.set_config(context.type.definition[:base_xpath], xml_from_should(name, should))
   end
 
   def delete(context, name)
-    names = name.split('/')
-    context.device.delete_config(context.type.definition[:base_xpath] + "/entry[@name='#{names[0]}']/routing-table/#{@version_label}/static-route/entry[@name='#{names[1]}']/path-monitor/monitor-destinations/entry[@name='#{names[2]}']") # rubocop:disable Metrics/LineLength
+    names = name[:route].split('/')
+    context.device.delete_config(context.type.definition[:base_xpath] + "/entry[@name='#{names[0]}']/routing-table/#{@version_label}/static-route/entry[@name='#{names[1]}']/path-monitor/monitor-destinations/entry[@name='#{name[:path]}']") # rubocop:disable Metrics/LineLength
   end
 end

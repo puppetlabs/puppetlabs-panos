@@ -71,143 +71,15 @@ RSpec.describe Puppet::Provider::PanosStaticRouteBase do
     end
   end
 
-  describe '#set(context, changes)' do
-    context 'with no changes' do
-      let(:changes) { {} }
-
-      it 'does not call create' do
-        expect(provider).to receive(:create).never
-        provider.set(context, changes)
-      end
-      it 'does not call update' do
-        expect(provider).to receive(:update).never
-        provider.set(context, changes)
-      end
-      it 'does not call delete' do
-        expect(provider).to receive(:delete).never
-        provider.set(context, changes)
-      end
-    end
-
-    context 'with a single change to create a resource' do
-      let(:should_values) { { route: 'title', ensure: 'present' } }
-      let(:changes) do
-        { 'title' =>
-          {
-            should: should_values,
-          } }
-      end
-
-      before(:each) do
-        allow(provider).to receive(:get).and_return({})
-        allow(typedef).to receive(:check_schema)
-      end
-
-      it 'calls create' do
-        expect(context).to receive(:creating).with('title').and_yield
-        expect(provider).to receive(:create).with(context, 'title', should_values).once
-        provider.set(context, changes)
-      end
-    end
-
-    context 'with a single change to update a resource' do
-      let(:is_values) { { route: 'title', ensure: 'present' } }
-      let(:should_values) { { route: 'title', ensure: 'present' } }
-      let(:changes) do
-        { 'title' =>
-          {
-            is: is_values,
-            should: should_values,
-          } }
-      end
-
-      it 'calls update' do
-        expect(context).to receive(:updating).with('title').and_yield
-        expect(provider).to receive(:update).with(context, 'title', should_values).once
-        provider.set(context, changes)
-      end
-    end
-
-    context 'with a single change to delete a resource' do
-      let(:is_values) { { route: 'title', ensure: 'present', vr_name: 'vr_name' } }
-      let(:should_values) { { route: 'title', ensure: 'absent', vr_name: 'vr_name' } }
-      let(:changes) do
-        { 'title' =>
-          {
-            is: is_values,
-            should: should_values,
-          } }
-      end
-
-      it 'calls delete once' do
-        allow(context).to receive(:deleting).with('title').and_yield
-        expect(provider).to receive(:delete).with(context, 'title', 'vr_name').once
-        provider.set(context, changes)
-      end
-    end
-
-    context 'with multiple changes' do
-      let(:changes) do
-        {
-          'to create' =>
-          {
-            should: { route: 'to create', ensure: 'present' },
-          },
-          'to update' =>
-          {
-            is: { route: 'to update', ensure: 'present' },
-            should: { route: 'to update', ensure: 'present' },
-          },
-          'to delete' =>
-          {
-            is: { route: 'to delete', ensure: 'present', vr_name: 'vr_name' },
-            should: { route: 'to delete', ensure: 'absent', vr_name: 'vr_name' },
-          },
-        }
-      end
-
-      before(:each) do
-        allow(typedef).to receive(:check_schema)
-        allow(provider).to receive(:get).and_return({})
-      end
-
-      it 'calls the crud methods' do
-        expect(context).to receive(:creating).with('to create').and_yield
-        expect(provider).to receive(:create).with(context, 'to create', hash_including(route: 'to create'))
-
-        allow(context).to receive(:updating).with('to update').and_yield
-        expect(provider).to receive(:update).with(context, 'to update', hash_including(route: 'to update'))
-
-        allow(context).to receive(:deleting).with('to delete').and_yield
-        expect(provider).to receive(:delete).with(context, 'to delete', 'vr_name')
-
-        provider.set(context, changes)
-      end
-    end
-
-    context 'with a type that does not implement ensurable' do
-      let(:is_values) { { route: 'title', content: 'foo' } }
-      let(:should_values) { { route: 'title', content: 'bar' } }
-      let(:changes) do
-        { 'title' =>
-              {
-                is: is_values,
-                should: should_values,
-              } }
-      end
-
-      before(:each) do
-        allow(context).to receive(:updating).with('title').and_yield
-        allow(typedef).to receive(:ensurable?).and_return(false)
-      end
-      it { expect { provider.set(context, changes) }.to raise_error %r{PanosStaticRouteBase cannot be used with a Type that is not ensurable} }
-    end
-  end
-
-  describe '#xml_from_should(_name, should)' do
+  describe '#xml_from_should(name, should)' do
     test_data = [
       {
         desc: 'a full example route',
+        name: {
+          route:    'test route 1',
+          vr_name:  'new router',
+          title:    'new router/test route 1',
+        },
         attrs: {
           route: 'test route 1',
           nexthop: '10.7.4.1',
@@ -238,6 +110,11 @@ RSpec.describe Puppet::Provider::PanosStaticRouteBase do
       },
       {
         desc: 'a full ipv6 example route',
+        name: {
+          route:    'test route ipv6',
+          vr_name:  'new router',
+          title:    'new router/test route ipv6',
+        },
         attrs: {
           nexthop_type: 'ipv6-address',
           nexthop: '2001:0dc8::/128',
@@ -265,6 +142,11 @@ RSpec.describe Puppet::Provider::PanosStaticRouteBase do
       },
       {
         desc: 'a route configured to discard.',
+        name: {
+          route:    'test route 2',
+          vr_name:  'new router',
+          title:    'new router/test route 2',
+        },
         attrs: {
           route: 'test route 2',
           nexthop_type: 'discard',
@@ -289,6 +171,11 @@ RSpec.describe Puppet::Provider::PanosStaticRouteBase do
       },
       {
         desc: 'a route with a nexthop of another virtual router.',
+        name: {
+          route:    'test route 3',
+          vr_name:  'new router',
+          title:    'new router/test route 3',
+        },
         attrs: {
           route: 'test route 3',
           nexthop: 'next vr',
@@ -314,6 +201,11 @@ RSpec.describe Puppet::Provider::PanosStaticRouteBase do
       },
       {
         desc: 'a route configured with no next hop.',
+        name: {
+          route:    'test route 4',
+          vr_name:  'new router',
+          title:    'new router/test route 4',
+        },
         attrs: {
           route: 'test route 4',
           nexthop_type: 'none',
@@ -337,6 +229,11 @@ RSpec.describe Puppet::Provider::PanosStaticRouteBase do
       },
       {
         desc: 'a route configured with path monitoring.',
+        name: {
+          route:    'test route 4',
+          vr_name:  'new router',
+          title:    'new router/test route 4',
+        },
         attrs: {
           route: 'test route 4',
           nexthop_type: 'none',
@@ -369,6 +266,11 @@ RSpec.describe Puppet::Provider::PanosStaticRouteBase do
       },
       {
         desc: 'a route configured with path monitoring enabled set to false.',
+        name: {
+          route:    'test route 4',
+          vr_name:  'new router',
+          title:    'new router/test route 4',
+        },
         attrs: {
           route: 'test route 4',
           nexthop_type: 'none',
@@ -400,6 +302,11 @@ RSpec.describe Puppet::Provider::PanosStaticRouteBase do
       },
       {
         desc: 'a route configured with path monitoring enabled set to false.',
+        name: {
+          route:    'test route 4',
+          vr_name:  'new router',
+          title:    'new router/test route 4',
+        },
         attrs: {
           route: 'test route 4',
           nexthop_type: 'none',
@@ -614,25 +521,26 @@ EOF
     end
   end
 
-  describe '#create(context, _name, should)' do
+  describe '#create(context, name, should)' do
     context 'when called' do
       let(:expected_path) do
         '/config/devices/entry/network/virtual-router/entry[@name=\'bar\']/routing-table/ip/static-route'
       end
-      let(:should_values) do
+      let(:namevars) do
         {
-          name: 'foo',
           vr_name: 'bar',
+          route:   'foo',
+          title:   'bar/foo',
         }
       end
       let(:mystruct) { {} }
 
       it 'will call set_config' do
         expect(typedef).to receive(:definition).and_return(mystruct).twice
-        expect(provider).to receive(:validate_should).with(should_values)
-        expect(provider).to receive(:xml_from_should).with('foo', should_values)
+        expect(provider).to receive(:validate_should).with(anything)
+        expect(provider).to receive(:xml_from_should).with(namevars, anything)
         expect(device).to receive(:set_config).with(expected_path, anything)
-        provider.create(context, 'name', should_values)
+        provider.create(context, namevars, anything)
       end
     end
   end
@@ -642,20 +550,21 @@ EOF
       let(:expected_path) do
         '/config/devices/entry/network/virtual-router/entry[@name=\'bar\']/routing-table/ip/static-route'
       end
-      let(:should_values) do
+      let(:namevars) do
         {
-          name: 'foo',
           vr_name: 'bar',
+          route:   'foo',
+          title:   'bar/foo',
         }
       end
       let(:mystruct) { {} }
 
       it 'will call edit_config' do
         expect(typedef).to receive(:definition).and_return(mystruct).twice
-        expect(provider).to receive(:validate_should).with(should_values)
-        expect(provider).to receive(:xml_from_should).with('foo', should_values)
+        expect(provider).to receive(:validate_should).with(anything)
+        expect(provider).to receive(:xml_from_should).with(namevars, anything)
         expect(device).to receive(:set_config).with(expected_path, anything)
-        provider.update(context, 'name', should_values)
+        provider.update(context, namevars, anything)
       end
     end
   end
@@ -670,11 +579,18 @@ EOF
           base_xpath: '/some_xpath',
         }
       end
+      let(:namevars) do
+        {
+          vr_name: 'bar',
+          route:   'name',
+          title:   'bar/name',
+        }
+      end
 
       it 'will call delete_config' do
         expect(typedef).to receive(:definition).and_return(mystruct)
         expect(device).to receive(:delete_config).with(expected_path)
-        provider.delete(context, 'name', 'bar')
+        provider.delete(context, namevars)
       end
     end
   end

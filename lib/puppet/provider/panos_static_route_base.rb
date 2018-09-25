@@ -16,38 +16,9 @@ class Puppet::Provider::PanosStaticRouteBase < Puppet::Provider::PanosProvider
     entry
   end
 
-  def set(context, changes) # Overriding set to provide the delete method with the vr_name, in order to specify the route to be deleted
-    changes.each do |name, change|
-      is = change.key?(:is) ? change[:is] : (get(context) || []).find { |r| r[:name] == name }
-
-      context.type.check_schema(is) unless change.key?(:is)
-
-      should = change[:should]
-
-      raise 'PanosStaticRouteBase cannot be used with a Type that is not ensurable' unless context.type.ensurable?
-
-      is = { route: name, ensure: 'absent' } if is.nil?
-      should = { route: name, ensure: 'absent' } if should.nil?
-
-      if is[:ensure].to_s == 'absent' && should[:ensure].to_s == 'present'
-        context.creating(name) do
-          create(context, name, should)
-        end
-      elsif is[:ensure].to_s == 'present' && should[:ensure].to_s == 'present'
-        context.updating(name) do
-          update(context, name, should)
-        end
-      elsif is[:ensure].to_s == 'present' && should[:ensure].to_s == 'absent'
-        context.deleting(should[:route]) do
-          delete(context, should[:route], should[:vr_name])
-        end
-      end
-    end
-  end
-
-  def xml_from_should(_name, should)
+  def xml_from_should(name, should)
     builder = Builder::XmlMarkup.new
-    builder.entry('name' => should[:route]) do
+    builder.entry('name' => name[:route]) do
       unless should[:nexthop_type] == 'none'
         builder.nexthop do
           builder.__send__(should[:nexthop_type], should[:nexthop]) unless should[:nexthop_type] == 'discard'
@@ -111,19 +82,19 @@ class Puppet::Provider::PanosStaticRouteBase < Puppet::Provider::PanosProvider
   end
 
   # Overiding the following methods to point the xpath into the correct VR.
-  def create(context, _name, should)
-    context.type.definition[:base_xpath] = "/config/devices/entry/network/virtual-router/entry[@name='#{should[:vr_name]}']/routing-table/#{@version_label}/static-route"
+  def create(context, name, should)
+    context.type.definition[:base_xpath] = "/config/devices/entry/network/virtual-router/entry[@name='#{name[:vr_name]}']/routing-table/#{@version_label}/static-route"
     validate_should(should)
-    context.device.set_config(context.type.definition[:base_xpath], xml_from_should(should[:name], should))
+    context.device.set_config(context.type.definition[:base_xpath], xml_from_should(name, should))
   end
 
-  def update(context, _name, should)
-    context.type.definition[:base_xpath] = "/config/devices/entry/network/virtual-router/entry[@name='#{should[:vr_name]}']/routing-table/#{@version_label}/static-route"
+  def update(context, name, should)
+    context.type.definition[:base_xpath] = "/config/devices/entry/network/virtual-router/entry[@name='#{name[:vr_name]}']/routing-table/#{@version_label}/static-route"
     validate_should(should)
-    context.device.set_config(context.type.definition[:base_xpath], xml_from_should(should[:name], should))
+    context.device.set_config(context.type.definition[:base_xpath], xml_from_should(name, should))
   end
 
-  def delete(context, name, vr_name)
-    context.device.delete_config(context.type.definition[:base_xpath] + "/entry[@name='#{vr_name}']/routing-table/#{@version_label}/static-route/entry[@name='#{name}']")
+  def delete(context, name)
+    context.device.delete_config(context.type.definition[:base_xpath] + "/entry[@name='#{name[:vr_name]}']/routing-table/#{@version_label}/static-route/entry[@name='#{name[:route]}']")
   end
 end
