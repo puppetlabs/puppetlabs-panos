@@ -37,10 +37,14 @@ RSpec.describe Puppet::Provider::PanosPathMonitorBase do
     end
   end
 
-  describe '#xml_from_should(_name, should)' do
+  describe '#xml_from_should(name, should)' do
     test_data = [
       {
         desc: 'a full example',
+        name: {
+          path:   'path monitor',
+          route:  'example vr/test route 1',
+        },
         attrs: {
           route:        'example vr/test route 1',
           path:         'path monitor',
@@ -60,6 +64,10 @@ RSpec.describe Puppet::Provider::PanosPathMonitorBase do
       },
       {
         desc: 'essentials example',
+        name: {
+          path:   'path monitor',
+          route:  'example vr/test route 1',
+        },
         attrs: {
           route:        'example vr/test route 1',
           path:         'path monitor',
@@ -168,51 +176,53 @@ EOF
     end
   end
 
-  describe '#create(context, _name, should)' do
+  describe '#create(context, name, should)' do
     context 'when called' do
       let(:expected_path) do
         '/config/devices/entry/network/virtual-router/entry[@name=\'foo\']/routing-table/ip/static-route/entry[@name=\'bar\']/path-monitor/monitor-destinations'
       end
-      let(:should_values) do
+      let(:namevars) do
         {
-          name: 'foo',
-          route: 'foo/bar',
+          title:  'foo/bar/path',
+          route:  'foo/bar',
+          path:   'path',
         }
       end
       let(:mystruct) { {} }
 
       it 'will call set_config' do
         expect(typedef).to receive(:definition).and_return(mystruct).twice
-        expect(provider).to receive(:xml_from_should).with('foo', should_values)
+        expect(provider).to receive(:xml_from_should).with(namevars, anything)
         expect(device).to receive(:set_config).with(expected_path, anything)
-        provider.create(context, 'name', should_values)
+        provider.create(context, namevars, anything)
       end
     end
   end
 
-  describe '#update(context, _name, should)' do
+  describe '#update(context, name, should)' do
     context 'when called' do
       let(:expected_path) do
         '/config/devices/entry/network/virtual-router/entry[@name=\'foo\']/routing-table/ip/static-route/entry[@name=\'bar\']/path-monitor/monitor-destinations'
       end
-      let(:should_values) do
+      let(:namevars) do
         {
-          name: 'foo',
           route: 'foo/bar',
+          path:  'moo',
+          title: 'foo/bar/moo',
         }
       end
       let(:mystruct) { {} }
 
       it 'will call set_config' do
         expect(typedef).to receive(:definition).and_return(mystruct).twice
-        expect(provider).to receive(:xml_from_should).with('foo', should_values)
+        expect(provider).to receive(:xml_from_should).with(namevars, anything)
         expect(device).to receive(:set_config).with(expected_path, anything)
-        provider.update(context, 'name', should_values)
+        provider.update(context, namevars, anything)
       end
     end
   end
 
-  describe '#delete(context, name, vr_name)' do
+  describe '#delete(context, name)' do
     context 'when called' do
       let(:expected_path) do
         '/some_xpath/entry[@name=\'bar\']/routing-table/ip/static-route/entry[@name=\'bar\']/path-monitor/monitor-destinations/entry[@name=\'moo\']'
@@ -222,11 +232,18 @@ EOF
           base_xpath: '/some_xpath',
         }
       end
+      let(:namevars) do
+        {
+          title: 'bar/bar/moo',
+          route: 'bar/bar',
+          path:  'moo',
+        }
+      end
 
       it 'will call delete_config' do
         expect(typedef).to receive(:definition).and_return(mystruct)
         expect(device).to receive(:delete_config).with(expected_path)
-        provider.delete(context, 'bar/bar/moo')
+        provider.delete(context, namevars)
       end
     end
   end
