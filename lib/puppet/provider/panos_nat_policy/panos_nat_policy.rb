@@ -1,6 +1,4 @@
 require_relative '../panos_provider'
-require 'rexml/document'
-require 'builder'
 
 # Implementation for the panos_NAT_policy type using the Resource API.
 class Puppet::Provider::PanosNatPolicy::PanosNatPolicy < Puppet::Provider::PanosProvider

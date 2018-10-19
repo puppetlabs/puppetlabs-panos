@@ -1,9 +1,12 @@
 require 'puppet/resource_api/simple_provider'
-require 'rexml/xpath'
-require 'builder'
 
 # provider to handle arbitrary configuration commands against a PANOS device using the Resource API.
 class Puppet::Provider::PanosArbitraryCommands::PanosArbitraryCommands < Puppet::ResourceApi::SimpleProvider
+  def initialize
+    require 'rexml/xpath'
+    require 'builder'
+  end
+
   # to ensure that the manifest xml matches the API format
   #
   # e.g.

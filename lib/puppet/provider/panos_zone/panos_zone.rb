@@ -1,6 +1,4 @@
 require_relative '../panos_provider'
-require 'rexml/document'
-require 'builder'
 
 # Implementation for the panos_tags type using the Resource API.
 class Puppet::Provider::PanosZone::PanosZone < Puppet::Provider::PanosProvider

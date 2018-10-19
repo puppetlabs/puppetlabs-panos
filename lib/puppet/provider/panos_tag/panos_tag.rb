@@ -1,10 +1,9 @@
 require_relative '../panos_provider'
-require 'rexml/document'
-require 'builder'
 
 # Implementation for the panos_tags type using the Resource API.
 class Puppet::Provider::PanosTag::PanosTag < Puppet::Provider::PanosProvider
   def initialize
+    super()
     @code_from_color = {
       'red' => 'color1',
       'green' => 'color2',

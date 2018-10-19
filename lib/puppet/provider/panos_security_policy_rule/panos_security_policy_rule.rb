@@ -1,6 +1,4 @@
 require_relative '../panos_provider'
-require 'rexml/document'
-require 'builder'
 
 # Implementation for the panos_security_policy_rule type using the Resource API.
 class Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRule < Puppet::Provider::PanosProvider
