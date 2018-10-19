@@ -5,6 +5,9 @@ Gemfile:
       - gem: 'webmock'
       - gem: 'builder'
         version: '~> 3.2.2'
+      - gem: 'puppet-strings'
+        git: 'https://github.com/puppetlabs/puppet-strings.git'
+        ref: 'master'
       - gem: 'puppet-resource_api'
         git: 'https://github.com/puppetlabs/puppet-resource_api.git'
         ref: 'master'
@@ -12,6 +15,10 @@ Gemfile:
       - gem: 'beaker-hostgenerator'
         # the first version to contain Palo Alto support
         version: '~> 1.1.15'
+      - gem: 'github_changelog_generator'
+        git: 'https://github.com/skywinder/github-changelog-generator'
+        ref: '20ee04ba1234e9e83eb2ffb5056e23d641c7a018'
+        condition: "Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')"
 .gitignore:
   paths:
     - spec/fixtures/acceptance-credentials.conf
@@ -25,6 +32,7 @@ Gemfile:
     - spec/fixtures/config-acceptance.xml
     - spec/fixtures/config-reset.xml
 Rakefile:
+  changelog_user: 'puppetlabs'
   requires:
     - 'puppet-strings/tasks'
 spec/spec_helper.rb:
@@ -33,3 +41,9 @@ spec/spec_helper.rb:
     - "require 'webmock/rspec'"
 .travis.yml:
   simplecov: true
+  branches:
+    - release
+appveyor.yml:
+  delete: true
+.gitlab-ci.yml:
+  delete: true
