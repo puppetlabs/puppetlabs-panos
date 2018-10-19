@@ -1,4 +1,4 @@
-require 'puppet/provider/panos_static_route_base'
+require_relative '../panos_static_route_base'
 require 'rexml/document'
 require 'builder'
 

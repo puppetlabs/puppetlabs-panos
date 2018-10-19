@@ -1,4 +1,4 @@
-require 'puppet/provider/panos_provider'
+require_relative 'panos_provider'
 require 'rexml/document'
 require 'builder'
 
