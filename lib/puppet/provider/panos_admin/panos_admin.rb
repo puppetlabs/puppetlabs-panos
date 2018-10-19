@@ -1,7 +1,4 @@
-require 'puppet/provider/panos_provider'
-require 'rexml/document'
-require 'rexml/xpath'
-require 'builder'
+require_relative '../panos_provider'
 require 'base64'
 
 # Implementation for the panos_admin type using the Resource API.

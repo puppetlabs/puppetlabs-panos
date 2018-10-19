@@ -1,6 +1,4 @@
-require 'puppet/provider/panos_provider'
-require 'rexml/document'
-require 'builder'
+require_relative '../panos_provider'
 
 # Implementation for the panos_service_type type using the Resource API.
 class Puppet::Provider::PanosService::PanosService < Puppet::Provider::PanosProvider

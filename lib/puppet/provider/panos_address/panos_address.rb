@@ -1,6 +1,4 @@
-require 'puppet/provider/panos_provider'
-require 'rexml/document'
-require 'builder'
+require_relative '../panos_provider'
 
 # Implementation for the panos_address type using the Resource API.
 class Puppet::Provider::PanosAddress::PanosAddress < Puppet::Provider::PanosProvider

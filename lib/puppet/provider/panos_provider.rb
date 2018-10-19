@@ -1,9 +1,13 @@
 require 'puppet/resource_api/simple_provider'
-require 'rexml/xpath'
-require 'builder'
 
 # A base provider for all PANOS providers
 class Puppet::Provider::PanosProvider < Puppet::ResourceApi::SimpleProvider
+  def initialize
+    require 'rexml/document'
+    require 'rexml/xpath'
+    require 'builder'
+  end
+
   def get(context)
     config = context.device.get_config(context.type.definition[:base_xpath] + '/entry')
     config.elements.collect('/response/result/entry') do |entry| # rubocop:disable Style/CollectionMethods
