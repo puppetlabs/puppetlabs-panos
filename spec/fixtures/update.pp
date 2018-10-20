@@ -220,7 +220,10 @@ panos_tag {
   'Test Tag':
     ensure   => 'present',
     color    => 'green',
-    comments => 'comments 123',
+    comments => 'comments 123';
+  'Second Test Tag':
+    ensure => 'present',
+    color  => 'green';
 }
 
 panos_nat_policy {
@@ -486,7 +489,7 @@ if $::facts['operatingsystemrelease'] == '8.1.0' {
     enable            => false,
     hold_time         => '7',
   }
-  
+
   panos_path_monitor {
     'full example VR/route four/path monitor one':
       ensure      => present,
