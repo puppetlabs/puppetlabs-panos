@@ -5,8 +5,8 @@
 
 **Classes**
 
-* [`panos::agent`](#panosagent): This resource will manage the resource_api::agent and the builder gem on an agent
-* [`panos::server`](#panosserver): This resource manages the resource_api::server on the server
+* [`panos::agent`](#panosagent): This resource manages the `resource_api::agent` and the builder gem on an agent.
+* [`panos::server`](#panosserver): This resource manages the `resource_api::server` on the server.
 
 **Resource types**
 
@@ -38,7 +38,7 @@
 
 ### panos::agent
 
-This resource will manage the resource_api::agent and the builder gem on an agent
+This resource manages the `resource_api::agent` and the builder gem on an agent.
 
 #### Examples
 
@@ -50,7 +50,7 @@ include panos::agent
 
 ### panos::server
 
-This resource manages the resource_api::server on the server
+This resource manages the `resource_api::server` on the server.
 
 #### Examples
 
