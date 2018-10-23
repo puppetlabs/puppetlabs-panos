@@ -225,5 +225,7 @@ To cut a new release, from a current `master` checkout:
 * Execute the [Puppet Strings](https://puppet.com/docs/puppet/5.5/puppet_strings.html) rake task to update the [REFERENCE.md](https://github.com/puppetlabs/puppetlabs-panos/blob/master/REFERENCE.md):
 
 ```
-bundle exec rake strings:generate[,,,,,REFERENCE.md,true]
+bundle exec rake 'strings:generate[,,,,,REFERENCE.md,true]'
 ```
+
+* Make sure that all PRs are tagged appropriately
