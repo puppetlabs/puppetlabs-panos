@@ -54,17 +54,18 @@ class Puppet::Provider::PanosTag::PanosTag < Puppet::Provider::PanosProvider
   def canonicalize(_context, resources)
     resources.each do |resource|
       resource[:color] = resource[:color].downcase if resource[:color]
+      resource[:color] = @color_from_code[resource[:color]] if @color_from_code.key?(resource[:color])
     end
     resources
   end
 
   def validate_should(should)
     return unless should.key? :color
-    raise Puppet::ResourceError, 'Please use one of the existing Palo Alto colors.' unless @code_from_color.key? should[:color]
+    raise Puppet::ResourceError, 'Please use one of the existing Palo Alto colors.' unless @code_from_color.key?(should[:color]) || @color_from_code.key?(should[:color])
   end
 
   def munge(entry)
-    entry[:color] = @color_from_code[entry[:color]] if entry[:color]
+    entry[:color] = @color_from_code[entry[:color]] if entry[:color] && @color_from_code.key?(entry[:color])
     entry
   end
 

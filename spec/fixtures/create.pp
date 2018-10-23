@@ -233,7 +233,10 @@ panos_tag {
   'Test Tag':
     ensure   => 'present',
     color    => 'red',
-    comments => 'comments 123',
+    comments => 'comments 123';
+  'Second Test Tag':
+    ensure => 'present',
+    color  => 'color2';
 }
 
 panos_nat_policy {
@@ -453,7 +456,7 @@ panos_static_route {
     no_install      => $::facts['operatingsystemrelease'] ? {
       '7.1.0' => false,
       '8.1.0' => false,
-    };  
+    };
   'full example VR/route three':
     ensure          => 'present',
     bfd_profile     => 'None',

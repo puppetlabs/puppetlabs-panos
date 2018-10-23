@@ -34,13 +34,18 @@ RSpec.describe Puppet::Provider::PanosTag::PanosTag do
       ]
     end
 
-    context 'when resource contains the color `red`' do
+    context 'when resource contains a color name' do
       let(:color) { 'red' }
 
       it { expect(panos_tag.canonicalize(nil, resource)).to eq canonicalised_resource }
     end
-    context 'when resource contains the color `RED`' do
+    context 'when resource contains a color name in upper case' do
       let(:color) { 'RED' }
+
+      it { expect(panos_tag.canonicalize(nil, resource)).to eq canonicalised_resource }
+    end
+    context 'when resource contains a color tag' do
+      let(:color) { 'color1' }
 
       it { expect(panos_tag.canonicalize(nil, resource)).to eq canonicalised_resource }
     end
@@ -63,13 +68,18 @@ RSpec.describe Puppet::Provider::PanosTag::PanosTag do
 
       it { expect { panos_tag.validate_should(entry) }.to raise_error Puppet::ResourceError, %r{Please use one of the existing Palo Alto colors.} }
     end
-    context 'when an valid color is provided' do
+    context 'when a valid color name is provided' do
       let(:entry) { { color: 'red' } }
 
       it { expect { panos_tag.validate_should(entry) }.not_to raise_error }
     end
-    context 'when a color is not provided' do
-      let(:entry) { { name: 'red' } }
+    context 'when a valid color index is provided' do
+      let(:entry) { { color: 'color1' } }
+
+      it { expect { panos_tag.validate_should(entry) }.not_to raise_error }
+    end
+    context 'when no color is provided' do
+      let(:entry) { {} }
 
       it { expect { panos_tag.validate_should(entry) }.not_to raise_error }
     end
