@@ -17,8 +17,25 @@ Puppet[:log_level] = 'debug'
 #### the real task ###
 
 require 'json'
-require 'puppet/util/network_device/panos/device'
+
+def add_plugin_paths(install_dir)
+  Dir.glob(File.join([install_dir, '*'])).each do |mod|
+    $LOAD_PATH << File.join([mod, "lib"])
+  end
+end
 
 params = JSON.parse(ENV['PARAMS'] || STDIN.read)
-device = Puppet::Util::NetworkDevice::Panos::Device.new(params)
+#params = {key: "foo"}
+target = params['_target']
+unless target
+  puts "Panos task must be run on a proxy"
+  exit 1
+end
+
+add_plugin_paths(params['_installdir'])
+
+
+require 'puppet/util/network_device/panos/device'
+
+device = Puppet::Util::NetworkDevice::Panos::Device.new(target)
 puts JSON.generate(apikey: device.apikey)

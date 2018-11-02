@@ -101,6 +101,10 @@ module Puppet::Util::NetworkDevice::Panos
       api.job_request('commit', cmd: '<commit></commit>')
     end
 
+    def apikey
+      api.apikey
+    end
+
     private
 
     def api
