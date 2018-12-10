@@ -8,7 +8,7 @@ RSpec.describe Puppet::Provider::PanosArbitraryCommands::PanosArbitraryCommands 
   subject(:provider) { described_class.new }
 
   let(:context) { instance_double('Puppet::ResourceApi::BaseContext', 'context') }
-  let(:device) { instance_double('Puppet::Util::NetworkDevice::Panos::Device', 'device') }
+  let(:transport) { instance_double('Puppet::ResourceApi::Transport::Panos', 'transport') }
   let(:typedef) { instance_double('Puppet::ResourceApi::TypeDefinition', 'typedef') }
 
   let(:example_data) do
@@ -68,7 +68,7 @@ EOF
   end
 
   before(:each) do
-    allow(context).to receive(:device).with(no_args).and_return(device)
+    allow(context).to receive(:transport).with(no_args).and_return(transport)
   end
 
   describe '#canonicalize' do
@@ -96,15 +96,15 @@ EOF
     end
     context 'when `names` is not nil' do
       it 'returns resource' do
-        allow(device).to receive(:get_config).with('/config/foo').and_return(example_data)
+        allow(transport).to receive(:get_config).with('/config/foo').and_return(example_data)
         allow(provider).to receive(:str_from_xml).and_return(parsed_xml) # rubocop:disable RSpec/SubjectStub
 
         expect(provider.get(context, ['foo'])).to eq(resource_data)
       end
     end
-    context 'when device issues an error' do
-      it 'allows for device errors to bubble up' do
-        allow(device).to receive(:get_config).with('/config/some').and_raise(Puppet::ResourceError, 'Some Error Message')
+    context 'when transport issues an error' do
+      it 'allows for transport errors to bubble up' do
+        allow(transport).to receive(:get_config).with('/config/some').and_raise(Puppet::ResourceError, 'Some Error Message')
 
         expect { provider.get(context, ['some']) }.to raise_error Puppet::ResourceError
       end
@@ -115,7 +115,7 @@ EOF
     context 'when xml is valid' do
       it 'does not produce an error' do
         allow(REXML::Document).to receive(:new).with(parsed_xml).and_return(example_data)
-        allow(device).to receive(:set_config).with('/config/foo', example_data)
+        allow(transport).to receive(:set_config).with('/config/foo', example_data)
 
         expect { provider.create(context, 'foo', resource_data[0]) }.not_to raise_error
       end
@@ -133,7 +133,7 @@ EOF
     context 'when xml is valid' do
       it 'does not produce an error' do
         allow(REXML::Document).to receive(:new).with(parsed_xml).and_return(example_data)
-        allow(device).to receive(:edit_config).with('/config/foo', example_data)
+        allow(transport).to receive(:edit_config).with('/config/foo', example_data)
 
         expect { provider.update(context, 'foo', resource_data[0]) }.not_to raise_error
       end
@@ -149,7 +149,7 @@ EOF
 
   describe '#delete' do
     it 'calls provider functions' do
-      expect(device).to receive(:delete_config).with('/config/foo')
+      expect(transport).to receive(:delete_config).with('/config/foo')
 
       provider.delete(context, resource_data[0][:xpath])
     end

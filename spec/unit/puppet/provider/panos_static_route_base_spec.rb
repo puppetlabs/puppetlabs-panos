@@ -6,12 +6,12 @@ require 'puppet/type/panos_ipv6_static_route'
 require 'puppet/type/panos_static_route'
 RSpec.describe Puppet::Provider::PanosStaticRouteBase do
   let(:context) { instance_double('Puppet::ResourceApi::BaseContext', 'context') }
-  let(:device) { instance_double('Puppet::Util::NetworkDevice::Panos::Device', 'device') }
+  let(:transport) { instance_double('Puppet::ResourceApi::Transport::Panos', 'transport') }
   let(:typedef) { instance_double('Puppet::ResourceApi::TypeDefinition', 'typedef') }
   let(:provider) { described_class.new('ip') }
 
   before(:each) do
-    allow(context).to receive(:device).with(no_args).and_return(device)
+    allow(context).to receive(:transport).with(no_args).and_return(transport)
     allow(context).to receive(:type).with(no_args).and_return(typedef)
     allow(typedef).to receive(:ensurable?).and_return(true)
   end
@@ -490,8 +490,8 @@ EOF
       allow(typedef).to receive(:definition).and_return(base_xpath: 'some_xpath')
     end
 
-    it 'allows device api error to bubble up' do
-      allow(device).to receive(:get_config).with('some_xpath/entry').and_raise(Puppet::ResourceError, 'Some Error Message')
+    it 'allows transport api error to bubble up' do
+      allow(transport).to receive(:get_config).with('some_xpath/entry').and_raise(Puppet::ResourceError, 'Some Error Message')
 
       expect { provider.get(context) }.to raise_error Puppet::ResourceError
     end
@@ -501,7 +501,7 @@ EOF
       let(:provider) { described_class.new(ip_version) }
 
       it 'processes resources' do
-        allow(device).to receive(:get_config).with('some_xpath/entry').and_return(example_data)
+        allow(transport).to receive(:get_config).with('some_xpath/entry').and_return(example_data)
         allow(typedef).to receive(:attributes).and_return(Puppet::Type.type(:panos_static_route).type_definition.attributes)
 
         expect(provider.get(context)).to eq resource_data
@@ -513,7 +513,7 @@ EOF
       let(:provider) { described_class.new(ip_version) }
 
       it 'processes resources' do
-        allow(device).to receive(:get_config).with('some_xpath/entry').and_return(example_data)
+        allow(transport).to receive(:get_config).with('some_xpath/entry').and_return(example_data)
         allow(typedef).to receive(:attributes).with(no_args).and_return(Puppet::Type.type(:panos_ipv6_static_route).type_definition.attributes)
 
         expect(provider.get(context)).to eq resource_data
@@ -539,7 +539,7 @@ EOF
         expect(typedef).to receive(:definition).and_return(mystruct).twice
         expect(provider).to receive(:validate_should).with(anything)
         expect(provider).to receive(:xml_from_should).with(namevars, anything)
-        expect(device).to receive(:set_config).with(expected_path, anything)
+        expect(transport).to receive(:set_config).with(expected_path, anything)
         provider.create(context, namevars, anything)
       end
     end
@@ -563,7 +563,7 @@ EOF
         expect(typedef).to receive(:definition).and_return(mystruct).twice
         expect(provider).to receive(:validate_should).with(anything)
         expect(provider).to receive(:xml_from_should).with(namevars, anything)
-        expect(device).to receive(:set_config).with(expected_path, anything)
+        expect(transport).to receive(:set_config).with(expected_path, anything)
         provider.update(context, namevars, anything)
       end
     end
@@ -589,7 +589,7 @@ EOF
 
       it 'will call delete_config' do
         expect(typedef).to receive(:definition).and_return(mystruct)
-        expect(device).to receive(:delete_config).with(expected_path)
+        expect(transport).to receive(:delete_config).with(expected_path)
         provider.delete(context, namevars)
       end
     end

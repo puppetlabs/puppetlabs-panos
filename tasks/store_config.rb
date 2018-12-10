@@ -17,13 +17,14 @@ Puppet[:log_level] = 'debug'
 #### the real task ###
 
 require 'json'
-require 'puppet/util/network_device/panos/device'
+require 'puppet/resource_api/transport/wrapper'
 
 params = JSON.parse(ENV['PARAMS'] || STDIN.read)
-device = Puppet::Util::NetworkDevice::Panos::Device.new(params['credentials_file'])
+wrapper = Puppet::ResourceApi::Transport::Wrapper.new('panos', params['credentials_file'])
+transport = wrapper.transport
 
 file_name = params['config_file']
-config = device.show_config
+config = transport.show_config
 
 config.elements.collect('/response/result/config') do |entry| # rubocop:disable Style/CollectionMethods
   config = entry

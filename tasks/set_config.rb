@@ -17,13 +17,14 @@ Puppet[:log_level] = 'debug'
 #### the real task ###
 
 require 'json'
-require 'puppet/util/network_device/panos/device'
+require 'puppet/resource_api/transport/wrapper'
 
 params = JSON.parse(ENV['PARAMS'] || STDIN.read)
-device = Puppet::Util::NetworkDevice::Panos::Device.new(params['credentials_file'])
+wrapper = Puppet::ResourceApi::Transport::Wrapper.new('panos', params['credentials_file'])
+transport = wrapper.transport
 
 file = params['config_file']
-device.import(file, 'configuration')
+transport.import(file, 'configuration')
 if params['apply']
-  device.load_config(File.basename(file))
+  transport.load_config(File.basename(file))
 end

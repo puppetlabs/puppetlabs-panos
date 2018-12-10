@@ -7,11 +7,11 @@ RSpec.describe Puppet::Provider::PanosCommit::PanosCommit do
   subject(:provider) { described_class.new }
 
   let(:context) { instance_double('Puppet::ResourceApi::BaseContext', 'context') }
-  let(:device) { instance_double('Puppet::Util::NetworkDevice::Panos::Device', 'device') }
+  let(:transport) { instance_double('Puppet::ResourceApi::Transport::Panos', 'transport') }
 
   before(:each) do
-    allow(context).to receive(:device).with(no_args).and_return(device)
-    allow(device).to receive(:outstanding_changes?).and_return(outstanding_changes)
+    allow(context).to receive(:transport).with(no_args).and_return(transport)
+    allow(transport).to receive(:outstanding_changes?).and_return(outstanding_changes)
   end
 
   describe '#get' do
@@ -48,7 +48,7 @@ RSpec.describe Puppet::Provider::PanosCommit::PanosCommit do
       context 'when the user requested a commit' do
         it 'commits them' do
           allow(context).to receive(:updating).with('commit').and_yield
-          expect(device).to receive(:commit)
+          expect(transport).to receive(:commit)
           provider.set(context, 'commit' => { should: { commit: true } })
         end
       end
@@ -57,7 +57,7 @@ RSpec.describe Puppet::Provider::PanosCommit::PanosCommit do
         it 'ignores them' do
           expect(context).to receive(:info).with('changes detected, but skipping commit as requested')
           expect(context).not_to receive(:updating).with('commit').and_yield
-          expect(device).not_to receive(:commit)
+          expect(transport).not_to receive(:commit)
           provider.set(context, 'commit' => { should: { commit: false } })
         end
       end

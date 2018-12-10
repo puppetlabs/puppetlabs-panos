@@ -9,7 +9,7 @@ class Puppet::Provider::PanosProvider < Puppet::ResourceApi::SimpleProvider
   end
 
   def get(context)
-    config = context.device.get_config(context.type.definition[:base_xpath] + '/entry')
+    config = context.transport.get_config(context.type.definition[:base_xpath] + '/entry')
     config.elements.collect('/response/result/entry') do |entry| # rubocop:disable Style/CollectionMethods
       result = {}
       context.type.attributes.each do |attr_name, attr|
@@ -21,16 +21,16 @@ class Puppet::Provider::PanosProvider < Puppet::ResourceApi::SimpleProvider
 
   def create(context, name, should)
     validate_should(should) if defined? validate_should
-    context.device.set_config(context.type.definition[:base_xpath], xml_from_should(name, should))
+    context.transport.set_config(context.type.definition[:base_xpath], xml_from_should(name, should))
   end
 
   def update(context, name, should)
     validate_should(should) if defined? validate_should
-    context.device.edit_config(context.type.definition[:base_xpath] + "/entry[@name='#{name}']", xml_from_should(name, should))
+    context.transport.edit_config(context.type.definition[:base_xpath] + "/entry[@name='#{name}']", xml_from_should(name, should))
   end
 
   def delete(context, name)
-    context.device.delete_config(context.type.definition[:base_xpath] + "/entry[@name='#{name}']")
+    context.transport.delete_config(context.type.definition[:base_xpath] + "/entry[@name='#{name}']")
   end
 
   def match(entry, attr, attr_name)

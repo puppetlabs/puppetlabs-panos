@@ -17,8 +17,10 @@ Puppet[:log_level] = 'debug'
 #### the real task ###
 
 require 'json'
-require 'puppet/util/network_device/panos/device'
+require 'puppet/resource_api/transport/wrapper'
 
 params = JSON.parse(ENV['PARAMS'] || STDIN.read)
-device = Puppet::Util::NetworkDevice::Panos::Device.new(params)
-puts JSON.generate(apikey: device.apikey)
+wrapper = Puppet::ResourceApi::Transport::Wrapper.new('panos', params['credentials_file'])
+transport = wrapper.transport
+
+puts JSON.generate(apikey: transport.apikey)

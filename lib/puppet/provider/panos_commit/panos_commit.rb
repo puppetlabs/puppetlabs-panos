@@ -5,16 +5,16 @@ class Puppet::Provider::PanosCommit::PanosCommit
       {
         name: 'commit',
         # return a value that causes an update if the user requested one
-        commit: !context.device.outstanding_changes?,
+        commit: !context.transport.outstanding_changes?,
       },
     ]
   end
 
   def set(context, changes)
-    if context.device.outstanding_changes?
+    if context.transport.outstanding_changes?
       if changes['commit'][:should][:commit]
         context.updating('commit') do
-          context.device.commit
+          context.transport.commit
         end
       else
         context.info('changes detected, but skipping commit as requested')
