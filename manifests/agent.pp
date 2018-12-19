@@ -3,6 +3,9 @@
 #
 # @example
 #   include panos::agent
+#
+# Deprecated by panos::install::agent
+
 class panos::agent {
   include resource_api::agent
   package { 'builder':

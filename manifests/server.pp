@@ -3,6 +3,9 @@
 #
 # @example
 #   include panos::server
+#
+# Deprecated by panos::install::master
+
 class panos::server {
   include resource_api::server
 }
