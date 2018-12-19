@@ -19,30 +19,40 @@
 
 The PANOS module configures Palo Alto firewalls running PANOS 7.1.0 or PANOS 8.1.0.
 
-When committing changes to resources, include `panos_commit` in your manifest, or execute the `commit` task. You must do this before they can be made available to the running configuration. 
+When committing changes to resources, include `panos_commit` in your manifest, or execute the `commit` task. You must do this before they can be made available to the running configuration.
 
 The module provides a Puppet task to manually `commit`, `store_config` to a file, and `set_config` from a file.
 
 ## Setup
 
-Install the module on either a Puppet master or Puppet agent machine, by running `puppet module install puppetlabs-panos`. To install from source, download the tar file from GitHub and run `puppet module install <file_name>.tar.gz --force`.
+Install the module on either a Puppet master or Puppet agent, by running `puppet module install puppetlabs-panos`. To install from source, download the tar file from GitHub and run `puppet module install <file_name>.tar.gz --force`.
+
+This module installs the Builder gem; and Puppet Resource API gem, if necessary. To activate the Puppet Resource API gem on a master, a reload of the puppetserver service is necessary. In most cases, this should happen automatically and cause little to no interruption to service.
 
 ### Setup Requirements
 
-The PANOS module requires access to the device's web management interface. You will also need to install the dependences.
+#### Device access
 
-The module has a dependency on the `resource_api` - it will be installed when the module is installed. Alternatively, it can be manually installed by running `puppet module install puppetlabs-resource_api`, or by following the setup instructions in the [Resource API README](https://github.com/puppetlabs/puppetlabs-resource_api#resource_api).
+The PANOS module requires access to the device's web management interface.
 
-### Manual Test Setup
+#### Proxy Puppet agent
 
-Once the module has been installed, classify the appropriate class:
+Since a Puppet agent is not available for Palo Alto devices (and, seriously, who would want to run an agent on them?) we need a proxy Puppet agent (either a compile master, or another agent) to run Puppet on behalf of the device.
 
-* On each puppetserver or PE master that needs to manage PANOS devices, classify or apply the `panos::server` by running `puppet apply -e 'include panos::server'`.
-* On each Puppet agent that needs to manage PANOS devices, classify or apply the `panos::agent` class by running `puppet apply -e 'include panos::agent'`.
+#### Install dependencies
+
+Once the module has been installed, install dependencies of the module:
+
+1. Classify or apply the `panos` class on each master (master of masters, and if present, compile masters and replica master) that needs serve catalogs for this module.
+1. Classify or apply the `panos` class on each proxy Puppet agent that proxies for Palo Alto devices.
+
+Run puppet agent -t on the master(s) before using the module on the agent(s).
 
 ### Getting started with PANOS
 
-To get started, create or edit `/etc/puppetlabs/puppet/device.conf`, add a section for the device (this will become the device's `certname`), specify a type of `panos`, and specify a `url` to a credentials file. For example:
+To get started, create or edit `/etc/puppetlabs/puppet/device.conf` on the proxy Puppet agent, add a section for the device (this will become the device's `certname`), specify a type of `panos`, and specify a `url` to a credentials file.
+
+For example:
 
 ```INI
 [firewall.example.com]
