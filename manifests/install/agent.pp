@@ -1,17 +1,13 @@
-# Install device module dependencies on a puppet agent.
-
-# @summary Install dependencies into the puppet agent
+# @summary This class install dependencies of this module into puppet agent
 #
-# @example
+# @example Declaring the class
 #   include panos::install::agent
-
 class panos::install::agent {
+
   include resource_api::install
 
   package { 'builder':
     ensure   => present,
     provider => 'puppet_gem',
   }
-
 }
-

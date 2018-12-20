@@ -27,7 +27,7 @@ The module provides a Puppet task to manually `commit`, `store_config` to a file
 
 Install the module on either a Puppet master or Puppet agent, by running `puppet module install puppetlabs-panos`. To install from source, download the tar file from GitHub and run `puppet module install <file_name>.tar.gz --force`.
 
-This module installs the Builder gem; and Puppet Resource API gem, if necessary. To activate the Puppet Resource API gem on a master, a reload of the puppetserver service is necessary. In most cases, this should happen automatically and cause little to no interruption to service.
+This module installs the Builder and Puppet Resource API gems, if necessary. To activate the Puppet Resource API gem on the master, reload the puppetserver service. In most cases, this happens automatically and causes little to no interruption to service.
 
 ### Setup Requirements
 
@@ -37,13 +37,13 @@ The PANOS module requires access to the device's web management interface.
 
 #### Proxy Puppet agent
 
-Since a Puppet agent is not available for Palo Alto devices (and, seriously, who would want to run an agent on them?) we need a proxy Puppet agent (either a compile master, or another agent) to run Puppet on behalf of the device.
+Since a Puppet agent is not available for Palo Alto devices, we need a proxy Puppet agent (either a compile master, or another agent) to run Puppet on behalf of the device.
 
 #### Install dependencies
 
 Once the module has been installed, install dependencies of the module:
 
-1. Classify or apply the `panos` class on each master (master of masters, and if present, compile masters and replica master) that needs serve catalogs for this module.
+1. Classify or apply the `panos` class on each master (master of masters, and if present, compile masters and replica master) that serves catalogs for this module.
 1. Classify or apply the `panos` class on each proxy Puppet agent that proxies for Palo Alto devices.
 
 Run puppet agent -t on the master(s) before using the module on the agent(s).

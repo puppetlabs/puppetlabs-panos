@@ -1,11 +1,10 @@
-# @summary
-#   This resource manages the `resource_api::server` on the server.
+# @summary This class installs dependencies of this module into puppetserver,
+#          and restarts the puppetserver service to activate.
 #
-# @example
+# @example Declaring the class
 #   include panos::server
 #
-# Deprecated by panos::install::master
-
+# @note Deprecated, use panos::install::master
 class panos::server {
   include resource_api::server
 }
