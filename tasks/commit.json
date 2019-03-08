@@ -6,7 +6,7 @@
   "parameters": {
   },
   "files": [
-    "panos/tasks/panos_task.rb",
+    "panos/lib/puppet/util/task_helper.rb",
     "panos/lib/puppet/transport/panos.rb",
     "panos/lib/puppet/transport/schema/panos.rb"
   ]
