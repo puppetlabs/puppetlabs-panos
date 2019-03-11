@@ -8,7 +8,7 @@ module Puppet::Transport
   # The main connection class to a PAN-OS API endpoint
   class Panos
     def self.validate_connection_info(connection_info)
-      raise Puppet::ResourceError, 'Could not find "username"/"password" or "apikey" in the configuration' unless (connection_info.key?(:username) && connection_info.key?(:password)) || connection_info.key?(:apikey) # rubocop:disable Metrics/LineLength
+      raise Puppet::ResourceError, 'Could not find "user"/"password" or "apikey" in the configuration' unless (connection_info.key?(:user) && connection_info.key?(:password)) || connection_info.key?(:apikey) # rubocop:disable Metrics/LineLength
       connection_info
     end
 
@@ -100,6 +100,10 @@ module Puppet::Transport
       Puppet.debug('Committing outstanding changes')
       # https://<firewall>/api/?type=commit&cmd=<commit></commit>
       api.job_request('commit', cmd: '<commit></commit>')
+    end
+
+    def apikey
+      api.apikey
     end
 
     private

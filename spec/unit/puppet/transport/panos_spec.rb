@@ -6,7 +6,7 @@ RSpec.describe Puppet::Transport do
   describe Puppet::Transport::Panos do
     let(:transport) { described_class.new(context, connection_info) }
     let(:context) { instance_double('Puppet::ResourceApi::BaseContext', 'context') }
-    let(:connection_info) { { address: 'www.example.com', username: 'admin', password: 'password' } }
+    let(:connection_info) { { host: 'www.example.com', user: 'admin', password: 'password' } }
     let(:api) { instance_double('Puppet::Transport::Panos::API', 'api') }
     let(:xml_doc) { REXML::Document.new(device_response) }
     let(:device_response) do
@@ -38,35 +38,35 @@ RSpec.describe Puppet::Transport do
       # TODO: validation functionality should be tested in puppet-resource_api, not here
       let(:transport) { Puppet::ResourceApi::Transport.connect('panos', connection_info) }
 
-      context 'when address is not provided' do
-        let(:connection_info) { { username: 'admin', password: 'password' } }
+      context 'when host is not provided' do
+        let(:connection_info) { { user: 'admin', password: 'password' } }
 
-        it { expect { transport }.to raise_error Puppet::ResourceError, %r{The following mandatory attributes were not provided:.*address}m }
+        it { expect { transport }.to raise_error Puppet::ResourceError, %r{The following mandatory attributes were not provided:.*host}m }
       end
       context 'when port is provided but not valid' do
-        let(:connection_info) { { address: 'www.example.com', port: 'foo', username: 'admin', password: 'password' } }
+        let(:connection_info) { { host: 'www.example.com', port: 'foo', user: 'admin', password: 'password' } }
 
         # TODO: rsapi should be checking this and raising an error
         pending { expect { transport }.to raise_error Puppet::ResourceError, 'The port attribute in the configuration is not an integer' }
       end
       context 'when valid user credentials are not provided' do
         [
-          { address: 'www.example.com', username: 'admin' },
-          { address: 'www.example.com', password: 'password' },
-          { address: 'www.example.com' },
+          { host: 'www.example.com', user: 'admin' },
+          { host: 'www.example.com', password: 'password' },
+          { host: 'www.example.com' },
         ].each do |config|
           let(:connection_info) { config }
 
-          it { expect { transport }.to raise_error Puppet::ResourceError, 'Could not find "username"/"password" or "apikey" in the configuration' }
+          it { expect { transport }.to raise_error Puppet::ResourceError, 'Could not find "user"/"password" or "apikey" in the configuration' }
         end
       end
       context 'when apikey is provided' do
-        let(:connection_info) { { address: 'www.example.com', apikey: 'foo' } }
+        let(:connection_info) { { host: 'www.example.com', apikey: 'foo' } }
 
         it { expect { transport }.not_to raise_error Puppet::ResourceError }
       end
       context 'when correct credentials are provided' do
-        let(:connection_info) { { address: 'www.example.com', username: 'foo', password: 'password' } }
+        let(:connection_info) { { host: 'www.example.com', user: 'foo', password: 'password' } }
 
         it { expect { transport }.not_to raise_error Puppet::ResourceError }
       end
@@ -169,6 +169,13 @@ RSpec.describe Puppet::Transport do
           transport.commit
         end
       end
+
+      describe '#apikey' do
+        it 'calls the api correctly' do
+          expect(api).to receive(:apikey)
+          transport.apikey
+        end
+      end
     end
 
     context 'without the internal api mocked' do
@@ -187,7 +194,7 @@ RSpec.describe Puppet::Transport do
   describe Puppet::Transport::Panos::API do
     subject(:instance) { described_class.new(credentials) }
 
-    let(:credentials) { { address: 'www.example.com' } }
+    let(:credentials) { { host: 'www.example.com' } }
 
     def stub_keygen_request(**options)
       stub_request(:get, 'https://www.example.com/api/?password=password&type=keygen&user=user')
@@ -210,7 +217,7 @@ RSpec.describe Puppet::Transport do
     end
 
     describe '#fetch_apikey(user, password)' do
-      context 'with valid username and password' do
+      context 'with valid user and password' do
         it 'fetches the API key' do
           stub_keygen_request(status: 200, body: "<response status='success'><result><key>SOMEKEY</key></result></response>")
 
@@ -220,7 +227,7 @@ RSpec.describe Puppet::Transport do
         end
       end
 
-      context 'with invalid username and password' do
+      context 'with invalid user and password' do
         it 'raises a helpful error' do
           stub_keygen_request(status: 403)
 
@@ -232,7 +239,7 @@ RSpec.describe Puppet::Transport do
     end
 
     describe '#apikey' do
-      let(:credentials) { super().merge(username: 'user', password: 'password') }
+      let(:credentials) { super().merge(user: 'user', password: 'password') }
 
       it 'makes only a single HTTP call' do
         stub_keygen_request(status: 200, body: "<response status = 'success'><result><key>SOMEKEY</key></result></response>")

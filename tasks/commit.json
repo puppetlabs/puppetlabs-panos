@@ -1,11 +1,13 @@
 {
   "puppet_task_version": 1,
+  "remote": true,
   "supports_noop": false,
   "description": "Commit a candidate configuration to a firewall.",
   "parameters": {
-    "credentials_file": {
-      "description": "The filename of the credentials file (as referenced in device.conf)",
-      "type": "String"
-    }
-  }
+  },
+  "files": [
+    "panos/tasks/panos_task.rb",
+    "panos/lib/puppet/transport/panos.rb",
+    "panos/lib/puppet/transport/schema/panos.rb"
+  ]
 }
