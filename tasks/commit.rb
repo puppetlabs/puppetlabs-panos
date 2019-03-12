@@ -2,7 +2,16 @@
 
 require_relative '../lib/puppet/util/task_helper'
 task = Puppet::Util::TaskHelper.new('panos')
+result = {}
 
-if task.transport.outstanding_changes?
-  task.transport.commit
+begin
+  if task.transport.outstanding_changes?
+    task.transport.commit
+  end
+rescue Exception => e # rubocop:disable Lint/RescueException
+  result[:_error] = { msg: e.message,
+                      kind: 'puppetlabs-panos/unknown',
+                      details: { class: e.class.to_s } }
 end
+
+puts result.to_json
