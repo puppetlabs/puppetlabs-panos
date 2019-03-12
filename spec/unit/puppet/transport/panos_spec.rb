@@ -1,12 +1,15 @@
 require 'spec_helper'
 require 'puppet/transport/panos'
+require 'puppet/resource_api'
 require 'support/matchers/have_xml'
 
 RSpec.describe Puppet::Transport do
   describe Puppet::Transport::Panos do
     let(:transport) { described_class.new(context, connection_info) }
     let(:context) { instance_double('Puppet::ResourceApi::BaseContext', 'context') }
-    let(:connection_info) { { host: 'www.example.com', user: 'admin', password: 'password' } }
+    let(:pass) { Puppet::Pops::Types::PSensitiveType::Sensitive.new('password') }
+    let(:apikey) { Puppet::Pops::Types::PSensitiveType::Sensitive.new('APIKEY') }
+    let(:connection_info) { { host: 'www.example.com', user: 'admin', password: pass } }
     let(:api) { instance_double('Puppet::Transport::Panos::API', 'api') }
     let(:xml_doc) { REXML::Document.new(device_response) }
     let(:device_response) do
@@ -61,7 +64,7 @@ RSpec.describe Puppet::Transport do
         end
       end
       context 'when apikey is provided' do
-        let(:connection_info) { { host: 'www.example.com', apikey: 'foo' } }
+        let(:connection_info) { { host: 'www.example.com', apikey: 'APIKEY' } }
 
         it { expect { transport }.not_to raise_error Puppet::ResourceError }
       end
@@ -194,6 +197,9 @@ RSpec.describe Puppet::Transport do
   describe Puppet::Transport::Panos::API do
     subject(:instance) { described_class.new(credentials) }
 
+    let(:pass) { Puppet::Pops::Types::PSensitiveType::Sensitive.new('password') }
+    let(:apikey) { Puppet::Pops::Types::PSensitiveType::Sensitive.new('APIKEY') }
+
     let(:credentials) { { host: 'www.example.com' } }
 
     def stub_keygen_request(**options)
@@ -239,7 +245,7 @@ RSpec.describe Puppet::Transport do
     end
 
     describe '#apikey' do
-      let(:credentials) { super().merge(user: 'user', password: 'password') }
+      let(:credentials) { super().merge(user: 'user', password: pass) }
 
       it 'makes only a single HTTP call' do
         stub_keygen_request(status: 200, body: "<response status = 'success'><result><key>SOMEKEY</key></result></response>")
@@ -252,7 +258,7 @@ RSpec.describe Puppet::Transport do
     end
 
     describe '#upload(file_name, file_content, **options)' do
-      let(:credentials) { super().merge(apikey: 'APIKEY') }
+      let(:credentials) { super().merge(apikey: apikey) }
       let(:doc) { instance.upload('THETYPE', '/path/to/file/test.txt', category: 'CATEGORY') }
       let(:file_content) { '<test>some config info</test>' }
 
@@ -298,7 +304,7 @@ RSpec.describe Puppet::Transport do
     end
 
     describe '#request(type, **options)' do
-      let(:credentials) { super().merge(apikey: 'APIKEY') }
+      let(:credentials) { super().merge(apikey: apikey) }
       let(:doc) { instance.request('THETYPE', option_a: 'ANOPTION') }
 
       context 'when the API returns success' do
@@ -331,7 +337,7 @@ RSpec.describe Puppet::Transport do
     end
 
     describe '#job_request(type, **options)' do
-      let(:credentials) { super().merge(apikey: 'APIKEY') }
+      let(:credentials) { super().merge(apikey: apikey) }
 
       before(:each) do
         # disable sleeping, due to how this is called (objects inheriting from Kernel) this requires a lot of wrangling

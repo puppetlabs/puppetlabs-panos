@@ -121,8 +121,8 @@ module Puppet::Transport
         @host = connection_info[:host] || connection_info[:address]
         @port = connection_info.key?(:port) ? connection_info[:port].to_i : 443
         @user = connection_info[:user] || connection_info[:username]
-        @password = connection_info[:password]
-        @apikey = connection_info[:apikey]
+        @password = connection_info[:password].unwrap unless connection_info[:password].nil?
+        @apikey = connection_info[:apikey].unwrap unless connection_info[:apikey].nil?
       end
 
       def http
