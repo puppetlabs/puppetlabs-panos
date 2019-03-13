@@ -8,8 +8,20 @@ RSpec.describe Puppet::Transport do
     let(:transport) { described_class.new(context, connection_info) }
     let(:context) { instance_double('Puppet::ResourceApi::BaseContext', 'context') }
     let(:pass) { Puppet::Pops::Types::PSensitiveType::Sensitive.new('password') }
+    let(:fingerprint) { Puppet::Pops::Types::PSensitiveType::Sensitive.new('fingerprint') }
     let(:apikey) { Puppet::Pops::Types::PSensitiveType::Sensitive.new('APIKEY') }
-    let(:connection_info) { { host: 'www.example.com', user: 'admin', password: pass } }
+    let(:connection_info) do
+      {
+        host: 'www.example.com',
+        user: 'admin',
+        password: pass,
+        ssl: true,
+        ssl_fingerprint: fingerprint,
+        ssl_ca_file: 'bar/foo',
+        ssl_version: 'TLSv1',
+        ssl_ciphers: ['abc', 'def', 'xyz'],
+      }
+    end
     let(:api) { instance_double('Puppet::Transport::Panos::API', 'api') }
     let(:xml_doc) { REXML::Document.new(device_response) }
     let(:device_response) do
@@ -332,6 +344,131 @@ RSpec.describe Puppet::Transport do
           stub_api_request(status: 200, body: "<response status='error' code='18'><msg><line>Malformed Request</line></msg></response>")
 
           expect { doc }.to raise_error Puppet::ResourceError, %r{Malformed Request}
+        end
+      end
+    end
+
+    describe '#handle_verify_mode' do
+      context 'when ssl mode is `false`' do
+        let(:verify_mode) { instance.handle_verify_mode(false) }
+
+        it { expect(verify_mode).to equal OpenSSL::SSL::VERIFY_NONE }
+      end
+      context 'when ssl mode is true' do
+        let(:verify_mode) { instance.handle_verify_mode(true) }
+
+        it { expect(verify_mode).to equal OpenSSL::SSL::VERIFY_PEER }
+      end
+      context 'when ssl mode is anything else' do
+        let(:verify_mode) { instance.handle_verify_mode('foo') }
+
+        it { expect { verify_mode }.to raise_error Puppet::ResourceError, %r{"foo" is not a valid mode} }
+      end
+    end
+
+    describe '#verify_callback' do
+      let(:cert_store) { OpenSSL::X509::StoreContext.new(OpenSSL::X509::Store.new) }
+      let(:certificate_1) { OpenSSL::X509::Certificate.new }
+      let(:certificate_current) { OpenSSL::X509::Certificate.new }
+      let(:chains) do
+        [certificate_1]
+      end
+
+      context 'when preverify is false and no fingerprint' do
+        let(:callback) { instance.verify_callback(false, anything) }
+
+        it { expect(callback).to be_falsy }
+      end
+      context 'when preverify is false and has fingerprint' do
+        let(:callback) { instance.verify_callback(false, cert_store) }
+
+        it do
+          allow(cert_store).to receive(:chain).and_return(chains)
+          allow(cert_store).to receive(:current_cert).and_return(certificate_current)
+          allow(certificate_1).to receive(:to_der).and_return('abc')
+          allow(certificate_current).to receive(:to_der).and_return('abc')
+          instance.instance_variable_set(:@fingerprint, 'X3:2B:AZ')
+          allow(OpenSSL::Digest::SHA256).to receive(:hexdigest).with('abc').and_return('x32baz')
+          expect(callback).to be_truthy
+        end
+      end
+      context 'when preverify is true and has no fingerprint' do
+        let(:callback) { instance.verify_callback(true, cert_store) }
+
+        it do
+          allow(cert_store).to receive(:chain).and_return(chains)
+          allow(cert_store).to receive(:current_cert).and_return(certificate_current)
+          allow(certificate_1).to receive(:to_der).and_return('abc')
+          allow(certificate_current).to receive(:to_der).and_return('abc')
+          expect(callback).to be_truthy
+        end
+      end
+    end
+
+    describe '#same_cert_fingerprint?' do
+      let(:end_cert) { OpenSSL::X509::Certificate.new }
+      let(:same_cert) { instance.same_cert_fingerprint?(end_cert) }
+
+      context 'when fingerprints match' do
+        it do
+          instance.instance_variable_set(:@fingerprint, 'X3:2B:AZ')
+          allow(end_cert).to receive(:to_der).and_return('abc')
+          allow(OpenSSL::Digest::SHA256).to receive(:hexdigest).with('abc').and_return('x32baz')
+          expect(same_cert).to be_truthy
+        end
+      end
+      context 'when fingerprints do not match' do
+        it do
+          instance.instance_variable_set(:@fingerprint, 'A3:2Z:8Z')
+          allow(end_cert).to receive(:to_der).and_return('abc')
+          allow(OpenSSL::Digest::SHA256).to receive(:hexdigest).with('abc').and_return('x32baz')
+          expect(same_cert).to be_falsy
+        end
+      end
+    end
+
+    describe '#http' do
+      let(:cert_store) { OpenSSL::X509::StoreContext.new(OpenSSL::X509::Store.new) }
+      let(:certificate_1) { OpenSSL::X509::Certificate.new }
+      let(:certificate_current) { OpenSSL::X509::Certificate.new }
+      let(:chains) do
+        [certificate_1]
+      end
+      let(:start_block) do
+        {
+          use_ssl: true,
+          verify_mode: OpenSSL::SSL::VERIFY_PEER,
+          ca_file: nil,
+          ssl_version: nil,
+          ciphers: nil,
+          verify_callback: ->(composed_lambda) {
+            expect(composed_lambda.call(true, cert_store)).to eq true
+          },
+        }
+      end
+
+      before(:each) do
+        allow(cert_store).to receive(:chain).and_return(chains)
+        allow(cert_store).to receive(:current_cert).and_return(certificate_current)
+        allow(certificate_1).to receive(:to_der).and_return('abc')
+        allow(certificate_current).to receive(:to_der).and_return('abc')
+      end
+      context 'when http is called it will start the connection' do
+        it do
+          expect(Net::HTTP).to receive(:start).with('www.example.com', 443, start_block)
+          instance.http
+        end
+      end
+      context 'when http is called and throws a verify error' do
+        it do
+          instance.instance_variable_set(:@ssl_verify, 'foo')
+          expect { instance.http }.to raise_error Puppet::ResourceError, %r{"foo" is not a valid mode}
+        end
+      end
+      context 'when http is called and throws a SSL error' do
+        it do
+          expect(Net::HTTP).to receive(:start).with('www.example.com', 443, start_block).and_raise OpenSSL::SSL::SSLError
+          expect { instance.http }.to raise_error Puppet::ResourceError, %r{Certificate Verification has failed, ensure the}
         end
       end
     end
