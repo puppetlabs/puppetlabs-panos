@@ -9,8 +9,9 @@ Gemfile:
         git: 'https://github.com/puppetlabs/puppet-strings.git'
         ref: 'master'
       - gem: 'puppet-resource_api'
-        git: 'https://github.com/puppetlabs/puppet-resource_api.git'
-        ref: 'master'
+        version: '>= 1.8.1'
+        # git: 'https://github.com/puppetlabs/puppet-resource_api.git'
+        # ref: 'master'
       # required for internal pipelines
       - gem: 'beaker-hostgenerator'
         # the first version to contain Palo Alto support
