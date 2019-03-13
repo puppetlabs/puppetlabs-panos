@@ -25,7 +25,6 @@ describe 'basic palo alto config' do
     context 'when it gets the current running config' do
       it 'will get the current running config and store to file' do
         params = {
-          'credentials_file' => "file://#{Dir.getwd}/spec/fixtures/acceptance-credentials.conf",
           'config_file' => 'spec/fixtures/config-acceptance.xml',
         }
 
@@ -68,7 +67,6 @@ describe 'basic palo alto config' do
             context 'when it gets the current running config' do
               it 'will get the current running config and store to file' do
                 params = {
-                  'credentials_file' => "file://#{Dir.getwd}/spec/fixtures/acceptance-credentials.conf",
                   'config_file' => 'spec/fixtures/config-reset.xml',
                 }
 

@@ -5,6 +5,7 @@ require 'json'
 class Puppet::Util::TaskHelper
   def initialize(transport_name)
     @transport_name = transport_name
+    @transport = {}
 
     return unless params.key? '_installdir'
     add_plugin_paths(params['_installdir'])
@@ -13,7 +14,7 @@ class Puppet::Util::TaskHelper
   def transport
     require 'puppet/resource_api/transport'
 
-    Puppet::ResourceApi::Transport.connect(@transport_name, credentials)
+    @transport[@transport_name] ||= Puppet::ResourceApi::Transport.connect(@transport_name, credentials)
   end
 
   def params
