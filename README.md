@@ -19,7 +19,7 @@
 
 The PANOS module configures Palo Alto firewalls running PANOS 7.1.0 or PANOS 8.1.0.
 
-When committing changes to resources, include `panos_commit` in your manifest, or execute the `commit` task. You must do this before they can be made available to the running configuration. 
+When committing changes to resources, include `panos_commit` in your manifest, or execute the `commit` task. You must do this before they can be made available to the running configuration.
 
 The module provides a Puppet task to manually `commit`, `store_config` to a file, and `set_config` from a file.
 
@@ -70,13 +70,27 @@ __Note:__ v0.1.0 requires `host` instead of `address`
 
 __Note:__ v0.1.0 requires `user` instead of `username`
 
-To obtain an API key for the device, it is possible to use the `panos::apikey` task. The required creditials file should be in the format of (a) above. After which you can discard it. Before running this task, install the module on your machine, along with [Puppet Bolt](https://puppet.com/docs/bolt/0.x/bolt_installing.html). When complete, execute the following command:
+To obtain an API key for the device, it is possible to use the `panos::apikey` task. Before running this task, install the module on your machine, along with [Puppet Bolt](https://puppet.com/docs/bolt/latest/bolt_installing.html). When complete, execute the following command:
 
 ```
-bolt task run panos::apikey --nodes localhost --transport local --modulepath <module_installation_dir> --params @credentials.json
+bolt task run panos::apikey --nodes pan --modulepath <module_installation_dir> --inventoryfile <inventory_yaml_path>
 ```
 
-The `--modulepath` param can be retrieved by typing `puppet config print modulepath`. The credentials file needs to be valid JSON containing host, username and password for the Palo Alto firewall.
+The following [inventory file](https://puppet.com/docs/bolt/latest/inventory_file.html) can be used to connect to your firewall.
+```yaml
+# inventory.yaml
+nodes:
+  - name: firewall.example.com
+    alias: pan
+    config:
+      transport: remote
+      remote:
+        remote-transport: panos
+        user: admin
+        password: admin
+```
+
+The `--modulepath` param can be retrieved by typing `puppet config print modulepath`.
 
 Test your setup and get the certificate signed:
 
