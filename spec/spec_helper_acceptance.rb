@@ -1,3 +1,4 @@
+require 'fileutils'
 require 'json'
 require 'net/http'
 require 'open3'
@@ -67,6 +68,8 @@ DEVICE
   end
 
   c.after :suite do
+    FileUtils.rm(Dir.glob('spec/fixtures/config-*.xml'))
+
     next if !@destroy || ENV['BEAKER_destroy'] == 'no' # TODO: handle 'onpass'
 
     vmpooler = Net::HTTP.start(ENV['VMPOOLER_HOST'] || 'vmpooler.delivery.puppetlabs.net')
