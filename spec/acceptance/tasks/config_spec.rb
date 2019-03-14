@@ -4,7 +4,11 @@ require 'json'
 describe 'Config task' do
   before(:each) do
     params = {
-      'credentials_file' => "file://#{Dir.getwd}/spec/fixtures/acceptance-credentials.conf",
+      '_target' => {
+        'host' => RSpec.configuration.host,
+        'user' => RSpec.configuration.user,
+        'password' => RSpec.configuration.password,
+      },
       'config_file' => config,
       'apply' => apply,
     }
@@ -21,7 +25,11 @@ describe 'Config task' do
 
   after(:all) do
     params = {
-      'credentials_file' => "file://#{Dir.getwd}/spec/fixtures/acceptance-credentials.conf",
+      '_target' => {
+        'host' => RSpec.configuration.host,
+        'user' => RSpec.configuration.user,
+        'password' => RSpec.configuration.password,
+      },
       'config_file' => 'spec/fixtures/config-reset.xml',
       'apply' => true,
     }
@@ -35,8 +43,8 @@ describe 'Config task' do
     let(:apply) { false }
 
     it 'will upload the configuration file but not load it' do
-      expect(stdout_str).not_to match %r{Loading Config}
-      expect(stdout_str).to match %r{Importing configuration}
+      expect(stdout_str).to match %r{\{\}}
+      expect(stdout_str).not_to match %r{_error}
       puts stdout_str if debug_output?
       expect(status.exitstatus).to eq 0
     end
@@ -46,8 +54,8 @@ describe 'Config task' do
     let(:apply) { true }
 
     it 'will upload the configuration file and load it' do
-      expect(stdout_str).to match %r{Loading Config}
-      expect(stdout_str).to match %r{Importing configuration}
+      expect(stdout_str).to match %r{\{\}}
+      expect(stdout_str).not_to match %r{_error}
       puts stdout_str if debug_output?
       expect(status.exitstatus).to eq 0
     end
@@ -74,8 +82,8 @@ describe 'Config task' do
     let(:apply) { true }
 
     it 'will upload the configuration file and load it' do
-      expect(stdout_str).to match %r{Loading Config}
-      expect(stdout_str).to match %r{Importing configuration}
+      expect(stdout_str).to match %r{\{\}}
+      expect(stdout_str).not_to match %r{_error}
       puts stdout_str if debug_output?
       expect(status.exitstatus).to eq 0
     end

@@ -6,7 +6,7 @@ RSpec.describe Puppet::Provider::PanosProvider do
   subject(:provider) { described_class.new }
 
   let(:context) { instance_double('Puppet::ResourceApi::BaseContext', 'context') }
-  let(:device) { instance_double('Puppet::Util::NetworkDevice::Panos::Device', 'device') }
+  let(:transport) { instance_double('Puppet::ResourceApi::Transport::Panos', 'transport') }
   let(:typedef) { instance_double('Puppet::ResourceApi::TypeDefinition', 'typedef') }
 
   let(:attrs) do
@@ -89,7 +89,7 @@ EOF
   end
 
   before(:each) do
-    allow(context).to receive(:device).with(no_args).and_return(device)
+    allow(context).to receive(:transport).with(no_args).and_return(transport)
     allow(context).to receive(:type).with(no_args).and_return(typedef)
     allow(context).to receive(:notice)
     allow(typedef).to receive(:definition).with(no_args).and_return(base_xpath: 'some xpath')
@@ -101,13 +101,13 @@ EOF
   describe '#get' do
     it 'processes resources' do
       allow(typedef).to receive(:attributes).with(no_args).and_return(attrs)
-      allow(device).to receive(:get_config).with('some xpath/entry').and_return(example_data)
+      allow(transport).to receive(:get_config).with('some xpath/entry').and_return(example_data)
 
       expect(provider.get(context)).to eq resource_data
     end
-    it 'allows device api error to bubble up' do
+    it 'allows transport api error to bubble up' do
       allow(typedef).to receive(:attributes).with(no_args).and_return(attrs)
-      allow(device).to receive(:get_config).with('some xpath/entry').and_raise(Puppet::ResourceError, 'Some Error Message')
+      allow(transport).to receive(:get_config).with('some xpath/entry').and_raise(Puppet::ResourceError, 'Some Error Message')
 
       expect { provider.get(context) }.to raise_error Puppet::ResourceError
     end
@@ -216,7 +216,7 @@ EOF
 
   describe 'create(context, name, should)' do
     it 'calls provider functions' do
-      expect(device).to receive(:set_config).with('some xpath', instance_of(String)) do |_xpath, doc|
+      expect(transport).to receive(:set_config).with('some xpath', instance_of(String)) do |_xpath, doc|
         expect(doc).to have_xml('entry/description', '&lt;eas&amp;lt;yxss/&gt;')
         expect(doc).to have_xml('entry/isenabled', 'Yes')
         expect(doc).to have_xml('entry/enabled', 'No')
@@ -230,7 +230,7 @@ EOF
 
   describe 'update(context, name, should)' do
     it 'calls provider functions' do
-      expect(device).to receive(:edit_config).with('some xpath/entry[@name=\'value1\']', instance_of(String)) do |_xpath, doc|
+      expect(transport).to receive(:edit_config).with('some xpath/entry[@name=\'value1\']', instance_of(String)) do |_xpath, doc|
         expect(doc).to have_xml('entry/description', '&lt;eas&amp;lt;yxss/&gt;')
         expect(doc).to have_xml('entry/isenabled', 'Yes')
         expect(doc).to have_xml('entry/enabled', 'No')
@@ -245,7 +245,7 @@ EOF
 
   describe 'delete(context, name)' do
     it 'calls provider functions' do
-      expect(device).to receive(:delete_config).with('some xpath/entry[@name=\'value1\']')
+      expect(transport).to receive(:delete_config).with('some xpath/entry[@name=\'value1\']')
 
       provider.delete(context, resource_data[0][:name])
     end

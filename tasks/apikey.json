@@ -1,19 +1,13 @@
 {
   "puppet_task_version": 1,
   "supports_noop": false,
-  "description": "Retrieve a PAN-OS apikey using PAN-OS host, username and password.",
+  "remote": true,
+  "description": "Retrieve a PAN-OS apikey",
   "parameters": {
-    "host": {
-      "description": "The host to connect to",
-      "type": "String"
-    },
-    "user": {
-      "description": "The user name",
-      "type": "String"
-    },
-    "password": {
-      "description": "The password",
-      "type": "String"
-    }
-  }
+  },
+  "files": [
+    "panos/lib/puppet/util/task_helper.rb",
+    "panos/lib/puppet/transport/panos.rb",
+    "panos/lib/puppet/transport/schema/panos.rb"
+  ]
 }

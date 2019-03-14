@@ -1,3 +1,4 @@
+require 'fileutils'
 require 'json'
 require 'net/http'
 require 'open3'
@@ -45,11 +46,15 @@ RSpec.configure do |c|
 
     puts "Detected #{@platform} config for #{@hostname}"
 
+    c.add_setting :host, default: @hostname
+    c.add_setting :user, default: (ENV['PANOS_TEST_USER'] || 'admin')
+    c.add_setting :password, default: (ENV['PANOS_TEST_PASSWORD'] || 'admin')
+
     File.open('spec/fixtures/acceptance-credentials.conf', 'w') do |file|
       file.puts <<CREDENTIALS
-address: #{@hostname}
-username: #{ENV['PANOS_TEST_USER'] || 'admin'}
-password: #{ENV['PANOS_TEST_PASSWORD'] || 'admin'}
+host: #{RSpec.configuration.host}
+user: #{RSpec.configuration.user}
+password: #{RSpec.configuration.password}
 CREDENTIALS
     end
 
@@ -63,6 +68,8 @@ DEVICE
   end
 
   c.after :suite do
+    FileUtils.rm(Dir.glob('spec/fixtures/config-*.xml'))
+
     next if !@destroy || ENV['BEAKER_destroy'] == 'no' # TODO: handle 'onpass'
 
     vmpooler = Net::HTTP.start(ENV['VMPOOLER_HOST'] || 'vmpooler.delivery.puppetlabs.net')

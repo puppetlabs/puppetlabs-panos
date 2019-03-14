@@ -1,29 +1,20 @@
 #!/opt/puppetlabs/puppet/bin/ruby
 
-# work around the fact that bolt (for now, see BOLT-132) is not able to transport additional code from the module
-# this requires that the panos module is pluginsynced to the node executing the task
-require 'puppet'
-Puppet.settings.initialize_app_defaults(
-  Puppet::Settings.app_defaults_for_run_mode(
-    Puppet::Util::RunMode[:agent],
-  ),
-)
-$LOAD_PATH.unshift(Puppet[:plugindest])
+require_relative '../lib/puppet/util/task_helper'
+task = Puppet::Util::TaskHelper.new('panos')
+result = {}
 
-# setup logging to stdout/stderr which will be available to task executors
-Puppet::Util::Log.newdestination(:console)
-Puppet[:log_level] = 'debug'
+begin
+  file = task.params['config_file']
+  task.transport.import(file, 'configuration')
 
-#### the real task ###
-
-require 'json'
-require 'puppet/util/network_device/panos/device'
-
-params = JSON.parse(ENV['PARAMS'] || STDIN.read)
-device = Puppet::Util::NetworkDevice::Panos::Device.new(params['credentials_file'])
-
-file = params['config_file']
-device.import(file, 'configuration')
-if params['apply']
-  device.load_config(File.basename(file))
+  if task.params['apply']
+    task.transport.load_config(File.basename(file))
+  end
+rescue Exception => e # rubocop:disable Lint/RescueException
+  result[:_error] = { msg: e.message,
+                      kind: 'puppetlabs-panos/unknown',
+                      details: { class: e.class.to_s } }
 end
+
+puts result.to_json

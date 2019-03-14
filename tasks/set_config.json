@@ -1,12 +1,9 @@
 {
   "puppet_task_version": 1,
   "supports_noop": false,
+  "remote": true,
   "description": "upload and/or apply a configuration to a firewall.",
   "parameters": {
-    "credentials_file": {
-      "description": "The filename of the credentials file (as referenced in device.conf)",
-      "type": "String"
-    },
     "config_file": {
       "description": "The filename of the configuration file to upload",
       "type": "String"
@@ -15,5 +12,10 @@
       "description": "true: upload and immediately apply the config. false: upload the config, without applying",
       "type": "Boolean"
     }
-  }
+  },
+  "files": [
+    "panos/lib/puppet/util/task_helper.rb",
+    "panos/lib/puppet/transport/panos.rb",
+    "panos/lib/puppet/transport/schema/panos.rb"
+  ]
 }

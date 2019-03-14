@@ -26,7 +26,7 @@ class Puppet::Provider::PanosArbitraryCommands::PanosArbitraryCommands < Puppet:
   def get(context, xpaths = nil)
     return [] if xpaths.nil?
     results = []
-    config = context.device.get_config('/config/' + xpaths.first) unless xpaths.first.nil?
+    config = context.transport.get_config('/config/' + xpaths.first) unless xpaths.first.nil?
     if xpaths.first
       config.elements.collect('/response/result') do |entry| # rubocop:disable Style/CollectionMethods
         xml = str_from_xml(entry.to_s)
@@ -48,7 +48,7 @@ class Puppet::Provider::PanosArbitraryCommands::PanosArbitraryCommands < Puppet:
       raise Puppet::ResourceError, parse_exception.message
     end
 
-    context.device.set_config('/config/' + xpath, should)
+    context.transport.set_config('/config/' + xpath, should)
   end
 
   def update(context, xpath, should)
@@ -58,11 +58,11 @@ class Puppet::Provider::PanosArbitraryCommands::PanosArbitraryCommands < Puppet:
       raise Puppet::ResourceError, parse_exception.message
     end
 
-    context.device.edit_config('/config/' + xpath, should)
+    context.transport.edit_config('/config/' + xpath, should)
   end
 
   def delete(context, xpath)
-    context.device.delete_config('/config/' + xpath)
+    context.transport.delete_config('/config/' + xpath)
   end
 
   def str_from_xml(xml)

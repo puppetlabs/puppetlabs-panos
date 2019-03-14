@@ -61,7 +61,7 @@ class Puppet::Provider::PanosStaticRouteBase < Puppet::Provider::PanosProvider
   # Overiding the get method, as the base xpath points towards virtual routers, and therefore the base provider's get will only return once for each VR.
   def get(context)
     results = []
-    config = context.device.get_config(context.type.definition[:base_xpath] + '/entry')
+    config = context.transport.get_config(context.type.definition[:base_xpath] + '/entry')
     config.elements.collect('/response/result/entry') do |entry| # rubocop:disable Style/CollectionMethods
       vr_name = REXML::XPath.match(entry, 'string(@name)').first
       # rubocop:disable Style/CollectionMethods
@@ -84,16 +84,16 @@ class Puppet::Provider::PanosStaticRouteBase < Puppet::Provider::PanosProvider
   def create(context, name, should)
     context.type.definition[:base_xpath] = "/config/devices/entry/network/virtual-router/entry[@name='#{name[:vr_name]}']/routing-table/#{@version_label}/static-route"
     validate_should(should)
-    context.device.set_config(context.type.definition[:base_xpath], xml_from_should(name, should))
+    context.transport.set_config(context.type.definition[:base_xpath], xml_from_should(name, should))
   end
 
   def update(context, name, should)
     context.type.definition[:base_xpath] = "/config/devices/entry/network/virtual-router/entry[@name='#{name[:vr_name]}']/routing-table/#{@version_label}/static-route"
     validate_should(should)
-    context.device.set_config(context.type.definition[:base_xpath], xml_from_should(name, should))
+    context.transport.set_config(context.type.definition[:base_xpath], xml_from_should(name, should))
   end
 
   def delete(context, name)
-    context.device.delete_config(context.type.definition[:base_xpath] + "/entry[@name='#{name[:vr_name]}']/routing-table/#{@version_label}/static-route/entry[@name='#{name[:route]}']")
+    context.transport.delete_config(context.type.definition[:base_xpath] + "/entry[@name='#{name[:vr_name]}']/routing-table/#{@version_label}/static-route/entry[@name='#{name[:route]}']")
   end
 end

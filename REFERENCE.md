@@ -29,7 +29,7 @@
 
 **Tasks**
 
-* [`apikey`](#apikey): Retrieve a PAN-OS apikey using PAN-OS host, username and password.
+* [`apikey`](#apikey): Retrieve a PAN-OS apikey
 * [`commit`](#commit): Commit a candidate configuration to a firewall.
 * [`set_config`](#set_config): upload and/or apply a configuration to a firewall.
 * [`store_config`](#store_config): Retrieve the configuration running on the firewall.
@@ -1711,43 +1711,15 @@ The display-name of the zone.
 
 ### apikey
 
-Retrieve a PAN-OS apikey using PAN-OS host, username and password.
+Retrieve a PAN-OS apikey
 
 **Supports noop?** false
-
-#### Parameters
-
-##### `host`
-
-Data type: `String`
-
-The host to connect to
-
-##### `user`
-
-Data type: `String`
-
-The user name
-
-##### `password`
-
-Data type: `String`
-
-The password
 
 ### commit
 
 Commit a candidate configuration to a firewall.
 
 **Supports noop?** false
-
-#### Parameters
-
-##### `credentials_file`
-
-Data type: `String`
-
-The filename of the credentials file (as referenced in device.conf)
 
 ### set_config
 
@@ -1756,12 +1728,6 @@ upload and/or apply a configuration to a firewall.
 **Supports noop?** false
 
 #### Parameters
-
-##### `credentials_file`
-
-Data type: `String`
-
-The filename of the credentials file (as referenced in device.conf)
 
 ##### `config_file`
 

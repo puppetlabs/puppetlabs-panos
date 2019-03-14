@@ -21,7 +21,8 @@ group :development do
   gem "fast_gettext",                                  require: false if Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.1.0')
   gem "json_pure", '<= 2.0.1',                         require: false if Gem::Version.new(RUBY_VERSION.dup) < Gem::Version.new('2.0.0')
   gem "json", '= 1.8.1',                               require: false if Gem::Version.new(RUBY_VERSION.dup) == Gem::Version.new('2.1.9')
-  gem "json", '<= 2.0.4',                              require: false if Gem::Version.new(RUBY_VERSION.dup) == Gem::Version.new('2.4.4')
+  gem "json", '= 2.0.4',                               require: false if Gem::Requirement.create('~> 2.4.2').satisfied_by?(Gem::Version.new(RUBY_VERSION.dup))
+  gem "json", '= 2.1.0',                               require: false if Gem::Requirement.create(['>= 2.5.0', '< 2.7.0']).satisfied_by?(Gem::Version.new(RUBY_VERSION.dup))
   gem "puppet-module-posix-default-r#{minor_version}", require: false, platforms: [:ruby]
   gem "puppet-module-posix-dev-r#{minor_version}",     require: false, platforms: [:ruby]
   gem "puppet-module-win-default-r#{minor_version}",   require: false, platforms: [:mswin, :mingw, :x64_mingw]
@@ -29,7 +30,7 @@ group :development do
   gem "webmock",                                       require: false
   gem "builder", '~> 3.2.2',                           require: false
   gem "puppet-strings",                                require: false, git: 'https://github.com/puppetlabs/puppet-strings.git', ref: 'master'
-  gem "puppet-resource_api",                           require: false, git: 'https://github.com/puppetlabs/puppet-resource_api.git', ref: 'master'
+  gem "puppet-resource_api", '>= 1.8.1',               require: false
   gem "beaker-hostgenerator", '~> 1.1.15',             require: false
   gem "github_changelog_generator",                    require: false, git: 'https://github.com/skywinder/github-changelog-generator', ref: '20ee04ba1234e9e83eb2ffb5056e23d641c7a018' if Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')
 end
