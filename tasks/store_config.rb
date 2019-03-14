@@ -1,33 +1,23 @@
 #!/opt/puppetlabs/puppet/bin/ruby
 
-# work around the fact that bolt (for now, see BOLT-132) is not able to transport additional code from the module
-# this requires that the panos module is pluginsynced to the node executing the task
-require 'puppet'
-Puppet.settings.initialize_app_defaults(
-  Puppet::Settings.app_defaults_for_run_mode(
-    Puppet::Util::RunMode[:agent],
-  ),
-)
-$LOAD_PATH.unshift(Puppet[:plugindest])
+require_relative '../lib/puppet/util/task_helper'
+task = Puppet::Util::TaskHelper.new('panos')
+result = {}
 
-# setup logging to stdout/stderr which will be available to task executors
-Puppet::Util::Log.newdestination(:console)
-Puppet[:log_level] = 'debug'
+begin
+  file_name = task.params['config_file']
+  config = task.transport.show_config
 
-#### the real task ###
+  config.elements.collect('/response/result/config') do |entry| # rubocop:disable Style/CollectionMethods
+    config = entry
+  end
 
-require 'json'
-require 'puppet/resource_api/transport/wrapper'
-
-params = JSON.parse(ENV['PARAMS'] || STDIN.read)
-wrapper = Puppet::ResourceApi::Transport::Wrapper.new('panos', params['credentials_file'])
-transport = wrapper.transport
-
-file_name = params['config_file']
-config = transport.show_config
-
-config.elements.collect('/response/result/config') do |entry| # rubocop:disable Style/CollectionMethods
-  config = entry
+  File.open(file_name, 'w+') { |file| file.write(config) }
+rescue Exception => e # rubocop:disable Lint/RescueException
+  result[:_error] = { msg: e.message,
+                      kind: 'puppetlabs-panos/unknown',
+                      details: { class: e.class.to_s },
+                      backtrace: e.backtrace }
 end
 
-File.open(file_name, 'w+') { |file| file.write(config) }
+puts result.to_json

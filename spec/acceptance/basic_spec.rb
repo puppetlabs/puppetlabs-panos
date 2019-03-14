@@ -25,12 +25,19 @@ describe 'basic palo alto config' do
     context 'when it gets the current running config' do
       it 'will get the current running config and store to file' do
         params = {
+          '_target' => {
+            'host' => RSpec.configuration.host,
+            'user' => RSpec.configuration.user,
+            'password' => RSpec.configuration.password,
+          },
           'config_file' => 'spec/fixtures/config-acceptance.xml',
         }
 
         ENV['PARAMS'] = JSON.generate(params)
         puts "Executing store_config.rb task with `#{ENV['PARAMS']}`" if debug_output?
-        Open3.capture2e('bundle exec ruby -Ilib tasks/store_config.rb')
+        result = Open3.capture2e('bundle exec ruby -Ilib tasks/store_config.rb')
+        expect(result[0]).not_to match(%r{_error})
+        expect(File).to be_exist(params['config_file'])
       end
 
       context 'when running an idempotency check' do
@@ -67,12 +74,18 @@ describe 'basic palo alto config' do
             context 'when it gets the current running config' do
               it 'will get the current running config and store to file' do
                 params = {
+                  '_target' => {
+                    'host' => RSpec.configuration.host,
+                    'user' => RSpec.configuration.user,
+                    'password' => RSpec.configuration.password,
+                  },
                   'config_file' => 'spec/fixtures/config-reset.xml',
                 }
 
                 ENV['PARAMS'] = JSON.generate(params)
                 puts "Executing store_config.rb task with `#{ENV['PARAMS']}`" if debug_output?
                 Open3.capture2e('bundle exec ruby -Ilib tasks/store_config.rb')
+                expect(File).to be_exist(params['config_file'])
               end
             end
           end
