@@ -57,19 +57,15 @@ There are two valid types of credential files:
 
 * (a) A file containing the host, username and password in plain text, for example:
   ```
-  address: 10.0.10.20
-  username: admin
+  host: 10.0.10.20
+  user: admin
   password: admin
   ```
-* (b) A file containing the address and an API key obtained from the device, for example:
+* (b) A file containing the host and an API key obtained from the device, for example:
   ```
-  address: 10.0.10.20
+  host: 10.0.10.20
   apikey: LUFRPT10cHhRNXMyR2wrYW1MSzg5cldhNElodmVkL1U9OEV1cGY5ZjJyc2xGL1Z4Qk9TNFM2dz09
   ```
-
-__Note:__ v0.1.0 requires `host` instead of `address`
-
-__Note:__ v0.1.0 requires `user` instead of `username`
 
 To obtain an API key for the device, it is possible to use the `panos::apikey` task. Before running this task, install the module on your machine, along with [Puppet Bolt](https://puppet.com/docs/bolt/latest/bolt_installing.html). When complete, execute the following command:
 
@@ -124,7 +120,7 @@ For more information refer to the [OpenSSL docs](https://www.openssl.org/docs/ma
 *NOTE*: If you accept the possibility that an attacker can hijack your firewall configuration, you can turn of SSL verification completely by setting `ssl: false`.
 
 ```
-address: 10.0.10.20
+host: 10.0.10.20
 username: admin
 password: admin
 ssl_ciphers: [ECDHE-ECDSA-AES128-GCM-SHA256, ECDHE-RSA-AES128-GCM-SHA256, ECDHE-ECDSA-AES256-GCM-SHA384, ECDHE-RSA-AES256-GCM-SHA384, AES256-GCM-SHA384]
