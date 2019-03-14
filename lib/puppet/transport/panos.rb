@@ -122,7 +122,69 @@ module Puppet::Transport
         @port = connection_info.key?(:port) ? connection_info[:port].to_i : 443
         @user = connection_info[:user] || connection_info[:username]
         @password = connection_info[:password].unwrap unless connection_info[:password].nil?
+        @ssl_verify = connection_info[:ssl].nil? ? true : connection_info[:ssl]
+        @ca_file = connection_info[:ssl_ca_file] if connection_info[:ssl_ca_file]
+        @ssl_version = connection_info[:ssl_version] if connection_info[:ssl_version]
+        @ciphers = connection_info[:ssl_ciphers] if connection_info[:ssl_ciphers]
+        @fingerprint = connection_info[:ssl_fingerprint].unwrap unless connection_info[:ssl_fingerprint].nil?
         @apikey = connection_info[:apikey].unwrap unless connection_info[:apikey].nil?
+      end
+
+      # Returns the OpenSSL verify mode based on the verify_mode arguments
+      #
+      # @raise if verify_mode param is not `on` or `off`
+      #
+      # @param String verify mode to use
+      #
+      # @return OpenSSL::SSL verification mode
+      def handle_verify_mode(verify_mode)
+        case verify_mode
+        when true
+          OpenSSL::SSL::VERIFY_PEER
+        when false
+          Puppet.warning("SSL verification turned off in configuration for $#{Puppet[:certname]}")
+          OpenSSL::SSL::VERIFY_NONE
+        else
+          raise Puppet::ResourceError, "\"#{verify_mode}\" is not a valid mode, " \
+                'valid modes are: "false" for no client verification, ' \
+                'and "true" for validating the certificate'
+        end
+      end
+
+      # https://stackoverflow.com/questions/22093042/implementing-https-certificate-pubkey-pinning-with-ruby/22108461#22108461
+      # this method will be called on the OpenSSL connection
+      # to allow for additional verification.
+      #
+      # A return of false means that verification has failed and
+      # will cause certificate verification errors.
+      #
+      # A return of true is verification has been
+      # successful
+      def verify_callback(preverify_ok, cert_store)
+        # if ssl_fingerprint is specified then do not
+        # depend on the pre-verification checks,
+        # if no ssl_fingerprint and the preverify_checks fail
+        # then certificate verification will fail overall
+        return false unless preverify_ok || @fingerprint
+
+        end_cert = cert_store.chain[0]
+
+        return true unless end_cert.to_der == cert_store.current_cert.to_der
+        @fingerprint ? same_cert_fingerprint?(end_cert) : true
+      end
+
+      def same_cert_fingerprint?(end_cert)
+        hexdigest = hexdigest_from_cert(end_cert)
+        cert_fingerprint = fingerprint_from_hexdigest(hexdigest)
+        cert_fingerprint == @fingerprint
+      end
+
+      def hexdigest_from_cert(cert)
+        OpenSSL::Digest::SHA256.hexdigest(cert.to_der)
+      end
+
+      def fingerprint_from_hexdigest(hexdigest)
+        hexdigest.scan(%r{..}).map { |s| s.upcase }.join(':')
       end
 
       def http
@@ -130,7 +192,13 @@ module Puppet::Transport
                     Puppet.debug('Connecting to https://%{host}:%{port}' % { host: @host, port: @port })
                     Net::HTTP.start(@host, @port,
                                     use_ssl: true,
-                                    verify_mode: OpenSSL::SSL::VERIFY_NONE)
+                                    verify_mode: handle_verify_mode(@ssl_verify),
+                                    ca_file: @ca_file,
+                                    ssl_version: @ssl_version,
+                                    ciphers: @ciphers ? @ciphers.join(':') : @ciphers,
+                                    verify_callback: ->(preverify_ok, cert_store) do
+                                                       verify_callback(preverify_ok, cert_store)
+                                                     end)
                   end
       end
 

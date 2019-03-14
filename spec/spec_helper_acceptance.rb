@@ -55,6 +55,7 @@ RSpec.configure do |c|
 host: #{RSpec.configuration.host}
 user: #{RSpec.configuration.user}
 password: #{RSpec.configuration.password}
+ssl: false
 CREDENTIALS
     end
 
