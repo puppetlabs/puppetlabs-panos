@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v1.0.0](https://github.com/puppetlabs/puppetlabs-panos/tree/v1.0.0) (2019-03-14)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-panos/compare/0.2.0...v1.0.0)
+
+### Added
+
+- \(FM-7625\) implement finegrained configuration support for SSL verification [\#76](https://github.com/puppetlabs/puppetlabs-panos/pull/76) ([Thomas-Franklin](https://github.com/Thomas-Franklin))
+- \(FM-7602\) Implement Resource API transports for bolt and ACE [\#73](https://github.com/puppetlabs/puppetlabs-panos/pull/73) ([DavidS](https://github.com/DavidS))
+
+### Fixed
+
+- \(maint\) add resource\_api install module as a dependency [\#72](https://github.com/puppetlabs/puppetlabs-panos/pull/72) ([DavidS](https://github.com/DavidS))
+
 ## [0.2.0](https://github.com/puppetlabs/puppetlabs-panos/tree/0.2.0) (2018-10-23)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-panos/compare/0.1.0...0.2.0)
