@@ -13,6 +13,15 @@ describe 'basic palo alto config' do
 
   let(:args) { '--apply spec/fixtures/create.pp' }
 
+  let(:_target) do
+    {
+      'host' => RSpec.configuration.host,
+      'user' => RSpec.configuration.user,
+      'password' => RSpec.configuration.password,
+      'ssl' => false,
+    }
+  end
+
   context 'when creating resources' do
     it 'applies a catalog with changes' do
       expect(stdout_str).not_to match %r{Error:}
@@ -25,11 +34,7 @@ describe 'basic palo alto config' do
     context 'when it gets the current running config' do
       it 'will get the current running config and store to file' do
         params = {
-          '_target' => {
-            'host' => RSpec.configuration.host,
-            'user' => RSpec.configuration.user,
-            'password' => RSpec.configuration.password,
-          },
+          '_target' => _target,
           'config_file' => 'spec/fixtures/config-acceptance.xml',
         }
 
@@ -74,11 +79,7 @@ describe 'basic palo alto config' do
             context 'when it gets the current running config' do
               it 'will get the current running config and store to file' do
                 params = {
-                  '_target' => {
-                    'host' => RSpec.configuration.host,
-                    'user' => RSpec.configuration.user,
-                    'password' => RSpec.configuration.password,
-                  },
+                  '_target' => _target,
                   'config_file' => 'spec/fixtures/config-reset.xml',
                 }
 
