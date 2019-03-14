@@ -468,7 +468,7 @@ RSpec.describe Puppet::Transport do
       context 'when http is called and throws a SSL error' do
         it do
           expect(Net::HTTP).to receive(:start).with('www.example.com', 443, start_block).and_raise OpenSSL::SSL::SSLError
-          expect { instance.http }.to raise_error Puppet::ResourceError, %r{Certificate Verification has failed, ensure the}
+          expect { instance.http }.to raise_error OpenSSL::SSL::SSLError
         end
       end
     end

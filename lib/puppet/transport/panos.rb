@@ -199,13 +199,6 @@ module Puppet::Transport
                                     verify_callback: ->(preverify_ok, cert_store) do
                                                        verify_callback(preverify_ok, cert_store)
                                                      end)
-                    # want to raise the Puppet::ResourceError message when raised, i.e.
-                    # wrong verify mode has been specified
-                  rescue Puppet::ResourceError => message
-                    raise message
-                  rescue OpenSSL::SSL::SSLError
-                    raise Puppet::ResourceError, "Certificate Verification has failed, ensure the correct `ssl_ca_file` \
-or `ssl_fingerprint` is specified#{@ciphers ? ', and ensure the correct `ssl_ciphers` are specified and supported.' : '.'}"
                   end
       end
 
