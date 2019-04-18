@@ -23,8 +23,8 @@
 /update_report.txt
 .DS_Store
 .project
-.vscode/
 .envrc
+/inventory.yaml
 /appveyor.yml
 /.fixtures.yml
 /Gemfile
@@ -33,11 +33,13 @@
 /.gitlab-ci.yml
 /.pdkignore
 /Rakefile
+/rakelib/
 /.rspec
 /.rubocop.yml
 /.travis.yml
 /.yardopts
 /spec/
+/.vscode/
 spec/fixtures/acceptance-credentials.conf
 spec/fixtures/acceptance-device.conf
 spec/fixtures/config-acceptance.xml
