@@ -32,6 +32,7 @@ group :development do
   gem "puppet-strings",                                require: false, git: 'https://github.com/puppetlabs/puppet-strings.git', ref: 'master'
   gem "puppet-resource_api", '>= 1.8.1',               require: false
   gem "beaker-hostgenerator", '~> 1.1.15',             require: false
+  gem "bolt",                                          require: false
   gem "github_changelog_generator",                    require: false, git: 'https://github.com/skywinder/github-changelog-generator', ref: '20ee04ba1234e9e83eb2ffb5056e23d641c7a018' if Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')
 end
 
