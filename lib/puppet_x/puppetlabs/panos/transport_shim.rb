@@ -22,13 +22,19 @@ module Puppet::ResourceApi
       elsif definition.is_a? Puppet::ResourceApi::BaseTypeDefinition
         @type = definition
       else
+        #:nocov:
         raise ArgumentError, 'BaseContext requires definition to be a child of Puppet::ResourceApi::BaseTypeDefinition, not <%{actual_type}>' % { actual_type: definition.class }
+        #:nocov:
       end
     end
 
+    #:nocov:
+    # patch for returning the device
+    # in the context.transport calls
     def transport
       device.transport
     end
+    #:nocov:
   end
   # pre-declare class
   class BaseTypeDefinition; end
@@ -87,9 +93,11 @@ module Puppet::ResourceApi
       raise Puppet::DevError, '%{type_class} must have a name' % { type_class: self.class.name } unless definition.key? :name
       raise Puppet::DevError, '%{type_class} must have `%{attr_key}`' % { type_class: self.class.name, attrs: attr_key } unless definition.key? attr_key
       unless attributes.is_a?(Hash)
+        #:nocov:
         raise Puppet::DevError, '`%{name}.%{attrs}` must be a hash, not `%{other_type}`' % {
           name: definition[:name], attrs: attr_key, other_type: attributes.class
         }
+        #:nocov:
       end
 
       attributes.each do |key, attr|
@@ -106,20 +114,24 @@ module Puppet::ResourceApi
 
         # fixup any weird behavior  ;-)
         next unless attr[:behavior]
+        #:nocov:
         if attr[:behaviour]
           raise Puppet::DevError, "the '#{key}' attribute has both a `behavior` and a `behaviour`, only use one"
         end
         attr[:behaviour] = attr[:behavior]
         attr.delete(:behavior)
+        #:nocov:
       end
     end
 
     # validates a resource hash against its type schema
     def check_schema(resource, message_prefix = nil)
       namevars.each do |namevar|
+        #:nocov:
         if resource[namevar].nil?
           raise Puppet::ResourceError, "`#{name}.get` did not return a value for the `#{namevar}` namevar attribute"
         end
+        #:nocov:
       end
 
       message_prefix = 'Provider returned data that does not match the Type Schema' if message_prefix.nil?
@@ -129,8 +141,10 @@ module Puppet::ResourceApi
       bad_values = check_schema_values(resource)
 
       unless rejected_keys.empty?
+        #:nocov:
         message += "\n Unknown attribute:\n"
         rejected_keys.each { |key, _value| message += "    * #{key}\n" }
+        #:nocov:
       end
       unless bad_values.empty?
         message += "\n Value type mismatch:\n"
@@ -140,17 +154,6 @@ module Puppet::ResourceApi
       return if rejected_keys.empty? && bad_values.empty?
 
       notify_schema_errors(message)
-    end
-
-    def notify_schema_errors(message)
-      if Puppet.settings[:strict] == :off
-        Puppet.debug(message)
-      elsif Puppet.settings[:strict] == :warning
-        Puppet::ResourceApi.warning_count += 1
-        Puppet.warning(message) if Puppet::ResourceApi.warning_count <= 100 # maximum number of schema warnings to display in a run
-      elsif Puppet.settings[:strict] == :error
-        raise Puppet::DevError, message
-      end
     end
 
     # Returns an array of keys that where not found in the type schema
@@ -201,10 +204,12 @@ module Puppet::ResourceApi::Transport
 
     init_transports
     unless @transports[@environment][schema[:name]].nil?
+      #:nocov:
       raise Puppet::DevError, 'Transport `%{name}` is already registered for `%{environment}`' % {
         name: schema[:name],
         environment: @environment,
       }
+      #:nocov:
     end
     @transports[@environment][schema[:name]] = Puppet::ResourceApi::TransportSchemaDef.new(schema)
   end
@@ -226,6 +231,7 @@ module Puppet::ResourceApi::Transport
   module_function :connect
 
   def inject_device(name, transport)
+    #:nocov:
     transport_wrapper = Puppet::ResourceApi::Transport::Wrapper.new(name, transport)
 
     if Puppet::Util::NetworkDevice.respond_to?(:set_device)
@@ -233,6 +239,7 @@ module Puppet::ResourceApi::Transport
     else
       Puppet::Util::NetworkDevice.instance_variable_set(:@current, transport_wrapper)
     end
+    #:nocov:
   end
   module_function :inject_device
 
@@ -241,10 +248,12 @@ module Puppet::ResourceApi::Transport
     require "puppet/transport/schema/#{name}" unless @transports[@environment].key? name
     transport_schema = @transports[@environment][name]
     if transport_schema.nil?
+      #:nocov:
       raise Puppet::DevError, 'Transport for `%{target}` not registered with `%{environment}`' % {
         target: name,
         environment: @environment,
       }
+      #:nocov:
     end
     message_prefix = 'The connection info provided does not match the Transport Schema'
     transport_schema.check_schema(connection_info, message_prefix)
@@ -261,7 +270,9 @@ module Puppet::ResourceApi::Transport
   def self.init_transports
     lookup = Puppet.lookup(:current_environment) if Puppet.respond_to? :lookup
     @environment =  if lookup.nil?
+                      #:nocov:
                       :transports_default
+                      #:nocov:
                     else
                       lookup.name
                     end
@@ -284,6 +295,7 @@ module Puppet::ResourceApi::Transport
   private_class_method :wrap_sensitive
 end
 
+#:nocov:
 # Puppet::ResourceApi::Transport::Wrapper` to interface between the Util::NetworkDevice
 class Puppet::ResourceApi::Transport::Wrapper
   attr_reader :transport, :schema
@@ -327,3 +339,4 @@ class Puppet::ResourceApi::Transport::Wrapper
     obj
   end
 end
+#:nocov:
