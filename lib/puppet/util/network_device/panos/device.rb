@@ -1,5 +1,9 @@
 require 'puppet'
-require 'puppet/resource_api/transport/wrapper'
+begin
+  require 'puppet/resource_api/transport/wrapper'
+rescue LoadError
+  require 'puppet_x/puppetlabs/panos/transport_shim'
+end
 # force registering the transport
 require 'puppet/transport/schema/panos'
 

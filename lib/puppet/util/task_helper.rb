@@ -12,7 +12,11 @@ class Puppet::Util::TaskHelper
   end
 
   def transport
-    require 'puppet/resource_api/transport'
+    begin
+      require 'puppet/resource_api/transport'
+    rescue LoadError
+      require 'puppet_x/puppetlabs/panos/transport_shim'
+    end
 
     @transport[@transport_name] ||= Puppet::ResourceApi::Transport.connect(@transport_name, credentials)
   end

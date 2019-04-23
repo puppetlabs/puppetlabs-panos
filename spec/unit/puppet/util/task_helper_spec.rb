@@ -1,6 +1,10 @@
 require 'json'
 require 'puppet/util/task_helper'
-require 'puppet/resource_api/transport'
+begin
+  require 'puppet/resource_api/transport'
+rescue LoadError
+  require 'puppet_x/puppetlabs/panos/transport_shim'
+end
 
 RSpec.describe Puppet::Util::TaskHelper do
   let(:helper) { described_class.new('panos') }
