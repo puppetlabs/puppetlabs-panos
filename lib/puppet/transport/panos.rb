@@ -126,7 +126,7 @@ module Puppet::Transport
         @ca_file = connection_info[:ssl_ca_file] if connection_info[:ssl_ca_file]
         @ssl_version = connection_info[:ssl_version] if connection_info[:ssl_version]
         @ciphers = connection_info[:ssl_ciphers] if connection_info[:ssl_ciphers]
-        @fingerprint = connection_info[:ssl_fingerprint].unwrap unless connection_info[:ssl_fingerprint].nil?
+        @fingerprint = fingerprint_from_hexdigest(connection_info[:ssl_fingerprint].unwrap) unless connection_info[:ssl_fingerprint].nil?
         @apikey = connection_info[:apikey].unwrap unless connection_info[:apikey].nil?
       end
 
@@ -166,7 +166,6 @@ module Puppet::Transport
         # if no ssl_fingerprint and the preverify_checks fail
         # then certificate verification will fail overall
         return false unless preverify_ok || @fingerprint
-
         end_cert = cert_store.chain[0]
 
         return true unless end_cert.to_der == cert_store.current_cert.to_der
@@ -184,7 +183,7 @@ module Puppet::Transport
       end
 
       def fingerprint_from_hexdigest(hexdigest)
-        hexdigest.scan(%r{..}).map { |s| s.upcase }.join(':')
+        hexdigest.tr(' ', '').scan(%r{..}).map { |s| s.upcase }.join(':')
       end
 
       def http
