@@ -117,7 +117,7 @@ TLSv1_2
 
 For more information refer to the [OpenSSL docs](https://www.openssl.org/docs/man1.1.1/man3/SSL_version.html).
 
-*NOTE*: Although not advisable, you can turn off SSL by setting `ssl.verify: off`. In doing so you increase the risk of your firewall configuration being hijacked by a potential attacker.
+*NOTE*: Although not advisable, you can turn off SSL by setting `ssl: false`. In doing so you increase the risk of your firewall configuration being hijacked by a potential attacker.
 
 ```
 host: 10.0.10.20
