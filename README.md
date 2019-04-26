@@ -95,7 +95,9 @@ Test your setup and get the certificate signed:
 
 This will sign the certificate and set up the device for Puppet.
 
-See the [`puppet device` documentation](https://puppet.com/docs/puppet/5.5/puppet_device.html)
+For more information, see the [`puppet device` documentation](https://puppet.com/docs/puppet/5.5/puppet_device.html)
+
+To get more practice using PANOS, try out the [hands-on labs](./docs/README.md). 
 
 ### SSL Certificate Verification
 
