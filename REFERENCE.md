@@ -1749,12 +1749,6 @@ Retrieve the configuration running on the firewall.
 
 #### Parameters
 
-##### `credentials_file`
-
-Data type: `String`
-
-The filename of the credentials file (as referenced in device.conf)
-
 ##### `config_file`
 
 Data type: `String`
