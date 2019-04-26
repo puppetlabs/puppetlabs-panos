@@ -1,17 +1,20 @@
-# Running a Task
+# Run a Bolt Task
 
-We're all set to use bolt to connect to the firewall and run a task. The module comes with some tasks already available out of the box. For this tutorial we will use the `panos::apikey` task to generate an API key.
+Use Bolt to connect to the firewall and run a task. The module comes with some tasks already available.
 
-Type `bolt task run panos::apikey -n pan --debug` where -n represents the nodes, with `pan` the alias we set in the `inventory.yaml` file and `--debug` represents that we want to get debug level output. If everything is working as planned you should be able to see that the task runs successfully and returns an apikey as expected. Examining the debug output you will notice a few interesting things:
+1. Use the `panos::apikey` task to generate an API key. Run:
 
-1. The task target is pan, which we know is a `remote target` as specified in our `inventory.yaml` and by default these tasks will run on the `localhost` transport.
+`bolt task run panos::apikey -n pan --debug`. 
 
-2. The details from inventory.yaml are used by the task.
+Note that `-n` represents the nodes, `pan` is the alias you set in the `inventory.yaml` file and `--debug` provides a debug level output. If everything works, you will the task run successfully and return an api key. 
 
-3. Additional parameters can be used, as outlined in the [bolt reference material](https://puppet.com/docs/bolt/latest/bolt_command_reference.html).
+Notice the following in the debug output:
+
+* Bolt used the details you added to the `inventory.yaml` file. For example, the task target is `pan`, which is the `remote target` you specified in the `inventory.yaml`. By default these tasks run on the `localhost` transport.
+* You can add additional parameters. For more information, see [Bolt reference material](https://puppet.com/docs/bolt/latest/bolt_command_reference.html).
 
 # Next steps
 
-Now we'll apply a manifest.
+Now you will apply a manifest.
 
 [Applying a manifest](./../05-applying-a-manifest/README.md)
