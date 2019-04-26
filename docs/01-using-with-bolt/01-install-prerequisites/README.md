@@ -1,6 +1,6 @@
 # Install Prerequisites
 
-Before you begin, you need a Ruby, Bolt and a Palo Alto firewall that you can test against. Open a terminal window and follow the steps below.
+Before you begin, you need Bolt and a Palo Alto firewall that you can test against. Open a terminal window and follow the steps below.
 
 1. Install the latest version of Bolt. See [Installing Bolt
 ](https://puppet.com/docs/bolt/latest/bolt_installing.html) for instuctions. To check that Bolt has been installed, run `bolt --version`, which shows you the Bolt version number.
