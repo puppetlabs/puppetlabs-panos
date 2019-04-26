@@ -1,4 +1,4 @@
-# Run Puppet Device Commands
+# Run Puppet device commands
 
 Now that you have set up your node as a proxy to the device, you can run the `puppet device` commands. If you are using Puppet Enterprise (PE), these commands are executed from here to being your device nodes under management. 
 
