@@ -21,7 +21,7 @@ nodes:
         ssl_fingerprint: <certificate SHA256 fingerprint>
 ```
 
-The `name` needs to match the `Common Name (CN)` of the certificate of the firewall. In this example, we have combined username and password. 
+The `name` needs to match the `Common Name (CN)` of the certificate of the firewall. In this example, we are using the username and password for authenticating with the device. 
 
 By default, the module performs SSL verification. To disable this, put `ssl: false` in the remote section of the `inventory.yaml` file. 
 
