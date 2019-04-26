@@ -1,4 +1,4 @@
-# Install Prerequisites
+# Install prerequisites
 
 Before you begin, you need Ruby, Puppet and a Palo Alto firewall that you can test against. Open a terminal window and follow the steps below.
 
