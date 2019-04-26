@@ -43,7 +43,7 @@ Once the module has been installed, classify the appropriate class:
 
 ### Getting started with PANOS
 
-To get started there is useful hands-on labs provided in the [documentation section](./docs/README.md), alternatively you can create or edit `/etc/puppetlabs/puppet/device.conf`, add a section for the device (this will become the device's `certname`), specify a type of `panos`, and specify a `url` to a credentials file. For example:
+To get started, create or edit `/etc/puppetlabs/puppet/device.conf`, add a section for the device (this will become the device's `certname`), specify a type of `panos`, and specify a `url` to a credentials file. For example:
 
 ```INI
 [firewall.example.com]
@@ -95,7 +95,9 @@ Test your setup and get the certificate signed:
 
 This will sign the certificate and set up the device for Puppet.
 
-See the [`puppet device` documentation](https://puppet.com/docs/puppet/5.5/puppet_device.html)
+For more information, see the [`puppet device` documentation](https://puppet.com/docs/puppet/5.5/puppet_device.html)
+
+To get more practice using PANOS, try out the [hands-on labs](./docs/README.md). 
 
 ### SSL Certificate Verification
 
