@@ -1,4 +1,4 @@
-# Configure Puppet Device
+# Configure Puppet device
 
 Puppet device is Puppet's agentless catalog execution service. It executes a catalog on an agent node, and applies the catalog via a module to a remote and agentless device. This approach is used by Puppet module developers for agentless device management. For more information on its history at Puppet, see the [manual page](https://puppet.com/docs/puppet/6.4/man/device.html). Note that we are in the process of upgrading our agentless capabilities, using both [Bolt](https://puppet.com/products/bolt) and Agentless Catalog Executor(ACE) that we will release later in 2019.
 
