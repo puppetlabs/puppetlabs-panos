@@ -43,7 +43,7 @@ Once the module has been installed, classify the appropriate class:
 
 ### Getting started with PANOS
 
-To get started, create or edit `/etc/puppetlabs/puppet/device.conf`, add a section for the device (this will become the device's `certname`), specify a type of `panos`, and specify a `url` to a credentials file. For example:
+To get started there is useful hands-on labs provided in the [documentation section](./docs/README.md), alternatively you can create or edit `/etc/puppetlabs/puppet/device.conf`, add a section for the device (this will become the device's `certname`), specify a type of `panos`, and specify a `url` to a credentials file. For example:
 
 ```INI
 [firewall.example.com]
