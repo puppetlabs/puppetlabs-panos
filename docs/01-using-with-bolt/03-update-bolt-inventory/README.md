@@ -18,7 +18,7 @@ nodes:
         remote-transport: panos
         user: <username to access your Palo Alto VM>
         password: <password for the above username>
-        ssl_fingerprint: <certificate SHA256 fingerprint>
+        ssl_fingerprint: "<certificate SHA256 fingerprint>"
 ```
 
 The `name` needs to match the `Common Name (CN)` of the certificate of the firewall. In this example, we are using the username and password for authenticating with the device. 
