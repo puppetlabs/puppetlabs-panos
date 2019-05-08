@@ -18,17 +18,17 @@ nodes:
         remote-transport: panos
         user: <username to access your Palo Alto VM>
         password: <password for the above username>
-        ssl_fingerprint: <certificate SHA256 fingerprint>
+        ssl_fingerprint: "<certificate SHA256 fingerprint>"
 ```
 
 The `name` needs to match the `Common Name (CN)` of the certificate of the firewall. In this example, we are using the username and password for authenticating with the device. 
 
 By default, the module performs SSL verification. To disable this, put `ssl: false` in the remote section of the `inventory.yaml` file. 
 
-In this lab, we use the SHA256 fingerprint of the certificate for verification. To get the certificate's fingerprint, see the certificate in a browser, or for Linux users, use the `openssl` command.
+In this lab, we use the SHA256 fingerprint of the certificate for verification. To get the certificate's fingerprint, see the certificate in a browser, or for Linux users, use the `openssl` command:
 
 ```
-echo | openssl s_client -connect <hostname of IP of Palo Alto firewall>:443 |& openssl x509 -fingerprint -noout -sha256
+echo | openssl s_client -connect <hostname of IP of Palo Alto firewall>:443 2>&1 | openssl x509 -fingerprint -noout -sha256
 ```
 
 > Note: For Puppet employees using VMPooler images, the CN name may be a generated string that does not match the FQDN. We advise you to edit the hosts file in this instance, or to replace `ssl_fingerprint: <certificate SHA256 fingerprint>` with `ssl: false` so that it does not perform SSL validation.
