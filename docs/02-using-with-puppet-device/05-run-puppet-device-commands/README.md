@@ -1,6 +1,6 @@
 # Run Puppet device commands
 
-Now that you have set up your node as a proxy to the device, you can run the `puppet device` commands. If you are using Puppet Enterprise (PE), these commands are executed from here to being your device nodes under management. 
+Now that you have set up your node as a proxy to the device, you can run the `puppet device` commands. If you are using Puppet Enterprise (PE), these commands are executed from here to bring your device nodes under management. 
 
 1. From the command line of the node on which your device is configured, run `puppet device --resource panos_address --target firewall.example.com` to return the addresses configured in the PANOS firewall. The output is Puppet code, similar to:
 
