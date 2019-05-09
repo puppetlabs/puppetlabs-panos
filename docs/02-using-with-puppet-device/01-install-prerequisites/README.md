@@ -9,7 +9,7 @@ export PATH=/opt/puppetlabs/bin:$PATH
 ```
 
 2. Get a Palo Alto device to connect to. You can use a live device if you have one, otherwise you can:
-    - Download a Palo Alto VM. If you are a Palo Alto customer, you may have VMs that you can run in [Virtual Box]    (https://www.virtualbox.org/), or
+    - Download a Palo Alto VM. If you are a Palo Alto customer, you may have VMs that you can run in [Virtual Box](https://www.virtualbox.org/), or
     - Get a free trial for a Palo Alto VM on the [AWS marketplace](https://aws.amazon.com/marketplace/seller-profile?id=0ed48363-5064-4d47-b41b-a53f7c937314), or 
     - If you are a Puppet employee, we have licenses for VMs that you can run in Virtual Box, or you can get an image from vmpooler. 
 
