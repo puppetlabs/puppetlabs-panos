@@ -2,7 +2,7 @@
 
 Download the Palo Alto module from the Puppet forge.
 
-1. First, check what modules you already have installed on your machine. Run `puppet module list` to see list. If you have just starting using Puppet on your workstation, you will not see any output from this command.
+1. First, check what modules you already have installed on your machine. Run `puppet module list` to see list. If you have just started using Puppet on your workstation, you may not see any output from this command.
 
 2. Download the module from the Forge: 
 
