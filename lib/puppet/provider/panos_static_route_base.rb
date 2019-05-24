@@ -12,6 +12,13 @@ class Puppet::Provider::PanosStaticRouteBase < Puppet::Provider::PanosProvider
     entry[:path_monitoring] = entry[:path_monitoring].nil? ? false : true
     entry[:nexthop_type] = 'none' if entry[:nexthop_type].nil?
     entry[:enable] = string_to_bool(entry[:enable])
+    entry[:admin_distance] = entry[:admin_distance].to_i unless entry[:admin_distance].nil?
+    entry[:hold_time] = entry[:hold_time].to_i unless entry[:hold_time].nil?
+    entry[:metric] =  if entry[:metric].nil?
+                        10
+                      else
+                        entry[:metric].to_i
+                      end
     entry
   end
 

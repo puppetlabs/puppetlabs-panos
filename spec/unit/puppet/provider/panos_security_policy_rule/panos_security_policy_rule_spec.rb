@@ -3196,6 +3196,7 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
       munged_entry: {
         name:             'icmp_unreachable',
         icmp_unreachable: true,
+        rule_type:        'universal',
       },
     },
     {
@@ -3207,6 +3208,7 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
       munged_entry: {
         name:             'icmp_unreachable',
         icmp_unreachable: false,
+        rule_type:        'universal',
       },
     },
     {
@@ -3218,6 +3220,7 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
       munged_entry: {
         name:             'icmp_unreachable',
         icmp_unreachable: 'neither',
+        rule_type:        'universal',
       },
     },
     {
@@ -3227,8 +3230,9 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
         log_start: 'yes',
       },
       munged_entry: {
-        name:      'log_start',
-        log_start: true,
+        name:       'log_start',
+        log_start:  true,
+        rule_type:  'universal',
       },
     },
     {
@@ -3238,8 +3242,9 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
         log_start: 'no',
       },
       munged_entry: {
-        name:      'log_start',
-        log_start: false,
+        name:       'log_start',
+        log_start:  false,
+        rule_type:  'universal',
       },
     },
     {
@@ -3249,8 +3254,9 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
         log_start: 'neither',
       },
       munged_entry: {
-        name:      'log_start',
-        log_start: 'neither',
+        name:       'log_start',
+        log_start:  'neither',
+        rule_type:  'universal',
       },
     },
     {
@@ -3260,8 +3266,9 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
         log_end: 'yes',
       },
       munged_entry: {
-        name:    'log_end',
-        log_end: true,
+        name:       'log_end',
+        log_end:    true,
+        rule_type:  'universal',
       },
     },
     {
@@ -3271,8 +3278,9 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
         log_end: 'no',
       },
       munged_entry: {
-        name:    'log_end',
-        log_end: false,
+        name:       'log_end',
+        log_end:    false,
+        rule_type:  'universal',
       },
     },
     {
@@ -3282,8 +3290,9 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
         log_end: 'neither',
       },
       munged_entry: {
-        name:    'log_end',
-        log_end: 'neither',
+        name:       'log_end',
+        log_end:    'neither',
+        rule_type:  'universal',
       },
     },
     {
@@ -3295,6 +3304,7 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
       munged_entry: {
         name:                               'disable_server_response_inspection',
         disable_server_response_inspection: true,
+        rule_type:                          'universal',
       },
     },
     {
@@ -3306,6 +3316,7 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
       munged_entry: {
         name:                               'disable_server_response_inspection',
         disable_server_response_inspection: false,
+        rule_type:                          'universal',
       },
     },
     {
@@ -3317,6 +3328,7 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
       munged_entry: {
         name:                               'disable_server_response_inspection',
         disable_server_response_inspection: 'neither',
+        rule_type:                          'universal',
       },
     },
     {
@@ -3328,6 +3340,7 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
       munged_entry: {
         name:          'negate_source',
         negate_source: true,
+        rule_type:     'universal',
       },
     },
     {
@@ -3339,6 +3352,7 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
       munged_entry: {
         name:          'negate_source',
         negate_source: false,
+        rule_type:     'universal',
       },
     },
     {
@@ -3350,6 +3364,7 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
       munged_entry: {
         name:          'negate_source',
         negate_source: 'neither',
+        rule_type:     'universal',
       },
     },
     {
@@ -3361,6 +3376,7 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
       munged_entry: {
         name:               'negate_destination',
         negate_destination: true,
+        rule_type:          'universal',
       },
     },
     {
@@ -3372,6 +3388,7 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
       munged_entry: {
         name:               'negate_destination',
         negate_destination: false,
+        rule_type:          'universal',
       },
     },
     {
@@ -3383,6 +3400,7 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
       munged_entry: {
         name:               'negate_destination',
         negate_destination: 'neither',
+        rule_type:          'universal',
       },
     },
     {
@@ -3392,8 +3410,9 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
         disable: 'yes',
       },
       munged_entry: {
-        name:    'disable',
-        disable: true,
+        name:       'disable',
+        disable:    true,
+        rule_type:  'universal',
       },
     },
     {
@@ -3403,8 +3422,9 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
         disable: 'no',
       },
       munged_entry: {
-        name:    'disable',
-        disable: false,
+        name:       'disable',
+        disable:    false,
+        rule_type:  'universal',
       },
     },
     {
@@ -3414,8 +3434,9 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
         disable: 'neither',
       },
       munged_entry: {
-        name:    'disable',
-        disable: 'neither',
+        name:       'disable',
+        disable:    'neither',
+        rule_type:  'universal',
       },
     },
     {
@@ -3425,8 +3446,9 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
         qos_type: nil,
       },
       munged_entry: {
-        name:     'qos_type',
-        qos_type: 'none',
+        name:       'qos_type',
+        qos_type:   'none',
+        rule_type:  'universal',
       },
     },
     {
@@ -3436,8 +3458,9 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
         qos_type: 'follow-c2s-flow',
       },
       munged_entry: {
-        name:     'qos_type',
-        qos_type: 'follow-c2s-flow',
+        name:       'qos_type',
+        qos_type:   'follow-c2s-flow',
+        rule_type:  'universal',
       },
     },
     {
@@ -3449,6 +3472,7 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
       munged_entry: {
         name:               'anti_virus_profile',
         anti_virus_profile: 'none',
+        rule_type:          'universal',
       },
     },
     {
@@ -3460,6 +3484,7 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
       munged_entry: {
         name:               'anti_virus_profile',
         anti_virus_profile: 'profile',
+        rule_type:          'universal',
       },
     },
     {
@@ -3471,6 +3496,7 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
       munged_entry: {
         name:                   'url_filtering_profile',
         url_filtering_profile:  'none',
+        rule_type:              'universal',
       },
     },
     {
@@ -3482,6 +3508,7 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
       munged_entry: {
         name:                   'url_filtering_profile',
         url_filtering_profile:  'profile',
+        rule_type:              'universal',
       },
     },
     {
@@ -3493,6 +3520,7 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
       munged_entry: {
         name:                   'data_filtering_profile',
         data_filtering_profile: 'none',
+        rule_type:              'universal',
       },
     },
     {
@@ -3504,6 +3532,7 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
       munged_entry: {
         name:                   'data_filtering_profile',
         data_filtering_profile: 'profile',
+        rule_type:              'universal',
       },
     },
     {
@@ -3515,6 +3544,7 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
       munged_entry: {
         name:                   'file_blocking_profile',
         file_blocking_profile:  'none',
+        rule_type:              'universal',
       },
     },
     {
@@ -3526,6 +3556,7 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
       munged_entry: {
         name:                   'file_blocking_profile',
         file_blocking_profile:  'profile',
+        rule_type:              'universal',
       },
     },
     {
@@ -3537,6 +3568,7 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
       munged_entry: {
         name:             'spyware_profile',
         spyware_profile:  'none',
+        rule_type:        'universal',
       },
     },
     {
@@ -3548,6 +3580,7 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
       munged_entry: {
         name:             'spyware_profile',
         spyware_profile:  'profile',
+        rule_type:        'universal',
       },
     },
     {
@@ -3559,6 +3592,7 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
       munged_entry: {
         name:                   'vulnerability_profile',
         vulnerability_profile:  'none',
+        rule_type:              'universal',
       },
     },
     {
@@ -3570,6 +3604,7 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
       munged_entry: {
         name:                   'vulnerability_profile',
         vulnerability_profile:  'profile',
+        rule_type:              'universal',
       },
     },
     {
@@ -3581,6 +3616,7 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
       munged_entry: {
         name:                       'wildfire_analysis_profile',
         wildfire_analysis_profile:  'none',
+        rule_type:                  'universal',
       },
     },
     {
@@ -3592,6 +3628,18 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
       munged_entry: {
         name:                       'wildfire_analysis_profile',
         wildfire_analysis_profile:  'profile',
+        rule_type:                  'universal',
+      },
+    },
+    {
+      desc: 'rule_type is nil.',
+      entry:  {
+        name:       'rule_type',
+        rule_type:  nil,
+      },
+      munged_entry: {
+        name:       'rule_type',
+        rule_type:  'universal',
       },
     },
   ]

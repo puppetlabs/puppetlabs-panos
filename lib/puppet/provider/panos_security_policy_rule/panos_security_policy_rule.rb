@@ -18,6 +18,7 @@ class Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRule < Puppe
         entry[attr] = string_to_bool(entry[attr])
       end
     end
+    entry[:rule_type] = 'universal' if entry[:rule_type].nil?
     entry
   end
 
