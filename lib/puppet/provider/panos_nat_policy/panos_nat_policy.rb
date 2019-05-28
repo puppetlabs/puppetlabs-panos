@@ -57,10 +57,10 @@ class Puppet::Provider::PanosNatPolicy::PanosNatPolicy < Puppet::Provider::Panos
                   builder.member(addr)
                 end
               end
-            elsif should[:SAT_interface]
+            elsif should[:sat_interface]
               builder.__send__('interface-address') do
-                builder.ip(should[:SAT_interface_ip])
-                builder.interface(should[:SAT_interface])
+                builder.ip(should[:sat_interface_ip]) if should[:sat_interface_ip]
+                builder.interface(should[:sat_interface])
               end
             end
           end
