@@ -1,6 +1,6 @@
 # Install prerequisites
 
-Before you begin, you need Ruby, Puppet and a Palo Alto firewall that you can test against. Open a terminal window and follow the steps below.
+Before you begin, you need Puppet and a Palo Alto firewall that you can test against. Open a terminal window and follow the steps below.
 
 1. Install the latest Puppet agent. See [Installing agents](https://puppet.com/docs/puppet/6.4/install_agents.html) for instructions. You can check that you have installed the agent correctly by running `puppet --version`. This command prints out the Puppet version number installed. A usefull tip is to add the Puppet install directory to your path so Puppet commands can be called without having to specify the full path:
 
