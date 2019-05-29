@@ -1,0 +1,26 @@
+{
+  "puppet_task_version": 1,
+  "supports_noop": false,
+  "remote": true,
+  "description": "Execute arbitrary commands in Operational mode.",
+  "parameters": {
+    "command": {
+      "description": "The operational command to execute.  Can be in CLI format or XML.\n    CLI based commands will be automatically converted to XML; to assist that process values should be delimited with <>\n    Examples: show interface <all>",
+      "type": "String"
+    },
+    "output": {
+      "description": "Output format.  json(default) or xml",
+      "type": "Optional[Enum['json', 'xml']]"
+    },
+    "raw": {
+      "description": "Whether to print the raw output or wrap it into result set",
+      "type": "Optional[Boolean]"
+    }
+  },
+  "files": [
+    "panos/lib/puppet/util/task_helper.rb",
+    "panos/lib/puppet/transport/panos.rb",
+    "panos/lib/puppet/transport/schema/panos.rb",
+    "panos/lib/puppet_x/puppetlabs/panos/transport_shim.rb"
+  ]
+}

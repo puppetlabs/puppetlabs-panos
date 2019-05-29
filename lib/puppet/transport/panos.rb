@@ -106,6 +106,12 @@ module Puppet::Transport
       api.apikey
     end
 
+    def op_command(cmd)
+      Puppet.debug("Executing OP command: #{cmd}")
+      # https://<firewall>/api/?type=op&cmd=<cmd>
+      api.request('op', cmd: cmd)
+    end
+
     private
 
     def api
