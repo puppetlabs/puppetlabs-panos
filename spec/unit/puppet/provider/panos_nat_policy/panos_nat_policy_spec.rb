@@ -563,8 +563,8 @@ RSpec.describe Puppet::Provider::PanosNatPolicy::PanosNatPolicy do
         name:                    'Test NAT Policy 9',
         ensure:                  'present',
         source_translation_type: 'dynamic-ip-and-port',
-        SAT_interface:           'tunnel.10',
-        SAT_interface_ip:        '10.10.10.10',
+        sat_interface:           'tunnel.10',
+        sat_interface_ip:        '10.10.10.10',
         from:                    ['sourcezone', 'source_zone'],
         to:                      ['destinationzone', 'destzone'],
         source:                  ['sourceAdr', 'source_adr'],
@@ -701,6 +701,48 @@ RSpec.describe Puppet::Provider::PanosNatPolicy::PanosNatPolicy do
               <to-interface>any</to-interface>
               <nat-type>ipv4</nat-type>
               <disabled>yes</disabled>
+            </entry>',
+    },
+    {
+      desc: 'an example using using SAT interface only',
+      attrs: {
+        name:                    'Test NAT Policy 12',
+        ensure:                  'present',
+        source_translation_type: 'dynamic-ip-and-port',
+        sat_interface:           'tunnel.10',
+        from:                    ['sourcezone', 'source_zone'],
+        to:                      ['destinationzone', 'destzone'],
+        source:                  ['sourceAdr', 'source_adr'],
+        destination:             ['destAdr', 'destination_adr'],
+        service:                 'any',
+        nat_type:                'ipv4',
+      },
+      xml: '<entry name="Test NAT Policy 12">
+              <source-translation>
+                <dynamic-ip-and-port>
+                  <interface-address>
+                    <interface>tunnel.10</interface>
+                  </interface-address>
+                </dynamic-ip-and-port>
+              </source-translation>
+              <to>
+                <member>destinationzone</member>
+                <member>destzone</member>
+              </to>
+              <from>
+                <member>sourcezone</member>
+                <member>source_zone</member>
+              </from>
+              <source>
+                <member>sourceAdr</member>
+                <member>source_adr</member>
+              </source>
+              <destination>
+                <member>destAdr</member>
+                <member>destination_adr</member>
+              </destination>
+              <service>any</service>
+              <nat-type>ipv4</nat-type>
             </entry>',
     },
   ]

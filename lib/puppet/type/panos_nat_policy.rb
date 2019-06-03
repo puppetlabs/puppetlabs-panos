@@ -109,12 +109,12 @@ The size of the address range is limited by the type of address pool:
 DESC
       xpath: 'local-name(source-translation/*[1])',
     },
-    SAT_interface: {
+    sat_interface: {
       type:  'Optional[String]',
       desc:  'The interface used in SAT',
       xpath: 'source-translation/*/interface-address/interface/text()',
     },
-    SAT_interface_ip: {
+    sat_interface_ip: {
       type:  'Optional[String]',
       desc:  'The interface used in SAT',
       xpath: 'source-translation/*/interface-address/ip/text()',
