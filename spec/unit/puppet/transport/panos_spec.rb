@@ -27,17 +27,75 @@ RSpec.describe Puppet::Transport do
     let(:device_response) do
       '<response status="success">
         <result>
-          <sw-version>7.1.0</sw-version>
-          <multi-vsys>off</multi-vsys>
-          <model>PA-VM</model>
+          <system>
+            <hostname>PA-VM</hostname>
+            <ip-address>192.168.122.254</ip-address>
+            <public-ip-address>unknown</public-ip-address>
+            <netmask>255.255.255.0</netmask>
+            <default-gateway>192.168.122.1</default-gateway>
+            <is-dhcp>yes</is-dhcp>
+            <ipv6-address>fd03:a7d:d814:8389:1:2:3:4</ipv6-address>
+            <ipv6-link-local-address>fe80::5054:ff:fe68:eb58/64</ipv6-link-local-address><ipv6-default-gateway/>
+            <mac-address>52:54:00:68:eb:58</mac-address>
+            <time>Tue May 28 15:35:35 2019
+            </time>
+            <uptime>0 days, 7:36:01</uptime>
+            <devicename>PA-VM</devicename>
+            <family>vm</family>
+            <model>PA-VM</model>
+            <serial>123456</serial>
+            <vm-mac-base>BA:DB:EE:FB:AD:00</vm-mac-base>
+            <vm-mac-count>255</vm-mac-count>
+            <vm-uuid>70602111-DCA5-49CF-A677-9E663B693DE2</vm-uuid>
+            <vm-cpuid>KVM:E3060500FFFB8B0F</vm-cpuid>
+            <vm-license>none</vm-license>
+            <vm-mode>KVM</vm-mode>
+            <cloud-mode>non-cloud</cloud-mode>
+            <sw-version>8.1.3</sw-version>
+            <global-protect-client-package-version>0.0.0</global-protect-client-package-version>
+            <app-version>769-4439</app-version>
+            <app-release-date/>
+            <av-version>0</av-version>
+            <av-release-date/>
+            <threat-version>0</threat-version>
+            <threat-release-date/>
+            <wf-private-version>0</wf-private-version>
+            <wf-private-release-date>unknown</wf-private-release-date>
+            <url-db>paloaltonetworks</url-db>
+            <wildfire-version>0</wildfire-version>
+            <wildfire-release-date/>
+            <url-filtering-version>0000.00.00.000</url-filtering-version>
+            <global-protect-datafile-version>unknown</global-protect-datafile-version>
+            <global-protect-datafile-release-date>unknown</global-protect-datafile-release-date>
+            <global-protect-clientless-vpn-version>0</global-protect-clientless-vpn-version>
+            <global-protect-clientless-vpn-release-date/>
+            <logdb-version>8.1.8</logdb-version>
+            <platform-family>vm</platform-family>
+            <vpn-disable-mode>off</vpn-disable-mode>
+            <multi-vsys>off</multi-vsys>
+            <operational-mode>normal</operational-mode>
+          </system>
         </result>
       </response>'
     end
     let(:fact_hash) do
       {
+        'networking' => {
+          'hostname' => 'PA-VM',
+          'ip' => '192.168.122.254',
+          'ip6' => 'fd03:a7d:d814:8389:1:2:3:4',
+          'mac' => '52:54:00:68:eb:58',
+          'netmask' => '255.255.255.0',
+        },
+        'hostname' => 'PA-VM',
         'operatingsystem' => 'PA-VM',
-        'operatingsystemrelease' => '7.1.0',
+        'operatingsystemrelease' => '8.1.3',
         'multi-vsys' => 'off',
+        'serialnumber' => '123456',
+        'uptime' => '0 days, 7:36:01',
+        'system_uptime' => {
+          'uptime' => '0 days, 7:36:01',
+        },
       }
     end
 
@@ -95,7 +153,7 @@ RSpec.describe Puppet::Transport do
       describe '#facts' do
         context 'when the response returns valid data' do
           it 'parses device facts' do
-            expect(api).to receive(:request).with('version').and_return(REXML::Document.new(device_response))
+            expect(api).to receive(:request).with('op', cmd: '<show><system><info/></system></show>').and_return(REXML::Document.new(device_response))
             expect(transport.facts(context)).to eq(fact_hash)
           end
         end
@@ -198,7 +256,7 @@ RSpec.describe Puppet::Transport do
         stub_request(:get, 'https://www.example.com/api/?password=password&type=keygen&user=admin')
           .to_return(status: 200, body: "<response status='success'><result><key>SOMEKEY</key></result></response>")
 
-        stub_request(:get, 'https://www.example.com/api/?key=SOMEKEY&type=version')
+        stub_request(:get, 'https://www.example.com/api/?cmd=%3Cshow%3E%3Csystem%3E%3Cinfo/%3E%3C/system%3E%3C/show%3E&key=SOMEKEY&type=op')
           .to_return(status: 200, body: device_response)
 
         expect(transport.facts(context)).to eq(fact_hash)

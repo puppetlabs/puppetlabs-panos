@@ -24,20 +24,42 @@ module Puppet::Transport
 
     def fetch_device_facts(context)
       context.debug('Retrieving PANOS Device Facts')
-      # https://<firewall>/api/?key=apikey&type=version
-      api.request('version')
+      # https://<firewall>/api/?type=op&cmd=<show><system><info></info></system></show>
+      api.request('op', cmd: '<show><system><info/></system></show>')
     end
 
     def parse_device_facts(response)
-      facts = {}
+      # rubocop:disable Style/StringLiterals
+      facts = { "networking" => {} }
+      # rubocop:enable Style/StringLiterals
 
-      model = response.elements['/response/result/model'].text
-      version = response.elements['/response/result/sw-version'].text
-      vsys = response.elements['/response/result/multi-vsys'].text
+      hostname = response.elements['/response/result/system/hostname'].text
+      ip = response.elements['/response/result/system/ip-address'].text
+      ip6 = response.elements['/response/result/system/ipv6-address'].text
+      mac = response.elements['/response/result/system/mac-address'].text
+      model = response.elements['/response/result/system/model'].text
+      netmask = response.elements['/response/result/system/netmask'].text
+      serial = response.elements['/response/result/system/serial'].text
+      uptime = response.elements['/response/result/system/uptime'].text
+      version = response.elements['/response/result/system/sw-version'].text
+      vsys = response.elements['/response/result/system/multi-vsys'].text
 
+      if hostname
+        facts['hostname'] = hostname
+        facts['networking']['hostname'] = hostname
+      end
+      facts['networking']['ip'] = ip if ip
+      facts['networking']['ip6'] = ip6 if ip6
+      facts['networking']['mac'] = mac if mac
+      facts['networking']['netmask'] = netmask if netmask
       facts['operatingsystem'] = model if model
       facts['operatingsystemrelease'] = version if version
       facts['multi-vsys'] = vsys if vsys
+      facts['serialnumber'] = serial if serial
+      if uptime
+        facts['uptime'] = uptime
+        facts['system_uptime'] = { 'uptime' => uptime }
+      end
       facts
     end
 
