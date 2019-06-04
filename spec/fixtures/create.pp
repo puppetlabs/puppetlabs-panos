@@ -443,7 +443,7 @@ panos_static_route {
   'full example VR/route two':
     ensure          => 'present',
     bfd_profile     => 'default',
-    metric          => 200,
+    metric          => '200',
     admin_distance  => 15,
     destination     => '10.9.0.0/16',
     nexthop_type    => 'ip-address',
@@ -461,7 +461,7 @@ panos_static_route {
     ensure          => 'present',
     bfd_profile     => 'None',
     metric          => 300,
-    admin_distance  => 15,
+    admin_distance  => '15',
     destination     => '10.9.0.0/16',
     nexthop_type    => 'next-vr',
     nexthop         => 'default',
@@ -477,8 +477,8 @@ panos_static_route {
   'full example VR/route four':
     ensure          => 'present',
     bfd_profile     => 'None',
-    metric          => 300,
-    admin_distance  => 15,
+    metric          => '300',
+    admin_distance  => '15',
     destination     => '10.11.0.0/16',
     nexthop_type    => 'next-vr',
     nexthop         => 'default',
@@ -569,7 +569,7 @@ if $::facts['operatingsystemrelease'] == '8.1.0' {
   Panos_ipv6_static_route['full example VR/ipv6 route one'] {
     failure_condition => 'any',
     enable            => true,
-    hold_time         => 7,
+    hold_time         => '7',
   }
 }
 

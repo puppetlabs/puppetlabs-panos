@@ -594,4 +594,67 @@ EOF
       end
     end
   end
+
+  describe '#canonicalize(_context, resources' do
+    context 'when resource values are passed as strings' do
+      let(:resources) do
+        [{
+          hold_time: '15',
+          metric: '5',
+          admin_distance: '25',
+        }]
+      end
+      let(:canonicalized_resources) do
+        [{
+          hold_time: 15,
+          metric: 5,
+          admin_distance: 25,
+        }]
+      end
+
+      it 'converts them to integers' do
+        expect(provider.canonicalize(context, resources)).to eq(canonicalized_resources)
+      end
+    end
+    context 'when resource values are passed as nil' do
+      let(:resources) do
+        [{
+          hold_time: nil,
+          metric: nil,
+          admin_distance: nil,
+        }]
+      end
+      let(:canonicalized_resources) do
+        [{
+          hold_time: nil,
+          metric: nil,
+          admin_distance: nil,
+        }]
+      end
+
+      it 'does nothing' do
+        expect(provider.canonicalize(context, resources)).to eq(canonicalized_resources)
+      end
+    end
+    context 'when resource values are passed as integers' do
+      let(:resources) do
+        [{
+          hold_time: 2,
+          metric: 500,
+          admin_distance: 1000,
+        }]
+      end
+      let(:canonicalized_resources) do
+        [{
+          hold_time: 2,
+          metric: 500,
+          admin_distance: 1000,
+        }]
+      end
+
+      it 'does nothing' do
+        expect(provider.canonicalize(context, resources)).to eq(canonicalized_resources)
+      end
+    end
+  end
 end
