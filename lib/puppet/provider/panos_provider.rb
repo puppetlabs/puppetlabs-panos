@@ -22,11 +22,13 @@ class Puppet::Provider::PanosProvider < Puppet::ResourceApi::SimpleProvider
   def create(context, name, should)
     validate_should(should) if defined? validate_should
     context.transport.set_config(context.type.definition[:base_xpath], xml_from_should(name, should))
+    context.transport.move(context.type.definition[:base_xpath], name, should[:insert_after]) unless should[:insert_after].nil?
   end
 
   def update(context, name, should)
     validate_should(should) if defined? validate_should
     context.transport.edit_config(context.type.definition[:base_xpath] + "/entry[@name='#{name}']", xml_from_should(name, should))
+    context.transport.move(context.type.definition[:base_xpath], name, should[:insert_after]) unless should[:insert_after].nil?
   end
 
   def delete(context, name)

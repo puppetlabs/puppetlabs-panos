@@ -195,8 +195,24 @@ This is useful when you have defined many policies and want to view those that a
 DESC
       xpath_array: 'tag/member/text()',
     },
+    insert_after: {
+      type: 'Optional[String]',
+      desc: <<DESC,
+Specifies where the rule should be inserted.
+
+* If specified with an empty string, the rule will be inserted at the TOP.
+  NOTE: Only one rule should be set to top
+* If a rule name is specified, the rule will be inserted after the given rule.
+* If this attribute is omitted, the rule will be added at the bottom.
+  NOTE: Rules cannot be moved to the bottom once created. Instead specify the rule name to insert after.
+DESC
+      xpath: 'preceding-sibling::entry[1]/@name',
+    },
   },
   autobefore: {
     panos_commit: 'commit',
+  },
+  autorequire: {
+    panos_nat_policy: '$insert_after',
   },
 )

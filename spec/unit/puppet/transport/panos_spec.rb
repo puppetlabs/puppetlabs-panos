@@ -184,6 +184,52 @@ RSpec.describe Puppet::Transport do
         end
       end
 
+      describe '#move' do
+        let(:xpath) { '/some/xpath' }
+        let(:name) { 'wibble' }
+        let(:xmlobj) {  REXML::Document.new(xml) }
+
+        context 'when a `dst` is an empty string' do
+          let(:dst) { '' }
+
+          context 'when entry is already at the top' do
+            let(:xml) { '<response status="success"><result /></response>' }
+
+            it 'does not request a move' do
+              expect(api).to receive(:request)
+                .with('config', action: 'get', xpath: xpath + "/entry[@name='#{name}']/preceding-sibling::entry[1]/@name")
+                .and_return(xmlobj)
+              expect(api).not_to receive(:request).with('config', action: 'move', xpath: xpath + "/entry[@name='#{name}']", where: 'top')
+              transport.move(xpath, name, dst)
+            end
+          end
+
+          context 'when entry is NOT at the top' do
+            let(:xml) { '<response status="success"><result count="1"><entry /></result></response>' }
+
+            it 'requests a move' do
+              expect(api).to receive(:request)
+                .with('config', action: 'get', xpath: xpath + "/entry[@name='#{name}']/preceding-sibling::entry[1]/@name")
+                .and_return(xmlobj)
+              expect(api).to receive(:request).with('config', action: 'move', xpath: xpath + "/entry[@name='#{name}']", where: 'top')
+
+              transport.move(xpath, name, dst)
+            end
+          end
+        end
+        context 'when `dst` contains a rule name' do
+          let(:dst) { 'foo' }
+
+          it 'moves the entry to the destination' do
+            expect(api).not_to receive(:request)
+              .with('config', action: 'get', xpath: xpath + "/entry[@name='#{name}']/preceding-sibling::entry[1]/@name")
+            expect(api).to receive(:request).with('config', action: 'move', xpath: xpath + "/entry[@name='#{name}']", where: 'after', dst: dst)
+
+            transport.move(xpath, name, dst)
+          end
+        end
+      end
+
       describe '#import(file_path, category)' do
         let(:file_path) { '/some/file/path/file.txt' }
         let(:category) { 'foo' }

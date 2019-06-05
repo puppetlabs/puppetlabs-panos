@@ -87,6 +87,23 @@ module Puppet::Transport
       api.request('config', action: 'delete', xpath: xpath)
     end
 
+    def move(xpath, name, dst)
+      if dst.empty?
+        # perform a check to see if we are already top. PANOS throws an exception if the item is already there
+        sibling = get_config(xpath + "/entry[@name='#{name}']/preceding-sibling::entry[1]/@name")
+        # https://<firewall>/api/?key=apikey&type=config&action=move&xpath=xpath-value&where=top
+        if sibling.elements['/response/result'].attributes.key?('count') &&
+           (sibling.elements['/response/result'].attributes['count'].to_i > 0)
+          Puppet.debug("moving #{name}")
+          api.request('config', action: 'move', xpath: xpath + "/entry[@name='#{name}']", where: 'top')
+        end
+      else
+        Puppet.debug("moving #{name}")
+        # https://<firewall>/api/?key=apikey&type=config&action=move&xpath=xpath-value&where=after&dst=<dst>
+        api.request('config', action: 'move', xpath: xpath + "/entry[@name='#{name}']", where: 'after', dst: dst)
+      end
+    end
+
     def import(file_path, category)
       Puppet.debug("Importing #{category}")
       # https://<firewall>/api/?key=apikey&type=import&category=category

@@ -3500,6 +3500,7 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
         name:               'anti_virus_profile',
         profile_type:       'none',
         anti_virus_profile: nil,
+        rule_type:          'universal',
       },
     },
     {
@@ -3539,6 +3540,7 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
         name:                   'url_filtering_profile',
         profile_type:           'none',
         url_filtering_profile:  nil,
+        rule_type:              'universal',
       },
     },
     {
@@ -3578,6 +3580,7 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
         name:                   'data_filtering_profile',
         profile_type:           'none',
         data_filtering_profile: nil,
+        rule_type:              'universal',
       },
     },
     {
@@ -3617,6 +3620,7 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
         name:                   'file_blocking_profile',
         profile_type:           'none',
         file_blocking_profile:  nil,
+        rule_type:        'universal',
       },
     },
     {
@@ -3656,6 +3660,7 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
         name:             'spyware_profile',
         profile_type:     'none',
         spyware_profile:  nil,
+        rule_type:        'universal',
       },
     },
     {
@@ -3695,6 +3700,7 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
         name:                   'vulnerability_profile',
         profile_type:           'none',
         vulnerability_profile:  nil,
+        rule_type:              'universal',
       },
     },
     {
@@ -3745,6 +3751,19 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
         name:                       'wildfire_analysis_profile',
         profile_type:               'none',
         wildfire_analysis_profile:  nil,
+        rule_type:                  'universal',
+      },
+    },
+    {
+      desc: 'insert_after is nil.',
+      entry:  {
+        name:             'entry_at_top',
+        insert_after:     nil,
+      },
+      munged_entry: {
+        name:             'entry_at_top',
+        insert_after:     '',
+        rule_type:        'universal',
       },
     },
   ]

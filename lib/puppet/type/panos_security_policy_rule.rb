@@ -299,8 +299,24 @@ DESC
       desc:  'Specify if the security policy rule should be disabled.',
       xpath: 'disabled/text()',
     },
+    insert_after: {
+      type: 'Optional[String]',
+      desc: <<DESC,
+Specifies where the rule should be inserted.
+
+* If specified with an empty string, the rule will be inserted at the TOP.
+  NOTE: Only one rule should be set to top
+* If a rule name is specified, the rule will be inserted after the given rule.
+* If this attribute is omitted, the rule will be added at the bottom.
+  NOTE: Rules cannot be moved to the bottom once created. Instead specify the rule name to insert after.
+DESC
+      xpath: 'preceding-sibling::entry[1]/@name',
+    },
   },
   autobefore: {
     panos_commit: 'commit',
+  },
+  autorequire: {
+    panos_security_policy_rule: '$insert_after',
   },
 )

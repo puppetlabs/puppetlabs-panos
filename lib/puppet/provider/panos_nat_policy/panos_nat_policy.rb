@@ -8,6 +8,9 @@ class Puppet::Provider::PanosNatPolicy::PanosNatPolicy < Puppet::Provider::Panos
     if entry.key?(:source_translation_type) && entry[:source_translation_type].nil?
       entry[:source_translation_type] = 'none'
     end
+    if entry.key?(:insert_after) && entry[:insert_after].nil?
+      entry[:insert_after] = ''
+    end
     entry
   end
 

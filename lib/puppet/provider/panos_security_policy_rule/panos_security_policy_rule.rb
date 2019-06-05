@@ -30,6 +30,9 @@ class Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRule < Puppe
       end
     end
     entry[:rule_type] = 'universal' if entry[:rule_type].nil?
+    if entry.key?(:insert_after) && entry[:insert_after].nil?
+      entry[:insert_after] = ''
+    end
     entry
   end
 

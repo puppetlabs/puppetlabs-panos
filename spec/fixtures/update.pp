@@ -229,7 +229,8 @@ panos_tag {
 panos_nat_policy {
   'minimal':
     ensure => 'present',
-    to => ['included lists'];
+    to => ['included lists'],
+    insert_after => '';
   'FullTestNATPolicy':
       ensure                         => 'present',
       source_translation_type        => 'dynamic-ip',
@@ -245,7 +246,8 @@ panos_nat_policy {
       destination                    => ['destination_address'],
       service                        => 'source port',
       # destination_interface        => 'vlan.2',
-      tags                           => ['Test Tag'];
+      tags                           => ['Test Tag'],
+      insert_after                   => 'StaticIPSATPolicy';
   'StaticIPSATPolicy':
       ensure                           => 'present',
       source_translation_type          => 'static-ip',
@@ -273,12 +275,14 @@ panos_nat_policy {
       service                 => 'any',
       source                  => ['source_address'],
       destination             => ['destination_address'],
-      source_translation_type => 'none';
+      source_translation_type => 'none',
+      insert_after            => 'DynamicIPandPortPolicy';
 }
 
 panos_security_policy_rule  {
   'minimal':
-    ensure => 'present';
+    ensure => 'present',
+    insert_after => '';
   'description':
     ensure      => 'present',
     description => 'This is still managed by Puppet.';
@@ -287,7 +291,8 @@ panos_security_policy_rule  {
     rule_type => 'intrazone';
   'intrazone':
     ensure    => 'present',
-    rule_type => 'universal';
+    rule_type => 'universal',
+    insert_after => 'interzone';
   'interzone':
     ensure    => 'present',
     rule_type => 'universal';
