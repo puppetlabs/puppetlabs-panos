@@ -60,11 +60,13 @@ There are two valid types of credential files:
   host: 10.0.10.20
   user: admin
   password: admin
+  ssl: false
   ```
 * (b) A file containing the host and an API key obtained from the device, for example:
   ```
   host: 10.0.10.20
   apikey: LUFRPT10cHhRNXMyR2wrYW1MSzg5cldhNElodmVkL1U9OEV1cGY5ZjJyc2xGL1Z4Qk9TNFM2dz09
+  ssl: false
   ```
 
 To obtain an API key for the device, it is possible to use the `panos::apikey` task. Before running this task, install the module on your machine, along with [Puppet Bolt](https://puppet.com/docs/bolt/latest/bolt_installing.html). When complete, execute the following command:
@@ -85,6 +87,7 @@ nodes:
         remote-transport: panos
         user: admin
         password: admin
+        ssl: false
 ```
 
 The `--modulepath` param can be retrieved by typing `puppet config print modulepath`.
@@ -97,7 +100,7 @@ This will sign the certificate and set up the device for Puppet.
 
 For more information, see the [`puppet device` documentation](https://puppet.com/docs/puppet/5.5/puppet_device.html)
 
-To get more practice using PANOS, try out the [hands-on labs](https://github.com/puppetlabs/puppetlabs-panos/tree/master/docs). 
+To get more practice using PANOS, try out the [hands-on labs](https://github.com/puppetlabs/puppetlabs-panos/tree/master/docs).
 
 ### SSL Certificate Verification
 
