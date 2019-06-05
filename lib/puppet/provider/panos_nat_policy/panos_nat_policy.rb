@@ -4,6 +4,7 @@ require_relative '../panos_provider'
 class Puppet::Provider::PanosNatPolicy::PanosNatPolicy < Puppet::Provider::PanosProvider
   def munge(entry)
     entry[:bi_directional] = string_to_bool(entry[:bi_directional]) unless entry[:bi_directional].nil?
+    entry[:nat_type] = 'ipv4' if entry[:nat_type].nil?
     if entry.key?(:source_translation_type) && entry[:source_translation_type].nil?
       entry[:source_translation_type] = 'none'
     end

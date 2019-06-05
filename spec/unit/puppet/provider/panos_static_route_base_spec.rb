@@ -86,8 +86,8 @@ RSpec.describe Puppet::Provider::PanosStaticRouteBase do
           nexthop_type: 'ip-address',
           bfd_profile: 'newbfd',
           interface: 'vlan.1',
-          metric: '10',
-          admin_distance: '15',
+          metric: 10,
+          admin_distance: 15,
           destination: '10.7.4.0/32',
           no_install: true,
           vr_name: 'new router',
@@ -120,8 +120,8 @@ RSpec.describe Puppet::Provider::PanosStaticRouteBase do
           nexthop: '2001:0dc8::/128',
           interface: 'ethernet1/8',
           bfd_profile: 'default',
-          metric: '300',
-          admin_distance: '10',
+          metric: 300,
+          admin_distance: 10,
           destination: '2001::/16',
           no_install: false,
           vr_name: 'new router',
@@ -151,8 +151,8 @@ RSpec.describe Puppet::Provider::PanosStaticRouteBase do
           route: 'test route 2',
           nexthop_type: 'discard',
           bfd_profile: 'None',
-          metric: '10',
-          admin_distance: '15',
+          metric: 10,
+          admin_distance: 15,
           destination: '10.7.4.0/32',
           no_install: false,
           vr_name: 'new router',
@@ -181,8 +181,8 @@ RSpec.describe Puppet::Provider::PanosStaticRouteBase do
           nexthop: 'next vr',
           nexthop_type: 'next-vr',
           bfd_profile: 'None',
-          metric: '10',
-          admin_distance: '15',
+          metric: 10,
+          admin_distance: 15,
           destination: '10.7.4.0/32',
           no_install: false,
           vr_name: 'new router',
@@ -211,8 +211,8 @@ RSpec.describe Puppet::Provider::PanosStaticRouteBase do
           nexthop_type: 'none',
           bfd_profile: 'None',
           interface: 'vlan.1',
-          metric: '10',
-          admin_distance: '15',
+          metric: 10,
+          admin_distance: 15,
           destination: '10.7.4.0/32',
           no_install: false,
           vr_name: 'new router',
@@ -239,14 +239,14 @@ RSpec.describe Puppet::Provider::PanosStaticRouteBase do
           nexthop_type: 'none',
           bfd_profile: 'None',
           interface: 'vlan.1',
-          metric: '10',
-          admin_distance: '15',
+          metric: 10,
+          admin_distance: 15,
           destination: '10.7.4.0/32',
           no_install: false,
           path_monitoring: true,
           enable: true,
           failure_condition: 'any',
-          hold_time: '2',
+          hold_time: 2,
           vr_name: 'new router',
         },
         xml: '<entry name="test route 4">
@@ -276,14 +276,14 @@ RSpec.describe Puppet::Provider::PanosStaticRouteBase do
           nexthop_type: 'none',
           bfd_profile: 'None',
           interface: 'vlan.1',
-          metric: '10',
-          admin_distance: '15',
+          metric: 10,
+          admin_distance: 15,
           destination: '10.7.4.0/32',
           no_install: false,
           path_monitoring: true,
           enable: false,
           failure_condition: 'any',
-          hold_time: '2',
+          hold_time: 2,
           vr_name: 'new router',
         },
         xml: '<entry name="test route 4">
@@ -312,14 +312,14 @@ RSpec.describe Puppet::Provider::PanosStaticRouteBase do
           nexthop_type: 'none',
           bfd_profile: 'None',
           interface: 'vlan.1',
-          metric: '10',
-          admin_distance: '15',
+          metric: 10,
+          admin_distance: 15,
           destination: '10.7.4.0/32',
           no_install: false,
           path_monitoring: true,
           enable: false,
           failure_condition: 'any',
-          hold_time: '2',
+          hold_time: 2,
           route_type: 'unicast',
           vr_name: 'new router',
         },
@@ -436,8 +436,8 @@ EOF
           nexthop_type: 'discard',
           bfd_profile: 'None',
           interface: nil,
-          metric: '25',
-          admin_distance: '15',
+          metric: 25,
+          admin_distance: 15,
           destination: '10.9.0.1/32',
           no_install: false,
           vr_name: 'example VR',
@@ -591,6 +591,69 @@ EOF
         expect(typedef).to receive(:definition).and_return(mystruct)
         expect(transport).to receive(:delete_config).with(expected_path)
         provider.delete(context, namevars)
+      end
+    end
+  end
+
+  describe '#canonicalize(_context, resources' do
+    context 'when resource values are passed as strings' do
+      let(:resources) do
+        [{
+          hold_time: '15',
+          metric: '5',
+          admin_distance: '25',
+        }]
+      end
+      let(:canonicalized_resources) do
+        [{
+          hold_time: 15,
+          metric: 5,
+          admin_distance: 25,
+        }]
+      end
+
+      it 'converts them to integers' do
+        expect(provider.canonicalize(context, resources)).to eq(canonicalized_resources)
+      end
+    end
+    context 'when resource values are passed as nil' do
+      let(:resources) do
+        [{
+          hold_time: nil,
+          metric: nil,
+          admin_distance: nil,
+        }]
+      end
+      let(:canonicalized_resources) do
+        [{
+          hold_time: nil,
+          metric: nil,
+          admin_distance: nil,
+        }]
+      end
+
+      it 'does nothing' do
+        expect(provider.canonicalize(context, resources)).to eq(canonicalized_resources)
+      end
+    end
+    context 'when resource values are passed as integers' do
+      let(:resources) do
+        [{
+          hold_time: 2,
+          metric: 500,
+          admin_distance: 1000,
+        }]
+      end
+      let(:canonicalized_resources) do
+        [{
+          hold_time: 2,
+          metric: 500,
+          admin_distance: 1000,
+        }]
+      end
+
+      it 'does nothing' do
+        expect(provider.canonicalize(context, resources)).to eq(canonicalized_resources)
       end
     end
   end

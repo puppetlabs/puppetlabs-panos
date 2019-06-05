@@ -19,6 +19,7 @@ RSpec.describe Puppet::Provider::PanosNatPolicy::PanosNatPolicy do
         {
           name: 'foo',
           bi_directional: out_value,
+          nat_type: 'ipv4',
         }
       end
 
@@ -46,6 +47,23 @@ RSpec.describe Puppet::Provider::PanosNatPolicy::PanosNatPolicy do
         {
           name: 'foo',
           source_translation_type: 'none',
+          nat_type: 'ipv4',
+        }
+      end
+
+      it { expect(provider.munge(entry)).to eq(munged_entry) }
+    end
+    context 'when :nat_type is nil' do
+      let(:entry) do
+        {
+          name: 'foo',
+          nat_type: nil,
+        }
+      end
+      let(:munged_entry) do
+        {
+          name: 'foo',
+          nat_type: 'ipv4',
         }
       end
 

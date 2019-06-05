@@ -12,6 +12,13 @@ class Puppet::Provider::PanosStaticRouteBase < Puppet::Provider::PanosProvider
     entry[:path_monitoring] = entry[:path_monitoring].nil? ? false : true
     entry[:nexthop_type] = 'none' if entry[:nexthop_type].nil?
     entry[:enable] = string_to_bool(entry[:enable])
+    entry[:admin_distance] = entry[:admin_distance].to_i unless entry[:admin_distance].nil?
+    entry[:hold_time] = entry[:hold_time].to_i unless entry[:hold_time].nil?
+    entry[:metric] =  if entry[:metric].nil?
+                        10
+                      else
+                        entry[:metric].to_i
+                      end
     entry
   end
 
@@ -95,5 +102,13 @@ class Puppet::Provider::PanosStaticRouteBase < Puppet::Provider::PanosProvider
 
   def delete(context, name)
     context.transport.delete_config(context.type.definition[:base_xpath] + "/entry[@name='#{name[:vr_name]}']/routing-table/#{@version_label}/static-route/entry[@name='#{name[:route]}']")
+  end
+
+  def canonicalize(_context, resources)
+    resources.each do |resource|
+      resource[:hold_time] = resource[:hold_time].to_i unless resource[:hold_time].nil?
+      resource[:metric] = resource[:metric].to_i unless resource[:metric].nil?
+      resource[:admin_distance] = resource[:admin_distance].to_i unless resource[:admin_distance].nil?
+    end
   end
 end

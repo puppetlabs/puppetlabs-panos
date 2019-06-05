@@ -71,15 +71,15 @@ DESC
       xpath:     'interface/text()',
     },
     metric: {
-      type:      'Optional[String]',
+      type:      'Variant[String, Integer[1, 65535]]',
       desc:      'Specify a valid metric for the static route (1 - 65535).',
       xpath:     'metric/text()',
+      default:   10,
     },
     admin_distance: {
-      type:      'String',
+      type:      'Optional[Variant[String,Integer[10, 240]]]',
       desc:      'Specify the administrative distance for the static route (10-240; default is 10).',
       xpath:     'admin-dist/text()',
-      default:   '10',
     },
     destination: {
       type:      'String',
@@ -142,7 +142,7 @@ DESC
       xpath:   'path-monitor/enable/text()',
     },
     hold_time: {
-      type:    'Optional[String]',
+      type:    'Optional[Variant[String, Integer[0, 1440]]]',
       desc:    <<DESC,
 Specify the number of minutes a downed path monitor must remain in Up stat:the path monitor evaluates all of its member monitored destinations and must remain Up before the firewall reinstalls the static route into the RIB. If the timer expires without the link going down or flapping, the link is deemed stable, path monitor can remain Up, and the firewall can add the static route back into the RIB.
 
