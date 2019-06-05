@@ -6,7 +6,7 @@ Puppet::ResourceApi.register_type(
 This type provides Puppet with the capabilities to manage IPv6 Static Routes on Palo Alto devices.
 EOS
   base_xpath: '/config/devices/entry/network/virtual-router',
-  features: ['remote_resource'],
+  features: ['remote_resource', 'canonicalize'],
   title_patterns: [
     {
       pattern: %r{^(?<vr_name>[^/]*)/(?<route>.*)$},
