@@ -3464,13 +3464,15 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
       },
     },
     {
-      desc: 'anti_virus_profile is nil.',
+      desc: 'anti_virus_profile is nil and profiles are set',
       entry:  {
         name:               'anti_virus_profile',
+        profile_type:       'profiles',
         anti_virus_profile: nil,
       },
       munged_entry: {
         name:               'anti_virus_profile',
+        profile_type:       'profiles',
         anti_virus_profile: 'none',
         rule_type:          'universal',
       },
@@ -3488,13 +3490,28 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
       },
     },
     {
-      desc: 'url_filtering_profile is nil.',
+      desc: 'anti_virus_profile is nil and profiles are none',
+      entry:  {
+        name:               'anti_virus_profile',
+        profile_type:       'none',
+        anti_virus_profile: nil,
+      },
+      munged_entry: {
+        name:               'anti_virus_profile',
+        profile_type:       'none',
+        anti_virus_profile: nil,
+      },
+    },
+    {
+      desc: 'url_filtering_profile is nil and profiles are set',
       entry:  {
         name:                   'url_filtering_profile',
+        profile_type:           'profiles',
         url_filtering_profile:  nil,
       },
       munged_entry: {
         name:                   'url_filtering_profile',
+        profile_type:           'profiles',
         url_filtering_profile:  'none',
         rule_type:              'universal',
       },
@@ -3512,13 +3529,28 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
       },
     },
     {
-      desc: 'data_filtering_profile is nil.',
+      desc: 'url_filtering_profile is nil and profiles are none',
+      entry:  {
+        name:                   'url_filtering_profile',
+        profile_type:           'none',
+        url_filtering_profile:  nil,
+      },
+      munged_entry: {
+        name:                   'url_filtering_profile',
+        profile_type:           'none',
+        url_filtering_profile:  nil,
+      },
+    },
+    {
+      desc: 'data_filtering_profile is nil and profiles are set',
       entry:  {
         name:                   'data_filtering_profile',
+        profile_type:           'profiles',
         data_filtering_profile: nil,
       },
       munged_entry: {
         name:                   'data_filtering_profile',
+        profile_type:           'profiles',
         data_filtering_profile: 'none',
         rule_type:              'universal',
       },
@@ -3536,13 +3568,28 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
       },
     },
     {
-      desc: 'file_blocking_profile is nil.',
+      desc: 'data_filtering_profile is nil and profiles are none',
+      entry:  {
+        name:                   'data_filtering_profile',
+        profile_type:           'none',
+        data_filtering_profile: nil,
+      },
+      munged_entry: {
+        name:                   'data_filtering_profile',
+        profile_type:           'none',
+        data_filtering_profile: nil,
+      },
+    },
+    {
+      desc: 'file_blocking_profile is nil and profiles are set',
       entry:  {
         name:                   'file_blocking_profile',
+        profile_type:           'profiles',
         file_blocking_profile:  nil,
       },
       munged_entry: {
         name:                   'file_blocking_profile',
+        profile_type:           'profiles',
         file_blocking_profile:  'none',
         rule_type:              'universal',
       },
@@ -3560,13 +3607,28 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
       },
     },
     {
-      desc: 'spyware_profile is nil.',
+      desc: 'file_blocking_profile is nil and profiles are none',
+      entry:  {
+        name:                   'file_blocking_profile',
+        profile_type:           'none',
+        file_blocking_profile:  nil,
+      },
+      munged_entry: {
+        name:                   'file_blocking_profile',
+        profile_type:           'none',
+        file_blocking_profile:  nil,
+      },
+    },
+    {
+      desc: 'spyware_profile is nil and profiles are set',
       entry:  {
         name:             'spyware_profile',
+        profile_type:     'profiles',
         spyware_profile:  nil,
       },
       munged_entry: {
         name:             'spyware_profile',
+        profile_type:     'profiles',
         spyware_profile:  'none',
         rule_type:        'universal',
       },
@@ -3584,13 +3646,28 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
       },
     },
     {
-      desc: 'vulnerability_profile is nil.',
+      desc: 'spyware_profile is nil and profiles are none',
+      entry:  {
+        name:             'spyware_profile',
+        profile_type:     'none',
+        spyware_profile:  nil,
+      },
+      munged_entry: {
+        name:             'spyware_profile',
+        profile_type:     'none',
+        spyware_profile:  nil,
+      },
+    },
+    {
+      desc: 'vulnerability_profile is nil and profiles are set',
       entry:  {
         name:                   'vulnerability_profile',
+        profile_type:           'profiles',
         vulnerability_profile:  nil,
       },
       munged_entry: {
         name:                   'vulnerability_profile',
+        profile_type:           'profiles',
         vulnerability_profile:  'none',
         rule_type:              'universal',
       },
@@ -3608,13 +3685,28 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
       },
     },
     {
-      desc: 'wildfire_analysis_profile is nil.',
+      desc: 'vulnerability_profile is nil and profiles are none',
+      entry:  {
+        name:                   'vulnerability_profile',
+        profile_type:           'none',
+        vulnerability_profile:  nil,
+      },
+      munged_entry: {
+        name:                   'vulnerability_profile',
+        profile_type:           'none',
+        vulnerability_profile:  nil,
+      },
+    },
+    {
+      desc: 'wildfire_analysis_profile is nil and profiles are set',
       entry:  {
         name:                       'wildfire_analysis_profile',
+        profile_type:               'profiles',
         wildfire_analysis_profile:  nil,
       },
       munged_entry: {
         name:                       'wildfire_analysis_profile',
+        profile_type:               'profiles',
         wildfire_analysis_profile:  'none',
         rule_type:                  'universal',
       },
@@ -3640,6 +3732,19 @@ RSpec.describe Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRul
       munged_entry: {
         name:       'rule_type',
         rule_type:  'universal',
+      },
+    },
+    {
+      desc: 'wildfire_analysis_profile is nil and profiles are none',
+      entry:  {
+        name:                       'wildfire_analysis_profile',
+        profile_type:               'none',
+        wildfire_analysis_profile:  nil,
+      },
+      munged_entry: {
+        name:                       'wildfire_analysis_profile',
+        profile_type:               'none',
+        wildfire_analysis_profile:  nil,
       },
     },
   ]

@@ -3,15 +3,26 @@ require_relative '../panos_provider'
 # Implementation for the panos_security_policy_rule type using the Resource API.
 class Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRule < Puppet::Provider::PanosProvider
   def munge(entry)
-    none_attrs = [:profile_type, :qos_type, :anti_virus_profile,
-                  :url_filtering_profile, :data_filtering_profile,
-                  :file_blocking_profile, :spyware_profile, :vulnerability_profile,
-                  :wildfire_analysis_profile]
+    none_attrs = [:profile_type, :qos_type]
+
     none_attrs.each do |attr|
       if entry.key?(attr) && entry[attr].nil?
         entry[attr] = 'none'
       end
     end
+
+    if entry[:profile_type] == 'profiles'
+      profile_attrs = [:anti_virus_profile, :url_filtering_profile, :data_filtering_profile,
+                       :file_blocking_profile, :spyware_profile, :vulnerability_profile,
+                       :wildfire_analysis_profile]
+
+      profile_attrs.each do |attr|
+        if entry.key?(attr) && entry[attr].nil?
+          entry[attr] = 'none'
+        end
+      end
+    end
+
     bool_attrs = [:icmp_unreachable, :log_start, :log_end, :disable_server_response_inspection, :negate_source, :negate_destination, :disable]
     bool_attrs.each do |attr|
       if entry.key? attr
