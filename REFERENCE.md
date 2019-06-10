@@ -32,7 +32,7 @@
 * [`apikey`](#apikey): Retrieve a PAN-OS apikey
 * [`commit`](#commit): Commit a candidate configuration to a firewall.
 * [`set_config`](#set_config): upload and/or apply a configuration to a firewall.
-* [`store_config`](#store_config): Retrieve the configuration running on the firewall.
+* [`store_config`](#store_config): Retrieve the configuration running on the firewall and save to local file.
 
 ## Classes
 
@@ -473,17 +473,17 @@ The interface used by the route, interfaces pulled from the virtual router this 
 
 ##### `metric`
 
-Data type: `Optional[String]`
+Data type: `Variant[String, Integer[1, 65535]]`
 
 Specify a valid metric for the static route (1 - 65535).
 
+Default value: 10
+
 ##### `admin_distance`
 
-Data type: `String`
+Data type: `Optional[Variant[String,Integer[10, 240]]]`
 
 Specify the administrative distance for the static route (10-240; default is 10).
-
-Default value: 10
 
 ##### `destination`
 
@@ -542,7 +542,7 @@ Note: can only be set on PAN-OS version 8.1.0.
 
 ##### `hold_time`
 
-Data type: `Optional[String]`
+Data type: `Optional[Variant[String, Integer[0, 1440]]]`
 
 Specify the number of minutes a downed path monitor must remain in Up stat:the path monitor evaluates all of its member monitored destinations and must remain Up before the firewall reinstalls the static route into the RIB. If the timer expires without the link going down or flapping, the link is deemed stable, path monitor can remain Up, and the firewall can add the static route back into the RIB.
 
@@ -679,13 +679,13 @@ The size of the address range is limited by the type of address pool:
 
 * None: Translation is not performed.
 
-##### `SAT_interface`
+##### `sat_interface`
 
 Data type: `Optional[String]`
 
 The interface used in SAT
 
-##### `SAT_interface_ip`
+##### `sat_interface_ip`
 
 Data type: `Optional[String]`
 
@@ -770,6 +770,18 @@ Data type: `Optional[Array[String]]`
 
 A policy tag is a keyword or phrase that allows you to sort or filter policies.
 This is useful when you have defined many policies and want to view those that are tagged with a particular keyword.
+
+##### `insert_after`
+
+Data type: `Optional[String]`
+
+Specifies where the rule should be inserted.
+
+* If specified with an empty string, the rule will be inserted at the TOP.
+  NOTE: Only one rule should be set to top
+* If a rule name is specified, the rule will be inserted after the given rule.
+* If this attribute is omitted, the rule will be added at the bottom.
+  NOTE: Rules cannot be moved to the bottom once created. Instead specify the rule name to insert after.
 
 #### Parameters
 
@@ -1180,6 +1192,18 @@ Data type: `Optional[Boolean]`
 
 Specify if the security policy rule should be disabled.
 
+##### `insert_after`
+
+Data type: `Optional[String]`
+
+Specifies where the rule should be inserted.
+
+* If specified with an empty string, the rule will be inserted at the TOP.
+  NOTE: Only one rule should be set to top
+* If a rule name is specified, the rule will be inserted after the given rule.
+* If this attribute is omitted, the rule will be added at the bottom.
+  NOTE: Rules cannot be moved to the bottom once created. Instead specify the rule name to insert after.
+
 #### Parameters
 
 The following parameters are available in the `panos_security_policy_rule` type.
@@ -1358,17 +1382,17 @@ The interface used by the route, interfaces pulled from the virtual router this 
 
 ##### `metric`
 
-Data type: `Optional[String]`
+Data type: `Variant[String, Integer[1, 65535]]`
 
-Specify a valid metric for the static route (1 - 65535).
+Specify a valid metric for the static route (1 - 65535; default is 10).
+
+Default value: 10
 
 ##### `admin_distance`
 
-Data type: `String`
+Data type: `Optional[Variant[String,Integer[10, 240]]]`
 
-Specify the administrative distance for the static route (10-240; default is 10).
-
-Default value: 10
+Specify the administrative distance for the static route (10-240).
 
 ##### `destination`
 
@@ -1427,7 +1451,7 @@ Note: can only be set on PAN-OS version 8.1.0.
 
 ##### `hold_time`
 
-Data type: `Optional[String]`
+Data type: `Optional[Variant[String, Integer[0, 1440]]]`
 
 Specify the number of minutes a downed path monitor must remain in Up stat:the path monitor evaluates all of its member monitored destinations and must remain Up before the firewall reinstalls the static route into the RIB. If the timer expires without the link going down or flapping, the link is deemed stable, path monitor can remain Up, and the firewall can add the static route back into the RIB.
 
@@ -1743,7 +1767,7 @@ true: upload and immediately apply the config. false: upload the config, without
 
 ### store_config
 
-Retrieve the configuration running on the firewall.
+Retrieve the configuration running on the firewall and save to local file.
 
 **Supports noop?** false
 
@@ -1753,5 +1777,5 @@ Retrieve the configuration running on the firewall.
 
 Data type: `String`
 
-The filename to save the configuration too
+The filename to save the configuration on Bolt host
 

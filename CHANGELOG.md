@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v1.2.0](https://github.com/puppetlabs/puppetlabs-panos/tree/v1.2.0) (2019-06-10)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-panos/compare/v1.1.0...v1.2.0)
+
+### Added
+
+- \(FM-8107\) Add `insert\_after` attribute for policy rule ordering [\#96](https://github.com/puppetlabs/puppetlabs-panos/pull/96) ([da-ar](https://github.com/da-ar))
+- \(FM-8111\) increase system facts [\#94](https://github.com/puppetlabs/puppetlabs-panos/pull/94) ([shermdog](https://github.com/shermdog))
+- \(FM-8104\) Add implicit default values [\#92](https://github.com/puppetlabs/puppetlabs-panos/pull/92) ([shermdog](https://github.com/shermdog))
+
+### Fixed
+
+- \(FM-8109\) Don't munge nil values unless profile\_type is set [\#97](https://github.com/puppetlabs/puppetlabs-panos/pull/97) ([da-ar](https://github.com/da-ar))
+- \(FM-8110\) fix panos\_nat\_policy source address translation [\#93](https://github.com/puppetlabs/puppetlabs-panos/pull/93) ([shermdog](https://github.com/shermdog))
+- \(FM-8097\) fix store\_config task metadata for Bolt and RSAPI transports [\#90](https://github.com/puppetlabs/puppetlabs-panos/pull/90) ([shermdog](https://github.com/shermdog))
+
 ## [v1.1.0](https://github.com/puppetlabs/puppetlabs-panos/tree/v1.1.0) (2019-04-26)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-panos/compare/1.0.0...v1.1.0)
