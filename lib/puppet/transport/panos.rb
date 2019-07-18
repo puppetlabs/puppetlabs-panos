@@ -222,7 +222,7 @@ module Puppet::Transport
       end
 
       def fingerprint_from_hexdigest(hexdigest)
-        hexdigest.tr(' ', '').scan(%r{..}).map { |s| s.upcase }.join(':')
+        hexdigest.tr(':', '').tr(' ', '').scan(%r{..}).map { |s| s.upcase }.join(':')
       end
 
       def http

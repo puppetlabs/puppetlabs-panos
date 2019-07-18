@@ -338,6 +338,13 @@ RSpec.describe Puppet::Transport do
       #       })
     end
 
+    describe '#fingerprint_from_hexdigest' do
+      it { expect(instance.fingerprint_from_hexdigest('fooo:da:ng:er')).to eq('FO:OO:DA:NG:ER') }
+      it { expect(instance.fingerprint_from_hexdigest('d0:0r')).to eq('D0:0R') }
+      it { expect(instance.fingerprint_from_hexdigest('Co oW')).to eq('CO:OW') }
+      it { expect(instance.fingerprint_from_hexdigest('FO:0D')).to eq('FO:0D') }
+    end
+
     describe '#fetch_apikey(user, password)' do
       context 'with valid user and password' do
         it 'fetches the API key' do
