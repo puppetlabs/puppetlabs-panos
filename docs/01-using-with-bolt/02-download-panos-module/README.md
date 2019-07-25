@@ -10,9 +10,10 @@ Use Bolt to download the [Puppet Palo Alto module](https://forge.puppet.com/pupp
 
 ```
 mod 'puppetlabs-panos', '1.0.0'
+mod 'puppetlabs-resource_api', '1.1.0'
 ```
 
-> Note: If you are familiar with Puppet, notice that it uses the same format as Puppet files.
+> Note: If you are familiar with Puppet, notice that it uses the same format as Puppet files. Also, this module is dependent on the [Resource API](https://forge.puppet.com/puppetlabs/resource_api), hence its inclusion here also.
 
 4. From the command line, install the module with Bolt:
 
