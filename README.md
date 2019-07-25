@@ -63,7 +63,7 @@ url file:////etc/puppetlabs/puppet/devices/firewall.example.com.conf
 
 Next, create a credentials file. See the [HOCON documentation](https://github.com/lightbend/config/blob/master/HOCON.md) for information on quoted/unquoted strings and connecting the device.
 
-There are two valid types of credential files:
+There are two valid types of credential files that can be placed in `/etc/puppetlabs/puppet/devices/firewall.example.com.conf`:
 
 * (a) A file containing the host, username and password in plain text, for example:
   ```
