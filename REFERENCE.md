@@ -5,8 +5,15 @@
 
 **Classes**
 
-* [`panos::agent`](#panosagent): This resource manages the `resource_api::agent` and the builder gem on an agent.
-* [`panos::server`](#panosserver): This resource manages the `resource_api::server` on the server.
+* [`panos`](#panos): This class calls the panos::install class.
+* [`panos::agent`](#panosagent): This class installs dependencies of this module into puppet agent
+* [`panos::install`](#panosinstall): This class installs dependencies of this module
+into the puppet agent, and/or the puppetserver service.
+* [`panos::install::agent`](#panosinstallagent): This class install dependencies of this module into puppet agent
+* [`panos::install::master`](#panosinstallmaster): This class installs dependencies of this module into puppetserver,
+and restarts the puppetserver service to activate.
+* [`panos::server`](#panosserver): This class installs dependencies of this module into puppetserver,
+and restarts the puppetserver service to activate.
 
 **Resource types**
 
@@ -36,25 +43,80 @@
 
 ## Classes
 
-### panos::agent
+### panos
 
-This resource manages the `resource_api::agent` and the builder gem on an agent.
+This class calls the panos::install class.
 
 #### Examples
 
-##### 
+##### Declaring the class
+
+```puppet
+include panos
+```
+
+### panos::agent
+
+This class installs dependencies of this module into puppet agent
+
+* **Note** Deprecated, use panos::install::agent
+
+#### Examples
+
+##### Declaring the class
 
 ```puppet
 include panos::agent
 ```
 
-### panos::server
+### panos::install
 
-This resource manages the `resource_api::server` on the server.
+This class installs dependencies of this module
+into the puppet agent, and/or the puppetserver service.
 
 #### Examples
 
-##### 
+##### Declaring the class
+
+```puppet
+include panos::install
+```
+
+### panos::install::agent
+
+This class install dependencies of this module into puppet agent
+
+#### Examples
+
+##### Declaring the class
+
+```puppet
+include panos::install::agent
+```
+
+### panos::install::master
+
+This class installs dependencies of this module into puppetserver,
+and restarts the puppetserver service to activate.
+
+#### Examples
+
+##### Declaring the class
+
+```puppet
+include panos::install::master
+```
+
+### panos::server
+
+This class installs dependencies of this module into puppetserver,
+and restarts the puppetserver service to activate.
+
+* **Note** Deprecated, use panos::install::master
+
+#### Examples
+
+##### Declaring the class
 
 ```puppet
 include panos::server

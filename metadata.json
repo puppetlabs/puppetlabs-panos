@@ -1,6 +1,6 @@
 {
   "name": "puppetlabs-panos",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "author": "Network Automation Team - contact David Schmitt <david.schmitt@puppet.com>",
   "summary": "Manage Palo Alto firewalls",
   "license": "Apache-2.0",
