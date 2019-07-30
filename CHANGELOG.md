@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v1.2.1](https://github.com/puppetlabs/puppetlabs-panos/tree/v1.2.1) (2019-07-29)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-panos/compare/v1.2.0...v1.2.1)
+
+### Fixed
+
+- \(maint\) fixing up the fingerprint hexdigest in the initialize [\#105](https://github.com/puppetlabs/puppetlabs-panos/pull/105) ([Thomas-Franklin](https://github.com/Thomas-Franklin))
+- Update README.md [\#89](https://github.com/puppetlabs/puppetlabs-panos/pull/89) ([kylehansel](https://github.com/kylehansel))
+
 ## [v1.2.0](https://github.com/puppetlabs/puppetlabs-panos/tree/v1.2.0) (2019-06-10)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-panos/compare/v1.1.0...v1.2.0)
