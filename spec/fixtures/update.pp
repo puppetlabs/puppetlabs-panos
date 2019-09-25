@@ -35,17 +35,17 @@ panos_address_group {
 
 panos_admin {
   'minimal':
-    ensure  =>  'present',
-    role    =>  'deviceadmin';
+    ensure =>  'present',
+    role   =>  'deviceadmin';
   'superreader':
-    ensure  =>  'present',
-    role    =>  'superreader';
+    ensure =>  'present',
+    role   =>  'superreader';
   'deviceadmin':
-    ensure  =>  'present',
-    role    =>  'deviceadmin';
+    ensure =>  'present',
+    role   =>  'deviceadmin';
   'devicereader':
-    ensure  =>  'present',
-    role    =>  'devicereader';
+    ensure =>  'present',
+    role   =>  'devicereader';
   'password_hash':
     ensure        =>  'present',
     password_hash =>  '$1$ulcyeqla$aRLxytbonTjxFMNWjjjOL0',
@@ -70,9 +70,9 @@ panos_admin {
 
 panos_service {
   'minimal':
-    ensure    => 'present',
-    protocol  => 'udp',
-    port      => '21';
+    ensure   => 'present',
+    protocol => 'udp',
+    port     => '21';
   'description':
     ensure      => 'present',
     port        => '220',
@@ -129,8 +129,8 @@ panos_service_group {
 
 panos_arbitrary_commands {
   'devices/entry/network/interface/ethernet':
-    ensure  => 'present',
-    xml     => '<ethernet>
+    ensure => 'present',
+    xml    => '<ethernet>
                   <entry name="ethernet1/1">
                     <layer2/>
                   </entry>
@@ -174,27 +174,27 @@ panos_arbitrary_commands {
 
 panos_zone {
   'tap':
-    ensure                     => 'present',
-    network                    => 'tap',
-    interfaces                 => ['ethernet1/6'];
+    ensure     => 'present',
+    network    => 'tap',
+    interfaces => ['ethernet1/6'];
   'virtual-wire':
-    ensure                     => 'present',
-    network                    => 'virtual-wire',
-    interfaces                 => ['ethernet1/4'];
+    ensure     => 'present',
+    network    => 'virtual-wire',
+    interfaces => ['ethernet1/4'];
   'layer2':
-    ensure                     => 'present',
-    network                    => 'layer2',
-    interfaces                 => ['ethernet1/7'];
+    ensure     => 'present',
+    network    => 'layer2',
+    interfaces => ['ethernet1/7'];
   'layer3':
-    ensure                     => 'present',
-    network                    => 'layer3',
-    interfaces                 => ['ethernet1/3', 'ethernet1/5'];
+    ensure     => 'present',
+    network    => 'layer3',
+    interfaces => ['ethernet1/3', 'ethernet1/5'];
   'included lists':
-    ensure                     => 'present',
-    include_list               => ['10.10.1.1', '192.168.1.1'];
+    ensure       => 'present',
+    include_list => ['10.10.1.1', '192.168.1.1'];
   'excluded lists':
-    ensure                     => 'present',
-    exclude_list               => ['10.10.1.1', '192.168.1.1'];
+    ensure       => 'present',
+    exclude_list => ['10.10.1.1', '192.168.1.1'];
   'user identification':
     ensure                     => 'present',
     enable_user_identification => false;
@@ -228,8 +228,8 @@ panos_tag {
 
 panos_nat_policy {
   'minimal':
-    ensure => 'present',
-    to => ['included lists'],
+    ensure       => 'present',
+    to           => ['included lists'],
     insert_after => '';
   'FullTestNATPolicy':
       ensure                         => 'present',
@@ -281,7 +281,7 @@ panos_nat_policy {
 
 panos_security_policy_rule  {
   'minimal':
-    ensure => 'present',
+    ensure       => 'present',
     insert_after => '';
   'description':
     ensure      => 'present',
@@ -290,8 +290,8 @@ panos_security_policy_rule  {
     ensure    => 'present',
     rule_type => 'intrazone';
   'intrazone':
-    ensure    => 'present',
-    rule_type => 'universal',
+    ensure       => 'present',
+    rule_type    => 'universal',
     insert_after => 'interzone';
   'interzone':
     ensure    => 'present',
@@ -368,29 +368,29 @@ panos_security_policy_rule  {
     profile_type => 'none';
     # group_profile => 'custom group profile';
   'other-settings':
-    ensure                              =>  'present',
-    description                         =>  'This is managed by Puppet.',
+    ensure                             =>  'present',
+    description                        =>  'This is managed by Puppet.',
     # schedule_profile  => 'custom schedule profile',
-    qos_type                            => 'none',
-    disable_server_response_inspection  =>  true;
+    qos_type                           => 'none',
+    disable_server_response_inspection =>  true;
   'ip-dscp-settings':
-    ensure                              =>  'present',
-    description                         =>  'This is managed by Puppet.',
-    qos_type                            => 'ip-dscp',
-    ip_dscp                             =>  'cs1',
-    disable_server_response_inspection  =>  true;
+    ensure                             =>  'present',
+    description                        =>  'This is managed by Puppet.',
+    qos_type                           => 'ip-dscp',
+    ip_dscp                            =>  'cs1',
+    disable_server_response_inspection =>  true;
   'ip-precedence-settings':
-    ensure                              =>  'present',
-    description                         =>  'This is managed by Puppet.',
-    qos_type                            =>  'ip-precedence',
-    ip_precedence                       =>  'cs1',
-    disable_server_response_inspection  =>  true;
+    ensure                             =>  'present',
+    description                        =>  'This is managed by Puppet.',
+    qos_type                           =>  'ip-precedence',
+    ip_precedence                      =>  'cs1',
+    disable_server_response_inspection =>  true;
 }
 
 panos_arbitrary_commands  {
   'devices/entry/vsys/entry/application-group':
-    ensure    => 'present',
-    xml       => '<application-group>
+    ensure => 'present',
+    xml    => '<application-group>
                     <entry name="Application Group">
                       <members>
                         <member>1c-enterprise</member>

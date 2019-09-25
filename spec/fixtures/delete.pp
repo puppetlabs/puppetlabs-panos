@@ -130,8 +130,8 @@ panos_service {
 
 panos_arbitrary_commands {
   'devices/entry/network/interface/ethernet':
-    ensure  => 'present',
-    xml     => '<ethernet/>';
+    ensure => 'present',
+    xml    => '<ethernet/>';
 }
 
 panos_zone {

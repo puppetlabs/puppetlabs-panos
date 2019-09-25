@@ -11,15 +11,14 @@ class Puppet::Provider::PanosDecryptionPolicyRule::PanosDecryptionPolicyRule < P
       end
     end
 
-
-    bool_attrs = [ :negate_source, :negate_destination, :disable]
+    bool_attrs = [:negate_source, :negate_destination, :disable]
     bool_attrs.each do |attr|
       if entry.key? attr
         entry[attr] = string_to_bool(entry[attr])
       end
     end
     entry[:type] = 'ssl-forward-proxy' if entry[:rule_type].nil?
-    #entry[:type] = '<' + entry[:type] + '/>'
+
     if entry.key?(:insert_after) && entry[:insert_after].nil?
       entry[:insert_after] = ''
     end

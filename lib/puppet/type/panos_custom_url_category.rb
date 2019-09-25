@@ -28,7 +28,7 @@ EOS
       type:         'Optional[Array[String]]',
       desc:         'One or more urls that form this category.',
       xpath_array:  'list/member/text()',
-    }
+    },
   },
   autobefore: {
     panos_commit: 'commit',

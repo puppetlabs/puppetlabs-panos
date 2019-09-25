@@ -1,4 +1,3 @@
-# coding: utf-8
 require 'puppet/resource_api'
 
 Puppet::ResourceApi.register_type(

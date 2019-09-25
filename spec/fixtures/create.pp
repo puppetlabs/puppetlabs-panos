@@ -2,8 +2,8 @@
 
 panos_address {
   'minimal':
-    ensure      => 'present',
-    ip_range    => '192.168.0.1-192.168.0.17';
+    ensure   => 'present',
+    ip_range => '192.168.0.1-192.168.0.17';
   'address-3':
     ip_range    => '192.168.0.1-192.168.0.17',
     description => '<eas&lt;yxss/>';
@@ -57,17 +57,17 @@ panos_arbitrary_commands  {
 
 panos_admin {
   'minimal':
-    ensure  =>  'present',
-    role    =>  'superuser';
+    ensure =>  'present',
+    role   =>  'superuser';
   'superreader':
-    ensure  =>  'present',
-    role    =>  'superreader';
+    ensure =>  'present',
+    role   =>  'superreader';
   'deviceadmin':
-    ensure  =>  'present',
-    role    =>  'deviceadmin';
+    ensure =>  'present',
+    role   =>  'deviceadmin';
   'devicereader':
-    ensure  =>  'present',
-    role    =>  'devicereader';
+    ensure =>  'present',
+    role   =>  'devicereader';
   'password_hash':
     ensure        =>  'present',
     password_hash =>  '$1$ulcyeqla$aRLxytbonTjxFMNW96UOL0',
@@ -90,8 +90,8 @@ panos_admin {
 
 panos_service {
   'minimal':
-    ensure    => 'present',
-    port      => '21';
+    ensure => 'present',
+    port   => '21';
   'description':
     ensure      => 'present',
     port        => '21',
@@ -148,8 +148,8 @@ panos_service_group {
 
 panos_arbitrary_commands {
   'devices/entry/network/interface/ethernet':
-    ensure  => 'present',
-    xml     => '<ethernet>
+    ensure => 'present',
+    xml    => '<ethernet>
                   <entry name="ethernet1/1">
                     <layer2/>
                   </entry>
@@ -185,27 +185,27 @@ panos_zone {
   'minimal':
     ensure                     => 'present';
   'tap':
-    ensure                     => 'present',
-    network                    => 'tap',
-    interfaces                 => ['ethernet1/6'];
+    ensure     => 'present',
+    network    => 'tap',
+    interfaces => ['ethernet1/6'];
   'virtual-wire':
-    ensure                     => 'present',
-    network                    => 'virtual-wire',
-    interfaces                 => ['ethernet1/2'];
+    ensure     => 'present',
+    network    => 'virtual-wire',
+    interfaces => ['ethernet1/2'];
   'layer2':
-    ensure                     => 'present',
-    network                    => 'layer2',
-    interfaces                 => ['ethernet1/1'];
+    ensure     => 'present',
+    network    => 'layer2',
+    interfaces => ['ethernet1/1'];
   'layer3':
-    ensure                     => 'present',
-    network                    => 'layer3',
-    interfaces                 => ['ethernet1/3', 'ethernet1/5'];
+    ensure     => 'present',
+    network    => 'layer3',
+    interfaces => ['ethernet1/3', 'ethernet1/5'];
   'included lists':
-    ensure                     => 'present',
-    include_list               => ['10.10.10.10', '192.168.1.1'];
+    ensure       => 'present',
+    include_list => ['10.10.10.10', '192.168.1.1'];
   'excluded lists':
-    ensure                     => 'present',
-    exclude_list               => ['10.10.10.10', '192.168.1.1'];
+    ensure       => 'present',
+    exclude_list => ['10.10.10.10', '192.168.1.1'];
   'user identification':
     ensure                     => 'present',
     enable_user_identification => true;
@@ -241,8 +241,8 @@ panos_tag {
 
 panos_nat_policy {
   'minimal':
-    ensure => 'present',
-    to => ['excluded lists'],
+    ensure       => 'present',
+    to           => ['excluded lists'],
     insert_after => '';
   'FullTestNATPolicy':
     ensure                         => 'present',
@@ -294,7 +294,7 @@ panos_nat_policy {
 
 panos_security_policy_rule  {
   'minimal':
-    ensure => 'present',
+    ensure       => 'present',
     insert_after => '';
   'description':
     ensure      => 'present',
@@ -303,12 +303,12 @@ panos_security_policy_rule  {
     ensure    => 'present',
     rule_type => 'universal';
   'intrazone':
-    ensure    => 'present',
-    rule_type => 'intrazone',
+    ensure       => 'present',
+    rule_type    => 'intrazone',
     insert_after => 'universal';
   'interzone':
-    ensure    => 'present',
-    rule_type => 'interzone',
+    ensure       => 'present',
+    rule_type    => 'interzone',
     insert_after => 'intrazone';
   'tags':
     ensure      => 'present',
@@ -382,23 +382,23 @@ panos_security_policy_rule  {
     profile_type => 'group';
     # group_profile => 'custom group profile';
   'other-settings':
-    ensure                              =>  'present',
-    description                         =>  'This is managed by Puppet.',
+    ensure                             =>  'present',
+    description                        =>  'This is managed by Puppet.',
     # schedule_profile  => 'custom schedule profile',
-    qos_type                            => 'follow-c2s-flow',
-    disable_server_response_inspection  =>  true;
+    qos_type                           => 'follow-c2s-flow',
+    disable_server_response_inspection =>  true;
   'ip-dscp-settings':
-    ensure                              =>  'present',
-    description                         =>  'This is managed by Puppet.',
-    qos_type                            => 'ip-dscp',
-    ip_dscp                             =>  'cs0',
-    disable_server_response_inspection  =>  true;
+    ensure                             =>  'present',
+    description                        =>  'This is managed by Puppet.',
+    qos_type                           => 'ip-dscp',
+    ip_dscp                            =>  'cs0',
+    disable_server_response_inspection =>  true;
   'ip-precedence-settings':
-    ensure                              =>  'present',
-    description                         =>  'This is managed by Puppet.',
-    qos_type                            =>  'ip-precedence',
-    ip_precedence                       =>  'cs0',
-    disable_server_response_inspection  =>  true;
+    ensure                             =>  'present',
+    description                        =>  'This is managed by Puppet.',
+    qos_type                           =>  'ip-precedence',
+    ip_precedence                      =>  'cs0',
+    disable_server_response_inspection =>  true;
 }
 
 panos_virtual_router {

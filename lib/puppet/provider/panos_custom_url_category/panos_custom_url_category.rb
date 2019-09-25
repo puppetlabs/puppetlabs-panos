@@ -2,9 +2,7 @@ require_relative '../panos_provider'
 
 # Implementation for the panos_custom_url_category type using the Resource API.
 class Puppet::Provider::PanosCustomUrlCategory::PanosCustomUrlCategory < Puppet::Provider::PanosProvider
-  def validate_should(should)
-
-  end
+  def validate_should(should); end
 
   def xml_from_should(name, should)
     builder = Builder::XmlMarkup.new
