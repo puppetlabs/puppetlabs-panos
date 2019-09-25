@@ -20,12 +20,16 @@ and restarts the puppetserver service to activate.
 * [`panos_address`](#panos_address): This type provides Puppet with the capabilities to manage "address" objects on Palo Alto devices.
 * [`panos_address_group`](#panos_address_group): This type provides Puppet with the capabilities to manage "address_groups" objects on Palo Alto devices.
 * [`panos_admin`](#panos_admin): This type provides Puppet with the capabilities to manage "administrator" user accounts on Palo Alto devices.
+* [`panos_application_group`](#panos_application_group): This type provides Puppet with the capabilities to manage "application_groups" objects on Palo Alto devices.
 * [`panos_arbitrary_commands`](#panos_arbitrary_commands): This type provides Puppet with the capabilities to execute arbitrary configuration commands on Palo Alto devices.
 * [`panos_commit`](#panos_commit): When evaluated, this resource commits all outstanding changes in the target device's configuration to the active configuration.
+* [`panos_custom_url_category`](#panos_custom_url_category): This type provides Puppet with the capabilities to manage "custom_url_category" objects on Palo Alto devices.
+* [`panos_decryption_policy_rule`](#panos_decryption_policy_rule): This type provides Puppet with the capilities to manage "Decryption Policy Rules" on Palo Alto devices.
 * [`panos_ipv6_path_monitor`](#panos_ipv6_path_monitor): This type provides Puppet with the capabilities to manage IPv6 Path Monitors on Palo Alto devices.
 * [`panos_ipv6_static_route`](#panos_ipv6_static_route): This type provides Puppet with the capabilities to manage IPv6 Static Routes on Palo Alto devices.
 * [`panos_nat_policy`](#panos_nat_policy): This type provides Puppet with the capabilities to manage "NAT Policy Rule" objects on Palo Alto devices.
 * [`panos_path_monitor`](#panos_path_monitor): This type provides Puppet with the capabilities to manage IPv4 Path Monitors on Palo Alto devices.
+* [`panos_profiles_url_filtering`](#panos_profiles_url_filtering): This type provides Puppet with the capabilities to manage "url-filtering" profiles on Palo Alto devices.
 * [`panos_security_policy_rule`](#panos_security_policy_rule): This type provides Puppet with the capilities to manage "Security Policy Rules" on Palo Alto devices.
 * [`panos_service`](#panos_service): This type provides Puppet with the capabilities to manage "service" objects on Palo Alto devices.
 * [`panos_service_group`](#panos_service_group): This type provides Puppet with the capabilities to manage "Service Group" objects on Palo Alto devices.
@@ -336,6 +340,41 @@ _*this data type contains a regex that may not be accurately reflected in genera
 
 The username.
 
+### panos_application_group
+
+This type provides Puppet with the capabilities to manage "application_groups" objects on Palo Alto devices.
+
+#### Properties
+
+The following properties are available in the `panos_application_group` type.
+
+##### `ensure`
+
+Data type: `Enum[present, absent]`
+
+Whether this resource should be present or absent on the target system.
+
+Default value: present
+
+##### `members`
+
+Data type: `Optional[Array[String]]`
+
+One or more `panos_application` or `panos_application_group` or `panos_application_filter` that form this group.
+
+#### Parameters
+
+The following parameters are available in the `panos_application_group` type.
+
+##### `name`
+
+namevar
+
+Data type: `Pattern[/^[a-zA-z0-9\-_\s\.]{1,63}$/]`
+_*this data type contains a regex that may not be accurately reflected in generated documentation_
+
+The display-name of the address-group.
+
 ### panos_arbitrary_commands
 
 This type provides Puppet with the capabilities to execute arbitrary configuration commands on Palo Alto devices.
@@ -397,6 +436,241 @@ namevar
 Data type: `Enum["commit"]`
 
 The name of the resource you want to manage. Can only be "commit".
+
+### panos_custom_url_category
+
+This type provides Puppet with the capabilities to manage "custom_url_category" objects on Palo Alto devices.
+
+#### Properties
+
+The following properties are available in the `panos_custom_url_category` type.
+
+##### `ensure`
+
+Data type: `Enum[present, absent]`
+
+Whether this resource should be present or absent on the target system.
+
+Default value: present
+
+##### `description`
+
+Data type: `Optional[String]`
+
+Provide a description of this url category.
+
+##### `list`
+
+Data type: `Optional[Array[String]]`
+
+One or more urls that form this category.
+
+#### Parameters
+
+The following parameters are available in the `panos_custom_url_category` type.
+
+##### `name`
+
+namevar
+
+Data type: `Pattern[/^[a-zA-z0-9\-_\s\.]{1,63}$/]`
+_*this data type contains a regex that may not be accurately reflected in generated documentation_
+
+The display-name of the url category.
+
+### panos_decryption_policy_rule
+
+This type provides Puppet with the capilities to manage "Decryption Policy Rules" on Palo Alto devices.
+
+#### Properties
+
+The following properties are available in the `panos_decryption_policy_rule` type.
+
+##### `ensure`
+
+Data type: `Enum[present, absent]`
+
+Whether this resource should be present or absent on the target system.
+
+Default value: present
+
+##### `type`
+
+Data type: `Enum["ssl-forward-proxy", "ssh-proxy", "ssl-inbound-inspection"]`
+
+Specifies the type of decryption rule:
+
+Default value: ssl-forward-proxy
+
+##### `description`
+
+Data type: `Optional[String]`
+
+Provide a description of the service.
+
+##### `tags`
+
+Data type: `Optional[Array[String]]`
+
+A policy tag is a keyword or phrase that allows you to sort or filter policies. This is useful when you have defined many policies and want to
+view those that are tagged with a particular keyword.For example, you may want to tag certain rules with specific words like Decrypt and No-decrypt,
+or use the name of a specific data center for policies associated with that location.
+
+##### `source_zones`
+
+Data type: `Array[String]`
+
+Zones must be of the same type (Layer 2, Layer 3, or virtual wire).
+
+Multiple zones can be used to simplify management. For example, if you have three different internal zones (Marketing, Sales, and Public Relations)
+that are all directed to the untrusted destination zone, you can create one rule that covers all cases.
+
+Default value: ["any"]
+
+##### `source_address`
+
+Data type: `Array[String]`
+
+The list of source addresses, address groups, or regions
+
+Default value: ["any"]
+
+##### `negate_source`
+
+Data type: `Optional[Boolean]`
+
+Matches on the reverse of the `source_address` value.
+
+##### `source_users`
+
+Data type: `Array[String]`
+
+The following source values are supported:
+
+* ['any']: Include any traffic regardless of user data.
+
+* ['pre-logon']: Include remote users that are connected to the network using GlobalProtect, but are not logged into their system.
+When the Pre-logon option is configured on the Portal for GlobalProtect clients, any user who is not currently logged into their machine
+will be identified with the username pre-logon. You can then create policies for pre-logon users and although the user is not logged in directly,
+their machines are authenticated on the domain as if they were fully logged in.
+
+* ['known-user']: Includes all authenticated users, which means any IP with user data mapped. This option is equivalent to the domain users group on a domain.
+
+* ['unknown']: Includes all unauthenticated users, which means IP addresses that are not mapped to a user. For example, you could use unknown for guest
+level access to something because they will have an IP on your network but will not be authenticated to the domain and will not have IP
+to user mapping information on the firewall.
+
+* Or provide a list of specific users. E.g. ['admin','john.doe','jane.doe']
+
+Note: If you are using a RADIUS server and not the User-ID agent, the list of users does not display; you must enter user information manually.
+
+Default value: ["any"]
+
+##### `destination_zones`
+
+Data type: `Array[String]`
+
+Specify one or more destination zones. Zones must be of the same type (Layer 2, Layer 3, or virtual wire). To define new zones, refer to “Defining Security Zones”.
+Multiple zones can be used to simplify management. For example, if you have three different internal zones (Marketing, Sales, and Public Relations) that are all
+directed to the untrusted destination zone, you can create one rule that covers all cases.
+
+Note: On intrazone rules, you cannot define a Destination Zone because these types of rules only match traffic with a source and a destination within the same zone.
+To specify the zones that match an intrazone rule you only need to set the Source Zone.
+
+Default value: ["any"]
+
+##### `destination_address`
+
+Data type: `Array[String]`
+
+Specify one or more destination addresses, address groups or regions
+
+Default value: ["any"]
+
+##### `negate_destination`
+
+Data type: `Optional[Boolean]`
+
+Matches on the reverse of the `destination_address` value.
+
+##### `services`
+
+Data type: `Array[String]`
+
+Select services to limit to specific TCP and/or UDP port numbers. The following values are valid:
+
+* ['any']: The selected applications are allowed or denied on any protocol or port.
+
+* ['application-default']: The selected applications are allowed or denied only on their default ports defined by Palo Alto Networks®.
+This option is recommended for allow policies because it prevents applications from running on unusual ports and protocol which, if not
+intentional, can be a sign of undesired application behavior and usage.
+
+Note that when you use this option, the firewall still checks for all applications on all ports but, with this configuration, applications are only allowed on their default ports and protocols.
+
+* A list of services. E.g. ['service-http', 'service-https', 'my_custom_service']
+
+Default value: ["application-default"]
+
+##### `categories`
+
+Data type: `Array[String]`
+
+The destination URL categories. The following values are valid:
+
+* ['any']: Allow or deny all sessions regardless of the URL category.
+
+* A list of specific categories or custom categories. E.g ['gambling','malware','my_custom_category']
+
+Default value: ["any"]
+
+##### `action`
+
+Data type: `Enum["decrypt", "no-decrypt"]`
+
+To specify the action for traffic that matches the attributes defined in a rule, select from the following actions:
+
+* no-ecrypt: Do not decrypt the traffic.
+
+* decrypt: Decrypt the traffic.
+
+Default value: no-decrypt
+
+##### `profile`
+
+Data type: `Optional[String]`
+
+Specify the decryption profile, can only be set when `action` is `decrypt`.
+
+##### `disable`
+
+Data type: `Optional[Boolean]`
+
+Specify if the security policy rule should be disabled.
+
+##### `insert_after`
+
+Data type: `Optional[String]`
+
+Specifies where the rule should be inserted.
+
+* If specified with an empty string, the rule will be inserted at the TOP.
+  NOTE: Only one rule should be set to top
+* If a rule name is specified, the rule will be inserted after the given rule.
+* If this attribute is omitted, the rule will be added at the bottom.
+  NOTE: Rules cannot be moved to the bottom once created. Instead specify the rule name to insert after.
+
+#### Parameters
+
+The following parameters are available in the `panos_decryption_policy_rule` type.
+
+##### `name`
+
+namevar
+
+Data type: `Pattern[/^[a-zA-z0-9\-_\s\.]{1,63}$/]`
+_*this data type contains a regex that may not be accurately reflected in generated documentation_
+
+The display-name of the decryption-policy-rule. Restricted to 31 characters on PAN-OS version 7.1.0.
 
 ### panos_ipv6_path_monitor
 
@@ -935,6 +1209,148 @@ namevar
 Data type: `String`
 
 A name to identify the static route which is usually the virtual router name followed by a forward slash.
+
+### panos_profiles_url_filtering
+
+This type provides Puppet with the capabilities to manage "url-filtering" profiles on Palo Alto devices.
+
+#### Properties
+
+The following properties are available in the `panos_profiles_url_filtering` type.
+
+##### `ensure`
+
+Data type: `Enum[present, absent]`
+
+Whether this resource should be present or absent on the target system.
+
+Default value: present
+
+##### `description`
+
+Data type: `Optional[String]`
+
+Provide a description of this url-fitering profile.
+
+##### `credential_mode`
+
+Data type: `Enum["disabled", "ip-user", "domain-credentials", "group-mapping"]`
+
+Specifies the Credential enforcement detection mode:
+
+* group-mapping :       Use Group Mapping
+* disabled :            Disabled
+* domain-credentials :  Use Domain Credential Filter
+* ip-user :             Use IP User Mapping
+
+
+Default value: disabled
+
+##### `credential_block`
+
+Data type: `Optional[Array[String]]`
+
+One or more `URL category` to block for credential enforcement.
+
+##### `credential_alert`
+
+Data type: `Optional[Array[String]]`
+
+One or more `URL category` to trigger allert for credential enforcement.
+
+##### `credential_allow`
+
+Data type: `Optional[Array[String]]`
+
+One or more `URL category` to allow for credential enforcement.
+
+##### `credential_continue`
+
+Data type: `Optional[Array[String]]`
+
+One or more `URL category` to continue for credential enforcement.
+
+##### `log_severity`
+
+Data type: `Enum["critical", "high", "informational", "low", "medium"]`
+
+Specifies the Log severity for credential enforcement:
+* critical        severity critical
+* high            severity high
+* informational   severity informational
+* low             severity low
+* medium          severity medium
+
+Default value: medium
+
+##### `block`
+
+Data type: `Optional[Array[String]]`
+
+One or more `URL category` to block access.
+
+##### `alert`
+
+Data type: `Optional[Array[String]]`
+
+One or more `URL category` to trigger access alerts.
+
+##### `allow`
+
+Data type: `Optional[Array[String]]`
+
+One or more `URL category` to allow access.
+
+##### `continue`
+
+Data type: `Optional[Array[String]]`
+
+One or more `URL category` to block/continue.
+
+##### `override`
+
+Data type: `Optional[Array[String]]`
+
+One or more `URL category` to override access.
+
+##### `allow_list`
+
+Data type: `Optional[Array[String]]`
+
+One or more specific URLs to allow access.
+
+##### `block_list`
+
+Data type: `Optional[Array[String]]`
+
+One or more specific URLs to block access.
+
+##### `action`
+
+Data type: `Enum["block", "alert", "continue", "override"]`
+
+Specifies the Credential enforcement detection mode:
+
+* block
+* alert
+* continue
+* override
+
+
+Default value: block
+
+#### Parameters
+
+The following parameters are available in the `panos_profiles_url_filtering` type.
+
+##### `name`
+
+namevar
+
+Data type: `Pattern[/^[a-zA-z0-9\-_\s\.]{1,63}$/]`
+_*this data type contains a regex that may not be accurately reflected in generated documentation_
+
+The display-name of the url-filtering profile.
 
 ### panos_security_policy_rule
 
