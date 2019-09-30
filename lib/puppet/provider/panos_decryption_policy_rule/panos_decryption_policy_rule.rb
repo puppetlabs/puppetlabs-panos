@@ -3,14 +3,6 @@ require_relative '../panos_provider'
 # Implementation for the panos_decryption_policy_rule type using the Resource API.
 class Puppet::Provider::PanosDecryptionPolicyRule::PanosDecryptionPolicyRule < Puppet::Provider::PanosProvider
   def munge(entry)
-    none_attrs = [:profile_type, :qos_type]
-
-    none_attrs.each do |attr|
-      if entry.key?(attr) && entry[attr].nil?
-        entry[attr] = 'none'
-      end
-    end
-
     bool_attrs = [:negate_source, :negate_destination, :disable]
     bool_attrs.each do |attr|
       if entry.key? attr

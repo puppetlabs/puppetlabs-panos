@@ -2,14 +2,14 @@ require_relative '../panos_provider'
 
 # Implementation for the panos_profiles_url-Filtering type using the Resource API.
 class Puppet::Provider::PanosProfilesUrlFiltering::PanosProfilesUrlFiltering < Puppet::Provider::PanosProvider
-  def munge(entry)
-    entry[:credential_mode] = 'disabled' if entry[:rule_type].nil?
-    entry[:log_severity] = 'medium' if entry[:rule_type].nil?
-    entry[:action] = 'block' if entry[:rule_type].nil?
-    entry
-  end
+  def validate_should(should); end
 
   def xml_from_should(name, should)
+    should[:credential_mode] = 'disabled' if should[:credential_mode].nil?
+    should[:log_severity] = 'medium' if should[:log_severity].nil?
+    should[:action] = 'block' if should[:action].nil?
+
+
     builder = Builder::XmlMarkup.new
     builder.entry('name' => name) do
       builder.__send__('credential-enforcement') do
