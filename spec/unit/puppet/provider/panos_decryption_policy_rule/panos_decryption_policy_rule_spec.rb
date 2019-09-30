@@ -126,7 +126,7 @@ RSpec.describe Puppet::Provider::PanosDecryptionPolicyRule::PanosDecryptionPolic
                   <member>tags</member>
                 </tag>
             </entry>',
-    }
+    },
   ]
 
   include_examples 'xml_from_should(name, should)', test_data_for_xml_from_should, described_class.new

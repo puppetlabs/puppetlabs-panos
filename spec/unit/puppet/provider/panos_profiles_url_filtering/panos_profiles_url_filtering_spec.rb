@@ -7,8 +7,6 @@ require 'puppet/provider/panos_profiles_url_filtering/panos_profiles_url_filteri
 RSpec.describe Puppet::Provider::PanosProfilesUrlFiltering::PanosProfilesUrlFiltering do
   subject(:provider) { described_class.new }
 
-  describe 'validate_should(should)' do; end
-
   test_data = [
     {
       descr: 'An exemple of URL Filtering profile',
@@ -16,14 +14,14 @@ RSpec.describe Puppet::Provider::PanosProfilesUrlFiltering::PanosProfilesUrlFilt
         name: 'url_profile_1',
         credential_mode: 'disabled',
         credential_block: [
-          'questionable'
+          'questionable',
         ],
         alert: [
-          'weapons'
+          'weapons',
         ],
         block: [
-          'adult'
-        ]
+          'adult',
+        ],
       },
       xml:  '<entry name="url_profile_1">
               <credential-enforcement>

@@ -9,7 +9,6 @@ class Puppet::Provider::PanosProfilesUrlFiltering::PanosProfilesUrlFiltering < P
     should[:log_severity] = 'medium' if should[:log_severity].nil?
     should[:action] = 'block' if should[:action].nil?
 
-
     builder = Builder::XmlMarkup.new
     builder.entry('name' => name) do
       builder.__send__('credential-enforcement') do

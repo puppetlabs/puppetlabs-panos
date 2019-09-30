@@ -14,7 +14,7 @@ RSpec.describe Puppet::Provider::PanosCustomUrlCategory::PanosCustomUrlCategory 
           name: 'demo_group',
           ensure: 'present',
           list: ['ssl', 'google-base'],
-          description: 'description'
+          description: 'description',
         }
       end
 
@@ -24,7 +24,7 @@ RSpec.describe Puppet::Provider::PanosCustomUrlCategory::PanosCustomUrlCategory 
       let(:should_hash) do
         {
           name: 'demo_group',
-          ensure: 'present'
+          ensure: 'present',
         }
       end
 
@@ -39,7 +39,7 @@ RSpec.describe Puppet::Provider::PanosCustomUrlCategory::PanosCustomUrlCategory 
         name:           'url_category',
         ensure:         'present',
         list:           ['foo', 'bar'],
-        description: 'description'
+        description: 'description',
       },
       xml:  '<entry name="url_category">
               <description>description</description>

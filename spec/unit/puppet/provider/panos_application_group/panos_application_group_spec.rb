@@ -13,7 +13,7 @@ RSpec.describe Puppet::Provider::PanosApplicationGroup::PanosApplicationGroup do
         {
           name: 'demo_group',
           ensure: 'present',
-          members: ['ssl', 'google-base']
+          members: ['ssl', 'google-base'],
         }
       end
 
@@ -23,7 +23,7 @@ RSpec.describe Puppet::Provider::PanosApplicationGroup::PanosApplicationGroup do
       let(:should_hash) do
         {
           name: 'demo_group',
-          ensure: 'present'
+          ensure: 'present',
         }
       end
 
@@ -37,7 +37,7 @@ RSpec.describe Puppet::Provider::PanosApplicationGroup::PanosApplicationGroup do
       attrs: {
         name:           'app_group',
         ensure:         'present',
-        members:           ['foo', 'bar']
+        members:           ['foo', 'bar'],
       },
       xml:  '<entry name="app_group">
               <members>
