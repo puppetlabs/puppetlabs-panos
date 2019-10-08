@@ -15,28 +15,28 @@ class Puppet::Provider::PanosProfilesUrlFiltering::PanosProfilesUrlFiltering < P
         builder.mode do
           builder.tag! should[:credential_mode], nil
         end
-        unless should[:credential_block].nil?
+        if should[:credential_block]
           builder.block do
             should[:credential_block].each do |category|
               builder.member(category)
             end
           end
         end
-        unless should[:credential_continue].nil?
+        if should[:credential_continue]
           builder.continue do
             should[:credential_continue].each do |category|
               builder.member(category)
             end
           end
         end
-        unless should[:credential_allow].nil?
+        if should[:credential_allow]
           builder.allow do
             should[:credential_allow].each do |category|
               builder.member(category)
             end
           end
         end
-        unless should[:credential_alert].nil?
+        if should[:credential_alert]
           builder.alert do
             should[:credential_alert].each do |category|
               builder.member(category)
@@ -45,49 +45,49 @@ class Puppet::Provider::PanosProfilesUrlFiltering::PanosProfilesUrlFiltering < P
         end
         builder.__send__('log-severity', should[:log_severity])
       end
-      unless should[:block].nil?
+      if should[:block]
         builder.block do
           should[:block].each do |category|
             builder.member(category)
           end
         end
       end
-      unless should[:continue].nil?
+      if should[:continue]
         builder.continue do
           should[:continue].each do |category|
             builder.member(category)
           end
         end
       end
-      unless should[:allow].nil?
+      if should[:allow]
         builder.allow do
           should[:allow].each do |category|
             builder.member(category)
           end
         end
       end
-      unless should[:alert].nil?
+      if should[:alert]
         builder.alert do
           should[:alert].each do |category|
             builder.member(category)
           end
         end
       end
-      unless should[:override].nil?
+      if should[:override]
         builder.override do
           should[:override].each do |category|
             builder.member(category)
           end
         end
       end
-      unless should[:allow_list].nil?
+      if should[:allow_list]
         builder.__send__('allow-list') do
           should[:allow_list].each do |category|
             builder.member(category)
           end
         end
       end
-      unless should[:block_list].nil?
+      if should[:block_list]
         builder.__send__('block-list') do
           should[:block_list].each do |category|
             builder.member(category)
