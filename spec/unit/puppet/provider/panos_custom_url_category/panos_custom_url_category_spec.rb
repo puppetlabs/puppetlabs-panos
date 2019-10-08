@@ -14,7 +14,7 @@ RSpec.describe Puppet::Provider::PanosCustomUrlCategory::PanosCustomUrlCategory 
           name: 'demo_group',
           ensure: 'present',
           list: ['ssl', 'google-base'],
-          category_type: 'URL List'
+          category_type: 'URL List',
           description: 'description',
         }
       end
@@ -36,12 +36,13 @@ RSpec.describe Puppet::Provider::PanosCustomUrlCategory::PanosCustomUrlCategory 
         {
           name: 'demo_group',
           list: ['ssl', 'google-base'],
-          category_type: 'wrong type'
+          category_type: 'wrong type',
           ensure: 'present',
         }
       end
 
       it { expect { provider.validate_should(should_hash) }.to raise_error Puppet::ResourceError, %r{Type should be `URL List` or `Category Match`} }
+    end
   end
 
   test_data = [
