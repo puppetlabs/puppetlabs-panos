@@ -5,8 +5,8 @@ class Puppet::Provider::PanosCustomUrlCategory::PanosCustomUrlCategory < Puppet:
   def validate_should(should)
     raise Puppet::ResourceError, 'URL Category should contain `list`' unless should[:list]
 
-    if should[:category_type] && should[:category_type] != 'URL List' && should[:category_type] != 'Category Match'
-      raise Puppet::ResourceError, 'Type should be `URL List` or `Category Match`'
+    if should[:category_type]
+      raise Puppet::ResourceError, 'Type should be `URL List` or `Category Match`' unless should[:category_type] == 'URL List' || should[:category_type] == 'Category Match'
     end
   end
 
