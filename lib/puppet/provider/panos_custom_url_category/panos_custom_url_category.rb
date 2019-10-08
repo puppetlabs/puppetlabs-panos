@@ -3,9 +3,7 @@ require_relative '../panos_provider'
 # Implementation for the panos_custom_url_category type using the Resource API.
 class Puppet::Provider::PanosCustomUrlCategory::PanosCustomUrlCategory < Puppet::Provider::PanosProvider
   def validate_should(should)
-    if should[:list].nil?
-      raise Puppet::ResourceError, 'URL Category should contain `list`'
-    end
+    raise Puppet::ResourceError, 'URL Category should contain `list`' unless should[:list]
 
     if should[:category_type] && should[:category_type] != 'URL List' && should[:category_type] != 'Category Match'
       raise Puppet::ResourceError, 'Type should be `URL List` or `Category Match`'
