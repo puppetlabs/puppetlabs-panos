@@ -213,6 +213,27 @@ panos_security_policy_rule  {
     ensure =>  'absent';
 }
 
+panos_custom_url_category { 'microsoft_store__puppet':
+  ensure => 'absent'
+}
+
+panos_decryption_policy_rule {
+  'NoDecrypt_Microsoft_updates':
+    ensure => 'absent';
+  'NoDecrypt_special_address_group':
+    ensure => 'absent';
+  'Decrypt_all':
+    ensure => 'absent';
+}
+
+panos_application_group { 'PUPPET_activedirectory':
+  ensure => 'absent'
+}
+
+panos_profiles_url_filtering { 'default_strict':
+  ensure => 'absent'
+}
+
 panos_commit {
   'commit':
     commit => true

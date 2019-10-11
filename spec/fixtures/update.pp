@@ -387,6 +387,105 @@ panos_security_policy_rule  {
     disable_server_response_inspection =>  true;
 }
 
+
+if  $::facts['operatingsystemrelease'] >= '9.0.0' {
+  panos_custom_url_category { 'microsoft_store__puppet':
+    list => [
+      '*.microsoft.com',
+      '*.do.dsp.mp.microsoft.com',
+      '*.events.data.microsoft.com',
+      '*.delivery.mp.microsoft.com'
+    ],
+    category_type => 'URL List'
+  }
+} else {
+  panos_custom_url_category { 'microsoft_store__puppet':
+    list => [
+      '*.microsoft.com',
+      '*.do.dsp.mp.microsoft.com',
+      '*.events.data.microsoft.com',
+      '*.delivery.mp.microsoft.com'
+    ],
+  }
+}
+
+panos_decryption_policy_rule {
+  'NoDecrypt_Microsoft_updates':
+    ensure              => 'absent',
+    description         => 'This is managed by Puppet.',
+    source_zones        => [$trust],
+    source_address      => ['any'],
+    services            => ['any'],
+    destination_zones   => [$untrust],
+    destination_address => ['any'],
+    categories          => ['microsoft_store__puppet'],
+    action              => 'no-decrypt',
+    type                => 'ssl-forward-proxy',
+    tags                => ['Test Tag'];
+  'NoDecrypt_special_address_group':
+    ensure              => 'present',
+    description         => 'This is managed by Puppet.',
+    source_zones        => [$trust],
+    source_address      => ['any'],
+    services            => ['any'],
+    destination_zones   => [$untrust],
+    destination_address => ['full'],
+    action              => 'no-decrypt',
+    type                => 'ssl-forward-proxy',
+    tags                => ['Test Tag'];
+  'Decrypt_all':
+    ensure              => 'present',
+    after               => 'NoDecrypt_special_address_group',
+    description         => 'This is managed by Puppet.',
+    source_zones        => [$trust],
+    source_address      => ['any'],
+    services            => ['any'],
+    destination_zones   => [$untrust],
+    destination_address => ['any'],
+    action              => 'decrypt',
+    type                => 'ssl-forward-proxy',
+    tags                => ['Test Tag'];
+}
+
+panos_application_group { 'PUPPET_activedirectory':
+  members => [
+    'ms-netlogon',
+    'ms-ds-smb',
+    'active-directory',
+    'ms-frs',
+    'ms-win-dns',
+    'msrpc',
+    'ssl',
+  ]
+}
+
+panos_profiles_url_filtering { 'default_strict':
+  credential_mode  => 'disabled',
+  credential_block => [
+    'abused-drugs',
+    'adult',
+    'dynamic-dns',
+    'gambling',
+    'hacking',
+    'weapons'
+  ],
+  alert => [
+    'copyright-infringement',
+    'dating',
+    'extremism',
+    'military',
+    'nudity',
+    'weapons'
+  ],
+  block => [
+    'adult',
+    'dynamic-dns',
+    'hacking',
+    'phishing',
+    'proxy-avoidance-and-anonymizers'
+  ]
+}
+
 panos_arbitrary_commands  {
   'devices/entry/vsys/entry/application-group':
     ensure => 'present',
