@@ -50,3 +50,4 @@ spec/spec_helper.rb:
   mock_with: ":rspec"
   spec_overrides:
   - require 'webmock/rspec'
+  coverage_report: true
