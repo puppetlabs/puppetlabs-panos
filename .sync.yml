@@ -1,57 +1,53 @@
 ---
-Gemfile:
-  optional:
-    ':development':
-      - gem: 'webmock'
-      - gem: 'builder'
-        version: '~> 3.2.2'
-      - gem: 'puppet-strings'
-        git: 'https://github.com/puppetlabs/puppet-strings.git'
-        ref: 'master'
-      - gem: 'puppet-resource_api'
-        version: '>= 1.8.1'
-        from_env: 'RSAPI_GEM_VERSION'
-        # git: 'https://github.com/puppetlabs/puppet-resource_api.git'
-        # ref: 'master'
-      # required for internal pipelines
-      - gem: 'beaker-hostgenerator'
-        # the first version to contain Palo Alto support
-        version: '~> 1.1.15'
-      - gem: 'bolt'
-      - gem: 'github_changelog_generator'
-        git: 'https://github.com/skywinder/github-changelog-generator'
-        ref: '20ee04ba1234e9e83eb2ffb5056e23d641c7a018'
-        condition: "Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')"
-.gitignore:
+".gitignore":
   paths:
-    - spec/fixtures/acceptance-credentials.conf
-    - spec/fixtures/acceptance-device.conf
-    - spec/fixtures/config-acceptance.xml
-    - spec/fixtures/config-reset.xml
-.pdkignore:
+  - spec/fixtures/acceptance-credentials.conf
+  - spec/fixtures/acceptance-device.conf
+  - spec/fixtures/config-acceptance.xml
+  - spec/fixtures/config-reset.xml
+".gitlab-ci.yml":
+  delete: true
+".pdkignore":
   paths:
-    - spec/fixtures/acceptance-credentials.conf
-    - spec/fixtures/acceptance-device.conf
-    - spec/fixtures/config-acceptance.xml
-    - spec/fixtures/config-reset.xml
-Rakefile:
-  changelog_user: 'puppetlabs'
-  requires:
-    - 'puppet-strings/tasks'
-spec/spec_helper.rb:
-  mock_with: ':rspec'
-  spec_overrides:
-    - "require 'webmock/rspec'"
-.travis.yml:
+  - spec/fixtures/acceptance-credentials.conf
+  - spec/fixtures/acceptance-device.conf
+  - spec/fixtures/config-acceptance.xml
+  - spec/fixtures/config-reset.xml
+".travis.yml":
   simplecov: true
   branches:
-    - release
+  - release
   includes:
-    -
-      env: PUPPET_GEM_VERSION="~> 6.0.0" RSAPI_GEM_VERSION="~> 1.6.0" CHECK=parallel_spec
-      rvm: 2.5.1
-      stage: spec
+  - env: PUPPET_GEM_VERSION="~> 6.0.0" RSAPI_GEM_VERSION="~> 1.6.0" CHECK=parallel_spec
+    rvm: 2.5.1
+    stage: spec
 appveyor.yml:
   delete: true
-.gitlab-ci.yml:
-  delete: true
+Gemfile:
+  optional:
+    ":development":
+    - gem: webmock
+    - gem: builder
+      version: "~> 3.2.2"
+    - gem: puppet-strings
+      git: https://github.com/puppetlabs/puppet-strings.git
+      ref: master
+    - gem: puppet-resource_api
+      version: ">= 1.8.1"
+      from_env: RSAPI_GEM_VERSION
+    - gem: beaker-hostgenerator
+      version: "~> 1.1.15"
+    - gem: bolt
+    - gem: github_changelog_generator
+      git: https://github.com/skywinder/github-changelog-generator
+      ref: 20ee04ba1234e9e83eb2ffb5056e23d641c7a018
+      condition: Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')
+Rakefile:
+  changelog_user: puppetlabs
+  requires:
+  - puppet-strings/tasks
+spec/spec_helper.rb:
+  mock_with: ":rspec"
+  spec_overrides:
+  - require 'webmock/rspec'
+  coverage_report: true
