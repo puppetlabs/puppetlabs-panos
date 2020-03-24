@@ -1,7 +1,7 @@
-require_relative '../panos_provider'
+require_relative '../panos_vsys_base'
 
 # Implementation for the panos_security_policy_rule type using the Resource API.
-class Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRule < Puppet::Provider::PanosProvider
+class Puppet::Provider::PanosSecurityPolicyRule::PanosSecurityPolicyRule < Puppet::Provider::PanosVsysBase
   def munge(entry)
     none_attrs = [:profile_type, :qos_type]
 

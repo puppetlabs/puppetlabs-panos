@@ -1,7 +1,7 @@
-require_relative '../panos_provider'
+require_relative '../panos_vsys_base'
 
 # Implementation for the panos_address_group type using the Resource API.
-class Puppet::Provider::PanosAddressGroup::PanosAddressGroup < Puppet::Provider::PanosProvider
+class Puppet::Provider::PanosAddressGroup::PanosAddressGroup < Puppet::Provider::PanosVsysBase
   def validate_should(should)
     if should[:type] == 'static' && !should.key?(:static_members)
       raise Puppet::ResourceError, 'Static Address group must provide `static_members`'
