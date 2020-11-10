@@ -1,6 +1,6 @@
 
 
-# panos [![Build Status](https://travis-ci.com/puppetlabs/puppetlabs-panos.svg?token=EgyaCjCqJtXUWAZqypZQ&branch=master)](https://travis-ci.com/puppetlabs/puppetlabs-panos)
+# panos [![Build Status](https://travis-ci.com/puppetlabs/puppetlabs-panos.svg?token=EgyaCjCqJtXUWAZqypZQ&branch=main)](https://travis-ci.com/puppetlabs/puppetlabs-panos)
 
 
 #### Table of Contents
@@ -26,9 +26,9 @@ The module provides a Puppet task to manually `commit`, `store_config` to a file
 
 ## Setup
 
-Install the module on either a Puppet master or Puppet agent, by running `puppet module install puppetlabs-panos`. To install from source, download the tar file from GitHub and run `puppet module install <file_name>.tar.gz --force`.
+Install the module on either a Puppet server or Puppet agent, by running `puppet module install puppetlabs-panos`. To install from source, download the tar file from GitHub and run `puppet module install <file_name>.tar.gz --force`.
 
-This module installs the Builder and Puppet Resource API gems, if necessary. To activate the Puppet Resource API gem on the master, reload the puppetserver service. In most cases, this happens automatically and causes little to no interruption to service.
+This module installs the Builder and Puppet Resource API gems, if necessary. To activate the Puppet Resource API gem on the server, reload the puppetserver service. In most cases, this happens automatically and causes little to no interruption to service.
 
 ### Setup Requirements
 
@@ -38,16 +38,16 @@ The PANOS module requires access to the device's web management interface.
 
 #### Proxy Puppet agent
 
-Since a Puppet agent is not available for Palo Alto devices, we need a proxy Puppet agent (either a compile master, or another agent) to run Puppet on behalf of the device.
+Since a Puppet agent is not available for Palo Alto devices, we need a proxy Puppet agent (either a compile server, or another agent) to run Puppet on behalf of the device.
 
 #### Install dependencies
 
 Once the module has been installed, install dependencies of the module:
 
-1. Classify or apply the `panos` class on each master (master of masters, and if present, compile masters and replica master) that serves catalogs for this module.
+1. Classify or apply the `panos` class on each server (server of servers, and if present, compile servers and replica server) that serves catalogs for this module.
 1. Classify or apply the `panos` class on each proxy Puppet agent that proxies for Palo Alto devices.
 
-Run puppet agent -t on the master(s) before using the module on the agent(s).
+Run puppet agent -t on the server(s) before using the module on the agent(s).
 
 ### Getting started with PANOS
 
@@ -110,7 +110,7 @@ This will sign the certificate and set up the device for Puppet.
 
 For more information, see the [`puppet device` documentation](https://puppet.com/docs/puppet/5.5/puppet_device.html)
 
-To get more practice using PANOS, try out the [hands-on labs](https://github.com/puppetlabs/puppetlabs-panos/tree/master/docs).
+To get more practice using PANOS, try out the [hands-on labs](https://github.com/puppetlabs/puppetlabs-panos/tree/main/docs).
 
 ### SSL Certificate Verification
 
@@ -146,9 +146,9 @@ ssl_fingerprint: "EA:21:E5:8F:13:98:73:DB:A6:25:0D:10:1A:08:57:55:34:B4:2C:A8:73
 
 ## Usage
 
-Now you can manage resources on the Palo Alto device. The module gives you access to various resources on the Palo Alto device, listed in the [REFERENCE.md](https://github.com/puppetlabs/puppetlabs-panos/blob/master/REFERENCE.md).
+Now you can manage resources on the Palo Alto device. The module gives you access to various resources on the Palo Alto device, listed in the [REFERENCE.md](https://github.com/puppetlabs/puppetlabs-panos/blob/main/REFERENCE.md).
 
-The repo's acceptance test examples contain a [useful reference](https://github.com/puppetlabs/puppetlabs-panos/blob/master/spec/fixtures/create.pp) on the use of the module's Types.
+The repo's acceptance test examples contain a [useful reference](https://github.com/puppetlabs/puppetlabs-panos/blob/main/spec/fixtures/create.pp) on the use of the module's Types.
 
 __Note:__ pw_hash function in the above example requires [puppetlabs-stdlib](https://forge.puppet.com/puppetlabs/stdlib)
 
@@ -180,7 +180,7 @@ Note that if you get errors, run the above commands with `--verbose` - this will
 
 ## Reference
 
-For full type reference documentation, see the [REFERENCE.md](https://github.com/puppetlabs/puppetlabs-panos/blob/master/REFERENCE.md)
+For full type reference documentation, see the [REFERENCE.md](https://github.com/puppetlabs/puppetlabs-panos/blob/main/REFERENCE.md)
 
 ## Limitations
 
@@ -195,7 +195,7 @@ Checkout the [repo](https://github.com/puppetlabs/puppetlabs-panos) by forking a
 ### Type
 
 Add new types to the type directory.
-We use the [Resource API format](https://github.com/puppetlabs/puppet-resource_api/blob/master/README.md).
+We use the [Resource API format](https://github.com/puppetlabs/puppet-resource_api/blob/main/README.md).
 
 These PANOS types extend the Resource API by adding in `xpath` values, which are used by their respective providers when retireving data from the PANOS API. If the attribute expects multiple values to be returned, it will declare `xpath_array`.
 
@@ -230,7 +230,7 @@ Here is a simple example:
 
 ### Provider
 
-Add a provider — see existing examples. Parsing logic is contained in each types respective provider directory with a common [base provider](https://github.com/puppetlabs/puppetlabs-panos/blob/master/lib/puppet/provider/panos_provider.rb) available.
+Add a provider — see existing examples. Parsing logic is contained in each types respective provider directory with a common [base provider](https://github.com/puppetlabs/puppetlabs-panos/blob/main/lib/puppet/provider/panos_provider.rb) available.
 
 ### Testing
 
@@ -277,10 +277,10 @@ bundle exec rake beaker
 
 ### Cutting a release
 
-To cut a new release, from a current `master` checkout:
+To cut a new release, from a current `main` checkout:
 
 * Start the release branch with `git checkout -b release-prep`
-* Execute the [Puppet Strings](https://puppet.com/docs/puppet/5.5/puppet_strings.html) rake task to update the [REFERENCE.md](https://github.com/puppetlabs/puppetlabs-panos/blob/master/REFERENCE.md):
+* Execute the [Puppet Strings](https://puppet.com/docs/puppet/5.5/puppet_strings.html) rake task to update the [REFERENCE.md](https://github.com/puppetlabs/puppetlabs-panos/blob/main/REFERENCE.md):
 
 ```
 bundle exec rake 'strings:generate[,,,,,REFERENCE.md,true]'

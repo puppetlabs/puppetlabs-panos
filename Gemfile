@@ -30,7 +30,7 @@ group :development do
   gem "puppet-module-win-dev-r#{minor_version}", '~> 0.4',                         require: false, platforms: [:mswin, :mingw, :x64_mingw]
   gem "webmock",                                                                   require: false
   gem "builder", '~> 3.2.2',                                                       require: false
-  gem "puppet-strings",                                                            require: false, git: 'https://github.com/puppetlabs/puppet-strings.git', ref: 'master'
+  gem "puppet-strings",                                                            require: false, git: 'https://github.com/puppetlabs/puppet-strings.git', ref: 'main'
   gem "puppet-resource_api", *location_for(ENV['RSAPI_GEM_VERSION'] || '>= 1.8.1')
   gem "beaker-hostgenerator", '~> 1.1.15',                                         require: false
   gem "bolt",                                                                      require: false
