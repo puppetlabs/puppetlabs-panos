@@ -4,7 +4,7 @@
 # @example Declaring the class
 #   include panos::server
 #
-# @note Deprecated, use panos::install::master
+# @note Deprecated, use panos::install::server
 class panos::server {
   include resource_api::server
 }

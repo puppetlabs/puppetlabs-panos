@@ -8,6 +8,6 @@ class panos::install {
   include panos::install::agent
 
   if $facts['puppetserver_installed'] {
-    include panos::install::master
+    include panos::install::server
   }
 }
