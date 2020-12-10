@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'puppet/util/network_device/panos/device'
 
 RSpec.describe Puppet::Util::NetworkDevice::Panos::Device do

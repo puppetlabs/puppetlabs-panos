@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../panos_provider'
 
 # Implementation for the panos_service_group type using the Resource API.

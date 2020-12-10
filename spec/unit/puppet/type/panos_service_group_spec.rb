@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'support/shared_examples'
 require 'puppet/type/panos_service_group'

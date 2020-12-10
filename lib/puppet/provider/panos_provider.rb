@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'puppet/resource_api/simple_provider'
 
 # A base provider for all PANOS providers

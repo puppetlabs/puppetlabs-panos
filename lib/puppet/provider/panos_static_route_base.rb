@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'panos_provider'
 
 # Implementation for the panos_static_route_base type using the Resource API, which has been implemented to remove the common functionality of the ipv4 and ipv6 static routes.

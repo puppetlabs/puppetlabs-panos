@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'support/matchers/have_xml'
 require 'puppet/provider/panos_static_route_base'

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'support/matchers/have_xml'
 require 'support/shared_examples'

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.shared_examples 'xml_from_should(name, should)' do |test_data, provider|
   test_data.each do |test|
     it "creates expected XML for `#{test[:desc]}`" do

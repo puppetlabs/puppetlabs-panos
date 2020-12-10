@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../panos_path_monitor_base'
 
 # Implementation for the panos_ipv6_path_monitor type using the Resource API.

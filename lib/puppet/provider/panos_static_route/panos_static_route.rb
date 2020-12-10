@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../panos_static_route_base'
 
 # Implementation for the panos_static_route type using the Resource API.

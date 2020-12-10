@@ -35,19 +35,8 @@ Gemfile:
     - gem: webmock
     - gem: builder
       version: "~> 3.2.2"
-    - gem: puppet-strings
-      git: https://github.com/puppetlabs/puppet-strings.git
-      ref: main
-    - gem: puppet-resource_api
-      version: ">= 1.8.1"
-      from_env: RSAPI_GEM_VERSION
-    - gem: beaker-hostgenerator
-      version: "~> 1.1.15"
-    - gem: bolt
     - gem: github_changelog_generator
-      git: https://github.com/skywinder/github-changelog-generator
-      ref: 20ee04ba1234e9e83eb2ffb5056e23d641c7a018
-      condition: Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')
+      condition: Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.4')
 Rakefile:
   changelog_user: puppetlabs
   requires:

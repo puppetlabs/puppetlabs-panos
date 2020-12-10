@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'puppet/resource_api/simple_provider'
 
 # provider to handle arbitrary configuration commands against a PANOS device using the Resource API.

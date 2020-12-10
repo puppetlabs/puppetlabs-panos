@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # a simple xpath matcher for REXML documents
 # inspired by: https://gist.github.com/pxlpnk/7223848
 RSpec::Matchers.define :have_xml do |xpath, text|

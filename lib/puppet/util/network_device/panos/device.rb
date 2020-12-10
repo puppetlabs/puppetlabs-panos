@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'puppet'
 begin
   require 'puppet/resource_api/transport/wrapper'

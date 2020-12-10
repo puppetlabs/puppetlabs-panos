@@ -35,6 +35,6 @@
     "network"
   ],
   "pdk-version": "1.18.1",
-  "template-url": "https://github.com/puppetlabs/pdk-templates#main",
-  "template-ref": "heads/main-0-gd610ead"
+  "template-url": "/home/david/git/pdk-templates/#master",
+  "template-ref": "heads/rubocop-refresh-0-g01b182e"
 }
