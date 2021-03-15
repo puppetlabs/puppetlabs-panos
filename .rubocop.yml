@@ -181,8 +181,6 @@ Lint/IdentityComparison:
   Enabled: false
 Lint/InterpolationCheck:
   Enabled: false
-Lint/MissingSuper:
- Enabled: false
 Lint/MissingCopEnableDirective:
   Enabled: false
 Lint/MixedRegexpCaptureTypes:
