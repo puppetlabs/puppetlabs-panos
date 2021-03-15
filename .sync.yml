@@ -19,10 +19,6 @@
   simplecov: true
   branches:
   - release
-  includes:
-  - env: PUPPET_GEM_VERSION="~> 6.0.0" RSAPI_GEM_VERSION="~> 1.6.0" CHECK=parallel_spec
-    rvm: 2.5.1
-    stage: spec
   notifications:
     slack:
       secure: >-
@@ -43,11 +39,7 @@ Gemfile:
       from_env: RSAPI_GEM_VERSION
     - gem: beaker-hostgenerator
       version: "~> 1.1.15"
-    - gem: bolt
     - gem: github_changelog_generator
-      git: https://github.com/skywinder/github-changelog-generator
-      ref: 20ee04ba1234e9e83eb2ffb5056e23d641c7a018
-      condition: Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')
 Rakefile:
   changelog_user: puppetlabs
   requires:

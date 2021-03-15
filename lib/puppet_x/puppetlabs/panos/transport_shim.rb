@@ -36,6 +36,7 @@ module Puppet::ResourceApi
     end
     #:nocov:
   end
+
   # pre-declare class
   class BaseTypeDefinition; end
 

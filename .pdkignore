@@ -42,6 +42,7 @@
 /spec/
 /.vscode/
 /.sync.yml
+/.devcontainer/
 spec/fixtures/acceptance-credentials.conf
 spec/fixtures/acceptance-device.conf
 spec/fixtures/config-acceptance.xml
