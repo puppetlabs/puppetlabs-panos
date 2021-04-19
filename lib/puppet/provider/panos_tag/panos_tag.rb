@@ -1,7 +1,7 @@
-require_relative '../panos_provider'
+require_relative '../panos_vsys_base'
 
 # Implementation for the panos_tags type using the Resource API.
-class Puppet::Provider::PanosTag::PanosTag < Puppet::Provider::PanosProvider
+class Puppet::Provider::PanosTag::PanosTag < Puppet::Provider::PanosVsysBase
   def initialize
     super()
     @code_from_color = {

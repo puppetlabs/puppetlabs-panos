@@ -5,7 +5,7 @@ Puppet::ResourceApi.register_type(
   docs: <<-EOS,
 This type provides Puppet with the capabilities to manage "address" objects on Palo Alto devices.
 EOS
-  base_xpath: '/config/devices/entry/vsys/entry/address',
+  base_xpath: 'address',
   features: ['remote_resource'],
   attributes: {
     name: {
@@ -13,6 +13,10 @@ EOS
       desc:      'The display-name of the address.',
       behaviour: :namevar,
       xpath:     'string(@name)',
+    },
+    vsys: {
+      type:      'Optional[String]',
+      desc:      'The vsys of the addresses xpath.',
     },
     ensure: {
       type:    'Enum[present, absent]',

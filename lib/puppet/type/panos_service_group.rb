@@ -5,7 +5,7 @@ Puppet::ResourceApi.register_type(
   docs: <<-EOS,
 This type provides Puppet with the capabilities to manage "Service Group" objects on Palo Alto devices.
 EOS
-  base_xpath: '/config/devices/entry/vsys/entry/service-group',
+  base_xpath: 'service-group',
   features: ['remote_resource'],
   attributes: {
     name: {
@@ -18,6 +18,10 @@ EOS
       type:    'Enum[present, absent]',
       desc:    'Whether this resource should be present or absent on the target system.',
       default: 'present',
+    },
+    vsys: {
+      type:      'Optional[String]',
+      desc:      'The vsys of the service groups xpath.',
     },
     services: {
       type:         'Array[String]',

@@ -1,7 +1,7 @@
-require_relative '../panos_provider'
+require_relative '../panos_vsys_base'
 
 # Implementation for the panos_tags type using the Resource API.
-class Puppet::Provider::PanosZone::PanosZone < Puppet::Provider::PanosProvider
+class Puppet::Provider::PanosZone::PanosZone < Puppet::Provider::PanosVsysBase
   def munge(entry)
     bool_attrs = [:enable_user_identification, :enable_packet_buffer_protection, :nsx_service_profile]
     bool_attrs.each do |attr|

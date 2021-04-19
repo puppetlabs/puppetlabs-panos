@@ -5,7 +5,7 @@ Puppet::ResourceApi.register_type(
   docs: <<-EOS,
 This type provides Puppet with the capabilities to manage "service" objects on Palo Alto devices.
 EOS
-  base_xpath: '/config/devices/entry/vsys/entry/service',
+  base_xpath: 'service',
   features: ['remote_resource'],
   attributes: {
     name: {
@@ -23,6 +23,10 @@ EOS
       type:  'Optional[String]',
       desc:  'Provide a description of this service.',
       xpath: 'description/text()',
+    },
+    vsys: {
+      type:      'Optional[String]',
+      desc:      'The vsys of the services xpath.',
     },
     protocol: {
       type:    'Enum["tcp", "udp"]',

@@ -5,7 +5,7 @@ Puppet::ResourceApi.register_type(
   docs: <<-EOS,
 This type provides Puppet with the capabilities to manage "NAT Policy Rule" objects on Palo Alto devices.
 EOS
-  base_xpath: '/config/devices/entry/vsys/entry/rulebase/nat/rules',
+  base_xpath: 'rulebase/nat/rules',
   features: ['remote_resource'],
   attributes: {
     name: {
@@ -23,6 +23,10 @@ EOS
       type:  'Optional[String]',
       desc:  'A description of the NAT Policy Rule',
       xpath: 'description/text()',
+    },
+    vsys: {
+      type:      'Optional[String]',
+      desc:      'The vsys of the policies xpath.',
     },
     nat_type: {
       type:    'Enum["ipv4", "nat64", "nptv6"]',

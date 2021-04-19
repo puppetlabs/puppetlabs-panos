@@ -1,7 +1,7 @@
-require_relative '../panos_provider'
+require_relative '../panos_vsys_base'
 
 # Implementation for the panos_service_type type using the Resource API.
-class Puppet::Provider::PanosService::PanosService < Puppet::Provider::PanosProvider
+class Puppet::Provider::PanosService::PanosService < Puppet::Provider::PanosVsysBase
   def xml_from_should(name, should)
     builder = Builder::XmlMarkup.new
     builder.entry('name' => name) do

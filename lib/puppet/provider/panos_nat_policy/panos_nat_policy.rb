@@ -1,7 +1,7 @@
-require_relative '../panos_provider'
+require_relative '../panos_vsys_base'
 
 # Implementation for the panos_NAT_policy type using the Resource API.
-class Puppet::Provider::PanosNatPolicy::PanosNatPolicy < Puppet::Provider::PanosProvider
+class Puppet::Provider::PanosNatPolicy::PanosNatPolicy < Puppet::Provider::PanosVsysBase
   def munge(entry)
     entry[:bi_directional] = string_to_bool(entry[:bi_directional]) unless entry[:bi_directional].nil?
     entry[:nat_type] = 'ipv4' if entry[:nat_type].nil?
