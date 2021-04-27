@@ -183,6 +183,8 @@ Lint/InterpolationCheck:
   Enabled: false
 Lint/MissingCopEnableDirective:
   Enabled: false
+Lint/MissingSuper:
+  Enabled: false
 Lint/MixedRegexpCaptureTypes:
   Enabled: false
 Lint/NestedPercentLiteral:
