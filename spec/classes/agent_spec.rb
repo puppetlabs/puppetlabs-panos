@@ -27,7 +27,6 @@ describe 'panos::agent' do
       let(:facts) { os_facts }
 
       it { is_expected.to compile }
-      it { is_expected.to contain_class('resource_api::agent') }
       it { is_expected.to contain_package('builder') }
     end
   end

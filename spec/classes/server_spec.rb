@@ -24,7 +24,6 @@ describe 'panos::server' do
       let(:pre_cond) { 'service { "puppetserver": }' }
 
       it { is_expected.to compile }
-      it { is_expected.to contain_class('resource_api::server') }
     end
   end
 end
