@@ -7,12 +7,6 @@
   "source": "https://github.com/puppetlabs/puppetlabs-panos",
   "project_page": "https://github.com/puppetlabs/puppetlabs-panos",
   "issues_url": "https://github.com/puppetlabs/puppetlabs-panos/issues",
-  "dependencies": [
-    {
-      "name": "puppetlabs/resource_api",
-      "version_requirement": ">= 1.0.0 < 2.0.0"
-    }
-  ],
   "operatingsystem_support": [
     {
       "operatingsystem": "PAN-OS",
