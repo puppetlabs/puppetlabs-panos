@@ -2,7 +2,7 @@ require 'puppet/resource_api/simple_provider'
 
 # provider to handle arbitrary configuration commands against a PANOS device using the Resource API.
 class Puppet::Provider::PanosArbitraryCommands::PanosArbitraryCommands < Puppet::ResourceApi::SimpleProvider
-  def initialize
+  def initialize # rubocop:disable Lint/MissingSuper
     require 'rexml/xpath'
     require 'builder'
   end
