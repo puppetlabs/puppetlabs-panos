@@ -4,8 +4,6 @@
 #   include panos::install::agent
 class panos::install::agent {
 
-  include resource_api::install
-
   package { 'builder':
     ensure   => present,
     provider => 'puppet_gem',

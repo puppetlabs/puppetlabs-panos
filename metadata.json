@@ -25,7 +25,7 @@
   "requirements": [
     {
       "name": "puppet",
-      "version_requirement": ">= 4.7.0 < 8.0.0"
+      "version_requirement": ">= 6.0.0 < 8.0.0"
     }
   ],
   "tags": [
@@ -34,7 +34,7 @@
     "firewall",
     "network"
   ],
-  "pdk-version": "1.18.1",
+  "pdk-version": "2.1.1",
   "template-url": "https://github.com/puppetlabs/pdk-templates#main",
-  "template-ref": "heads/main-0-gd610ead"
+  "template-ref": "heads/main-0-g2381db6"
 }

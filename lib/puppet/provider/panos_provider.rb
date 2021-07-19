@@ -2,7 +2,7 @@ require 'puppet/resource_api/simple_provider'
 
 # A base provider for all PANOS providers
 class Puppet::Provider::PanosProvider < Puppet::ResourceApi::SimpleProvider
-  def initialize
+  def initialize # rubocop:disable Lint/MissingSuper
     require 'rexml/document'
     require 'rexml/xpath'
     require 'builder'

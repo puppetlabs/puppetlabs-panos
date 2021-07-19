@@ -6,5 +6,4 @@
 #
 # @note Deprecated, use panos::install::server
 class panos::server {
-  include resource_api::server
 }
