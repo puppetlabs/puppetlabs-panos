@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v2.0.0](https://github.com/puppetlabs/puppetlabs-panos/tree/v2.0.0) (2021-07-19)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-panos/compare/v1.2.1...v2.0.0)
+
+### Changed
+
+- \(IAC-1604\) Removal of puppet5 and resource api module [\#131](https://github.com/puppetlabs/puppetlabs-panos/pull/131) ([pmcmaw](https://github.com/pmcmaw))
+- \(IAC-999\) - Removal of inappropriate terminology [\#123](https://github.com/puppetlabs/puppetlabs-panos/pull/123) ([david22swan](https://github.com/david22swan))
+
+### Added
+
+- pdksync - \(feat\) Add support for Puppet 7 [\#125](https://github.com/puppetlabs/puppetlabs-panos/pull/125) ([daianamezdrea](https://github.com/daianamezdrea))
+
+### Fixed
+
+- \(maint\) Improve transport schema docs \[no-ci\] [\#109](https://github.com/puppetlabs/puppetlabs-panos/pull/109) ([DavidS](https://github.com/DavidS))
+
 ## [v1.2.1](https://github.com/puppetlabs/puppetlabs-panos/tree/v1.2.1) (2019-07-29)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-panos/compare/v1.2.0...v1.2.1)
