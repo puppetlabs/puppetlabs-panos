@@ -6,14 +6,15 @@
 #### Table of Contents
 
 1. [Module Description - What the module does and why it is useful](#module-description)
-2. [Setup - The basics of getting started with PANOS](#setup)
+2. [Support](#support)
+3. [Setup - The basics of getting started with PANOS](#setup)
     * [Setup requirements](#setup-requirements)
     * [Getting started with PANOS](#getting-started-with-panos)
     * [SSL Certificate Verification](#ssl-certificate-verification)
-3. [Usage - Configuration options and additional functionality](#usage)
-4. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
-5. [Limitations - OS compatibility, etc.](#limitations)
-6. [Development - Guide for contributing to the module](#development)
+4. [Usage - Configuration options and additional functionality](#usage)
+5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
+6. [Limitations - OS compatibility, etc.](#limitations)
+7. [Development - Guide for contributing to the module](#development)
 
 
 ## Module Description
@@ -23,6 +24,13 @@ The PANOS module configures Palo Alto firewalls running PANOS 7.1.0 or PANOS 8.1
 When committing changes to resources, include `panos_commit` in your manifest, or execute the `commit` task. You must do this before they can be made available to the running configuration.
 
 The module provides a Puppet task to manually `commit`, `store_config` to a file, and `set_config` from a file.
+
+## Support
+
+This module is not supported or maintained by Puppet and does not qualify for Puppet Support plans.
+It's provided without guarantee or warranty and you can use it at your own risk.
+All bugfixes, updates, and new feature development will come from community contributions.
+[tier:community]
 
 ## Setup
 
