@@ -1,7 +1,6 @@
 
 
-# panos [![Build Status](https://travis-ci.com/puppetlabs/puppetlabs-panos.svg?token=EgyaCjCqJtXUWAZqypZQ&branch=main)](https://travis-ci.com/puppetlabs/puppetlabs-panos)
-
+# panos
 
 #### Table of Contents
 
