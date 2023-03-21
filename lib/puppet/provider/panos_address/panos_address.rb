@@ -1,7 +1,7 @@
-require_relative '../panos_provider'
+require_relative '../panos_vsys_base'
 
 # Implementation for the panos_address type using the Resource API.
-class Puppet::Provider::PanosAddress::PanosAddress < Puppet::Provider::PanosProvider
+class Puppet::Provider::PanosAddress::PanosAddress < Puppet::Provider::PanosVsysBase
   def validate_should(should)
     required = [should[:ip_netmask], should[:ip_range], should[:fqdn]].compact.size
     if required > 1 # rubocop:disable Style/GuardClause
